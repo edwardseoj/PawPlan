@@ -1,4 +1,21 @@
+    import email
+
 import flet as ft
+# config
+import pyrebase
+from certifi import contents
+from flet.controls.core import placeholder
+
+config = {
+  "apiKey": "apiKey",
+  "authDomain": "projectId.firebaseapp.com",
+  "databaseURL": "https://databaseName.firebaseio.com",
+  "storageBucket": "projectId.appspot.com"
+}
+
+firebase = pyrebase.initialize_app(config)
+
+
 
 def main(page: ft.Page):
     page.title = "PawPlan"
@@ -10,12 +27,12 @@ def main(page: ft.Page):
     title_row = ft.Row([paw_text, plan_text], alignment=ft.MainAxisAlignment.CENTER)
 
     login_btn = ft.Container(
-        content=ft.ElevatedButton(text="Login"),
+        content=ft.ElevatedButton("Login"),
         width=200,
         height=50
     )
     signup_btn = ft.Container(
-        content=ft.ElevatedButton(text="Sign Up"),
+        content=ft.ElevatedButton("Sign Up"),
         width=200,
         height=50
     )
@@ -27,11 +44,34 @@ def main(page: ft.Page):
         ft.Divider(thickness=1)
     ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
 
+    # page popup
+    def close_google_dialog(e):
+        page.close_dialog()
+
+    google_dlg = ft.AlertDialog(
+        title=ft.Text("Google Sign In"),
+        content=ft.Column(
+          controls=[
+            ft.CupertinoTextField(
+                placeholder_text="email",
+            ),
+            ft.CupertinoTextField(
+                placeholder_text="password",
+                password=True,
+                can_reveal_password=True ),
+          ],
+        ),
+        actions=[ft.TextButton("OK", on_click=lambda e: page.pop_dialog())],
+    )
+
     google_btn = ft.Container(
-        content=ft.ElevatedButton(text="Sign in with Google"),
+        content=ft.Button("Sign in with Google", on_click=lambda e: page.show_dialog(google_dlg)),
         width=250,
         height=50
     )
+
+
+
 
     page.add(
         ft.Column([
