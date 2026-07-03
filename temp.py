@@ -15,7 +15,7 @@ if not client_id or not client_secret:
 
 
 # main
-def main(page: ft.Page):
+def loginregister(page: ft.Page):
     page.title = "PawPlan"
 
     # Google auth code
@@ -144,114 +144,33 @@ def main(page: ft.Page):
                             ft.Container(height=20),
                             google_btn
                         ],
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER)
                     ],
                     vertical_alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER
                 )
             )
-        ],
-        vertical_alignment=ft.MainAxisAlignment.CENTER,
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-    )
 
 
-# LOGIN SCREEN ("/login")
-def login_view(page: ft.Page) -> ft.View:
-    async def go_root(e):
-        await page.push_route("/")
-
-    async def go_register(e):
-        await page.push_route("/register")
-
-    # link homepage.py
-    async def do_login(e):
-        await page.push_route("/homepage")
-
-    # content variables
-    back_btn = ft.TextButton("Back", on_click=go_root)
-    username = ft.TextField(label="Username", width=300)
-    password = ft.TextField(label="Password", password=True, width=300)
-    login_btn = ft.Button("Log In", width=150, on_click=do_login)
-    register_link = ft.TextButton("Not registered yet?", on_click=go_register)
-
-    # call content
-    return ft.View(
-        route="/login",
-        controls=[
-            ft.Column(
-                [
-                    ft.Row([back_btn], alignment=ft.MainAxisAlignment.START),
-                    ft.Text("Login", size=24, weight=ft.FontWeight.BOLD),
-                    username,
-                    password,
-                    register_link,
-                    login_btn,
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        elif page.route == "/homepage":
+            page.views.append(
+                ft.View(
+                    route = "/homepage",
+                    controls = [startup_top()],
+                    vertical_alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                )
             )
-        ],
-        vertical_alignment=ft.MainAxisAlignment.CENTER,
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-    )
 
-
-# REGISTER SCREEN ("/register")
-def register_view(page: ft.Page) -> ft.View:
-    async def go_root(e):
-        await page.push_route("/")
-
-    async def go_login(e):
-        await page.push_route("/login")
-
-    async def do_register(e):
-        await page.push_route("/homepage")
-
-    # content variables
-    back_btn = ft.TextButton("Back", on_click=go_root)
-    username = ft.TextField(label="Username", width=300)
-    fullname = ft.TextField(label="Full Name", width=300)
-    gender = ft.Row(
-        [
-            ft.Row([back_btn], alignment=ft.MainAxisAlignment.START),
-            ft.Text("Gender:"),
-            ft.Button("Male", width=80),
-            ft.Button("Female", width=80),
-        ],
-        alignment=ft.MainAxisAlignment.CENTER,
-    )
-    dob = ft.Row(
-        [
-            ft.TextField(label="MM", width=70),
-            ft.TextField(label="DD", width=70),
-            ft.TextField(label="YYYY", width=100),
-        ],
-        alignment=ft.MainAxisAlignment.CENTER,
-    )
-    password = ft.TextField(label="Password", password=True, width=300)
-    create_btn = ft.Button("Create Account", width=180, on_click=do_register)
-    back_to_login_btn = ft.TextButton("Back to Login", on_click=go_login)
-
-    # call content
-    return ft.View(
-        route="/register",
-        controls=[
-            ft.Column(
-                [
-                    ft.Text("Register", size=24, weight=ft.FontWeight.BOLD),
-                    username,
-                    fullname,
-                    gender,
-                    ft.Text("Date of birth:"),
-                    dob,
-                    password,
-                    create_btn,
-                    back_to_login_btn,
-                ],
-                alignment=ft.MainAxisAlignment.CENTER,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        elif page.route == "/login":
+            page.views.append(
+                ft.View(
+                    route = "/login",
+                    controls = [login_screen()],
+                    vertical_alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                )
             )
 
         elif page.route == "/register":

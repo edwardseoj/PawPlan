@@ -1,11 +1,7 @@
 import flet as ft
 
 
-def main(page: ft.Page):
-    page.title = "PawPlan"
-    page.bgcolor = "#FFFFFF"
-    page.scroll = None
-
+def homepage_view(page: ft.Page) -> ft.View:
     primary = "#0D6EFD"
     soft_border = "#DDE3EE"
     white = "#FFFFFF"
@@ -114,24 +110,37 @@ def main(page: ft.Page):
         ),
     )
 
-    page.add(
-        ft.Column(
-            spacing=0,
-            expand=True,
-            controls=[
-                appbar,
-                header,
-                calendar,
-                tasks,
-                ft.Container(expand=True),
-                bottom_nav,
-            ],
-        )
+    return ft.View(
+        route="/homepage",
+        bgcolor="#FFFFFF",
+        scroll=None,
+        padding=0,
+        spacing=0,
+        controls=[
+            ft.Column(
+                spacing=0,
+                expand=True,
+                controls=[
+                    appbar,
+                    header,
+                    calendar,
+                    tasks,
+                    ft.Container(expand=True),
+                    bottom_nav,
+                ],
+            )
+        ],
     )
 
-    page.window.width= 430
-    page.window.height= 900
+
+def _standalone_main(page: ft.Page):
+    # Lets you run `python homepage.py` on its own to preview this screen
+    page.title = "PawPlan"
+    page.window.width = 430
+    page.window.height = 900
+    page.views.append(homepage_view(page))
+    page.update()
 
 
 if __name__ == "__main__":
-    ft.run(main)
+    ft.run(_standalone_main)
