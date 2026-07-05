@@ -9,11 +9,8 @@ def main(page: ft.Page):
     pet_Type = ft.Dropdown(
         label = "Pet Type",
         options=[
-            ft.dropdown.Option("Red"),
-            ft.dropdown.Option("Blue"),
-            ft.dropdown.Option("Yellow"),
-            ft.dropdown.Option("Green"),
-            ft.dropdown.Option("White"),
+            ft.dropdown.Option("Dog"),
+            ft.dropdown.Option("Cat"),
         ],
         width=300
     )
