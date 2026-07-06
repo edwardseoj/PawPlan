@@ -6,3 +6,4 @@ dependencies = [
     "flet>=0.85.3",
     "pyrebase4>=4.9.0",
 ]
+description = "Add your description here"
