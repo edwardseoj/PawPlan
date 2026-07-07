@@ -1,7 +1,22 @@
 import flet as ft
 
+# logger import
+# use in push.route to see route changes
+# will need to filter things though
+import logging
+logger = logging.getLogger(__name__)
+
+
 
 def homepage_view(page: ft.Page) -> ft.View:
+    async def go_petprofileinput(e):
+        logger.info("Go to pet profile clicked")
+        try:
+            await page.push_route("/petprofile")
+            logger.info("Route pushed")
+        except Exception as e:
+            logger.error(f"Error occurred: {e}")
+
     primary = "#0D6EFD"
     soft_border = "#DDE3EE"
     white = "#FFFFFF"
@@ -33,11 +48,13 @@ def homepage_view(page: ft.Page) -> ft.View:
                             size=18,
                             weight=ft.FontWeight.W_700,
                         ),
+
+                        # reroute to petprofile
                         ft.Button(
                             "Add Pet",
-                            bgcolor=white,
-                            color=primary,
-                            on_click=lambda e: None,
+                            # bgcolor=white,
+                            # color=primary,
+                            on_click=go_petprofileinput,
                         ),
                     ],
                 ),

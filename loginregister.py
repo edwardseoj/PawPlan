@@ -1,6 +1,9 @@
 import os
 import flet as ft
 from flet.auth.providers import GoogleOAuthProvider
+
+# note that this one would not work in the build app
+# find an alternative
 from dotenv import load_dotenv
 load_dotenv()
 from homepage import homepage_view
@@ -12,6 +15,7 @@ client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 # error checking
 if not client_id or not client_secret:
     raise ValueError("Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET in .env file")
+
 
 # auth code
 provider = GoogleOAuthProvider(

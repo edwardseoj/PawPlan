@@ -1,7 +1,11 @@
 import flet as ft
 from loginregister import startup_view, login_view, register_view, make_on_login
 from homepage import homepage_view
+from petprofile_input import petprofile_input_view\
 
+# logger setup
+from logging_config import setup_logging
+setup_logging()
 
 def main(page: ft.Page):
     page.title = "PawPlan"
@@ -18,10 +22,11 @@ def main(page: ft.Page):
         elif page.route == "/register":
             page.views.append(register_view(page))
 
-        # error here
-        # list is empty
         elif page.route == "/homepage":
             page.views.append(homepage_view(page))
+
+        elif page.route == "/petprofile":
+            page.views.append(petprofile_input_view(page))
 
         page.update()
 
