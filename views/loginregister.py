@@ -6,7 +6,6 @@ from flet.auth.providers import GoogleOAuthProvider
 # find an alternative
 from dotenv import load_dotenv
 load_dotenv()
-from homepage import homepage_view
 
 # get values from .env
 client_id = os.getenv("GOOGLE_CLIENT_ID")

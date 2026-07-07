@@ -1,10 +1,10 @@
 import flet as ft
-from loginregister import startup_view, login_view, register_view, make_on_login
-from homepage import homepage_view
-from petprofile_input import petprofile_input_view\
+from views.loginregister import startup_view, login_view, register_view, make_on_login
+from views.homepage import homepage_view
+from views.petprofile_input import petprofile_input_view\
 
 # logger setup
-from logging_config import setup_logging
+from helper_scripts.logging_config import setup_logging
 setup_logging()
 
 def main(page: ft.Page):

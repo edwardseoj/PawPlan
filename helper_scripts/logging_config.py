@@ -6,6 +6,6 @@ def setup_logging():
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers = [
             logging.StreamHandler(),  # prints to console
-            logging.FileHandler("pawplan.log", mode="a"),  # also writes to a file
+            logging.FileHandler("../pawplan.log", mode="a"),  # also writes to a file
         ],
     )
