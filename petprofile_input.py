@@ -42,17 +42,17 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
         horizontal_alignment=ft.CrossAxisAlignment.CENTER
     )
 
-# to try running it as itself
-def _standalone_main(page: ft.Page):
-    page.title = "PawPlan"
-    page.window.width = 430
-    page.window.height = 900
-    page.views.append(petprofile_input_view(page))
-    page.update()
-
-if __name__ == "__main__":
-    ft.run(_standalone_main)
-
+# # to try running it as itself
+# def _standalone_main(page: ft.Page):
+#     page.title = "PawPlan"
+#     page.window.width = 430
+#     page.window.height = 900
+#     page.views.append(petprofile_input_view(page))
+#     page.update()
+#
+# if __name__ == "__main__":
+#     ft.run(_standalone_main)
+#
 # def main(page: ft.Page):
 #     page.title = "Pet Profile"
 #     page.horizontal_alignment = ft.MainAxisAlignment.CENTER
