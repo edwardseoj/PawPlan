@@ -8,6 +8,7 @@ def settings_view(page: ft.Page) -> ft.View:
     white = "#FFFFFF"
     white38 = "#FFFFFF66"
 
+    #TODO: add back button
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=20, vertical=10),
         bgcolor="#8C52FF",
@@ -19,27 +20,28 @@ def settings_view(page: ft.Page) -> ft.View:
         ),
     )
 
-    # settings = ft.Container(
-    #     padding=ft.Padding.symmetric(horizontal=20, vertical=10),
-    #     bgcolor=WHITE,
-    #     content=ft.Column(
-    #         alignment=ft.MainAxisAlignment.CENTER,
-    #         settings=[
-    #             ft.TextButton(
-    #                 "Change Name"
-    #             ),
-    #             ft.TextButton(
-    #                 "Change Username"
-    #             ),
-    #             ft.TextButton(
-    #                 "Change Password"
-    #             ),
-    #             ft.TextButton(
-    #                 "Change Appearance"
-    #             )
-    #         ],
-    #     )
-    # )
+    #settings buttons
+    settings = ft.Container(
+        padding=ft.Padding.symmetric(horizontal=20, vertical=10),
+        bgcolor=white,
+        content=ft.Column(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
+                ft.TextButton(
+                    "Change Name"
+                ),
+                ft.TextButton(
+                    "Change Username"
+                ),
+                ft.TextButton(
+                    "Change Password"
+                ),
+                ft.TextButton(
+                    "Change Appearance"
+                )
+            ],
+        )
+    )
 
     bottom_nav = ft.Container(
         padding=ft.Padding.symmetric(horizontal=20, vertical=10),
@@ -65,6 +67,7 @@ def settings_view(page: ft.Page) -> ft.View:
         ),
     )
 
+#TODO: implement
 # replacement nav bar
     # page.navigation_bar = ft.NavigationBar(
     #     destinations=[
@@ -90,7 +93,7 @@ def settings_view(page: ft.Page) -> ft.View:
                 expand=True,
                 controls=[
                     appbar,
-                    #settings,
+                    settings,
                     ft.Container(expand=True),
                     #NavigationBar()
                     bottom_nav,
