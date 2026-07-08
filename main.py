@@ -4,7 +4,7 @@ from views.homepage import homepage_view
 from views.petprofile_input import petprofile_input_view\
 
 # logger setup
-from helper_scripts.logging_config import setup_logging
+from utility.logging_config import setup_logging
 setup_logging()
 
 def main(page: ft.Page):
