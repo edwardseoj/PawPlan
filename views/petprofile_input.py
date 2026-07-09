@@ -1,6 +1,16 @@
 import flet as ft
+import logging
+logger = logging.getLogger(__name__)
 
 def petprofile_input_view(page: ft.Page) -> ft.View:
+    async def go_homepage(e):
+        logger.info("Go to pet profile clicked")
+        try:
+            await page.push_route("/homepage")
+            logger.info("Route pushed")
+        except Exception as e:
+            logger.error(f"Error occurred: {e}")
+
     # content variables
     pet_name = ft.TextField(label="Pet Name", width=300)
     pet_type = ft.Dropdown(
@@ -13,7 +23,7 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
     )
     pet_age = ft.TextField(label="Age", width=300, keyboard_type=ft.KeyboardType.NUMBER, text_align=ft.TextAlign.CENTER)
     pet_breed = ft.TextField(label="Breed", width=300, text_align=ft.TextAlign.CENTER)
-    submit_btn = ft.Button("Save Profile", on_click=lambda e: page.dialog.close())
+    submit_btn = ft.Button("Save Profile", on_click=go_homepage)
 
 
     return ft.View(
