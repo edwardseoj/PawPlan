@@ -1,9 +1,9 @@
 import flet as ft
 
-
 def account_profile_view(page: ft.Page) -> ft.View:
     primary = "#0D6EFD"
     white = "#FFFFFF"
+    black = "#000000"
 
     # App bar
     appbar = ft.Container(
@@ -40,27 +40,60 @@ def account_profile_view(page: ft.Page) -> ft.View:
         ),
     )
 
-    # Profile details
-    profile_details = ft.Container(
-        margin=ft.Margin.symmetric(horizontal=16, vertical=12),
-        padding=ft.Padding.all(12),
+    owner_profile = ft.Container(
+        width = 280,
+        padding = ft.Padding.all(20),
         bgcolor=white,
         border_radius=12,
-        border=ft.Border.all(1, "#DDE3EE"),
-        content=ft.Column(
+        border = ft.Border.all(1, "#DDE3EE"),
+        content = ft.Column(
             spacing=10,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
-                ft.Text("John Doe", size=22, weight=ft.FontWeight.W_700),
-                ft.Text("Username: johndoe12", size=16),
-                ft.Text("Age: 21", size=16),
-                ft.Text("Gender: Male", size=16),
-                ft.Text("Pets:", size=16, weight=ft.FontWeight.W_600),
-                ft.Text("Pet 1: Bella", size=14),
-                ft.Text("Pet 2: Max", size=14),
-            ],
-        ),
+                ft.Text(
+                    "Juan Dela Cruz",
+                    size = 40,
+                    weight=ft.FontWeight.W_700,
+                    color = black,
+                    text_align=ft.TextAlign.CENTER,
+                ),
+                ft.Text (
+                    "Username: @juan_dcruz",
+                    size = 20,
+                    weight=ft.FontWeight.W_700,
+                    color = black,
+                    text_align=ft.TextAlign.CENTER,
+                ),
+                ft.Text (
+                    "Age: 20",
+                    size = 20,
+                    weight=ft.FontWeight.W_700,
+                    color = black,
+                    text_align=ft.TextAlign.CENTER,
+                ),
+                ft.Text (
+                    "Gender: Male",
+                    size = 20,
+                    weight=ft.FontWeight.W_700,
+                    color = black,
+                    text_align=ft.TextAlign.CENTER,
+                )
+            ]
+        )
+
     )
+
+
+
+    profile_details = ft.Container(
+        margin=ft.Margin.only(left=16, right=16, top=140, bottom=16),
+        bgcolor=white,
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[owner_profile],
+        )
+    )
+
 
 
     bottom_nav = ft.Container(
@@ -71,18 +104,21 @@ def account_profile_view(page: ft.Page) -> ft.View:
             alignment=ft.MainAxisAlignment.SPACE_AROUND,
             controls=[
                 ft.TextButton(
-                    "Home", style=ft.ButtonStyle(color=white), on_click=lambda e: page.go("/homepage")
+                    "Home", style=ft.ButtonStyle(color=white), on_click=lambda e: None
                 ),
                 ft.TextButton(
-                    "Calendar", style=ft.ButtonStyle(color=white), on_click=lambda e: None
+                    "Calendar",
+                    style=ft.ButtonStyle(color=white),
+                    on_click=lambda e: None,
                 ),
                 ft.TextButton(
-                    "Profile", style=ft.ButtonStyle(color=white), on_click=lambda e: page.go("/account_profile")
+                    "Profile",
+                    style=ft.ButtonStyle(color=white),
+                    on_click=lambda e: None,
                 ),
             ],
         ),
     )
-
     return ft.View(
         route="/account_profile",
         bgcolor=white,
