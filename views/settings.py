@@ -3,6 +3,8 @@ from flet import NavigationBar
 
 
 def settings_view(page: ft.Page) -> ft.View:
+
+
     primary = "#0D6EFD"
     soft_border = "#DDE3EE"
     white = "#FFFFFF"
