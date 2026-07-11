@@ -1,10 +1,41 @@
+import calendar
+import datetime
+
 import flet as ft
 
 # logger import
 # use in push.route to see route changes
 # will need to filter things though
 import logging
+
+from flet.controls import border_radius
+
 logger = logging.getLogger(__name__)
+
+
+# Sample based on Mock Screens (will be updated later on)
+PETS = [
+    {"name": "Max", "icon": ft.Icons.PETS, "photo_bg": "#F1D9B0"},
+    {"name": "Bella", "icon": ft.Icons.PETS, "photo_bg": "#F1D9B0"},
+]
+
+TODAYS_TASKS = [
+    {"time": "8:00 AM", "task": "Feed Bella"},
+    {"time": "12:00 PM", "task": "Walk Max"},
+    {"time": "6:00 PM", "task": "Give Bella Medication"},
+]
+
+UPCOMING_EVENT = "Upcoming Vet Visit for Bella - June 15"
+
+DESTINATIONS = [
+    ("Home", ft.Icons.WIDGETS_OUTLINED, ft.Icons.HOUSE),
+    ("Calendar", ft.Icons.WIDGETS_OUTLINED, ft.Icons.CALENDAR_MONTH),
+    ("Profile", ft.Icons.WIDGETS_OUTLINED, ft.Icons.PERSON),
+]
+
+LOGO_SIZE = 70
+
+NAV_SHRINK_SCALE = 0.6
 
 
 
@@ -14,136 +45,391 @@ def homepage_view(page: ft.Page) -> ft.View:
         try:
             await page.push_route("/petprofile")
             logger.info("Route pushed")
-        except Exception as e:
-            logger.error(f"Error occurred: {e}")
+        except Exception as ex:
+            logger.error(f"Error occurred: {ex}")
+
+    def view_reminder(pet_name):
+        def handler(e):
+            logger.info(f"View reminder clicked for {pet_name}")
+        return handler
+
+    def go_home(e):
+        logger.info("Home nav clicked")
+
+    def go_calendar(e):
+        logger.info("Calendar nav clicked")
+
+    def go_profile(e):
+        logger.info("Profile nav clicked")
+
+    def go_settings(e):
+        logger.info("Settings nav clicked")
+
+    NAV_ACTIONS = [go_home, go_calendar, go_profile]
 
     primary = "#0D6EFD"
+    header_blue = "#1450B4"
+    orange = "#F5821F"
     soft_border = "#DDE3EE"
     white = "#FFFFFF"
-    white38 = "#FFFFFF66"
+    black = "#000000"
+    green = "#4CAF50"
+    nav_blue = "#0B4FB0"
+    calendar_header_blue = "#2F6FCB"
+    weekend_blue = "#3B6FD6"
+
 
     appbar = ft.Container(
-        padding=ft.Padding.symmetric(horizontal=20, vertical=10),
-        bgcolor="#FFFFFF",
+        padding=ft.Padding.symmetric(horizontal=20, vertical=12),
+        bgcolor=white,
         content=ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             controls=[
-                ft.Text("PawPlan", size=20, weight=ft.FontWeight.W_700, color="#000000"),
-            ]
+                ft.Row(
+                    spacing=10,
+                    controls=[
+
+                        ft.Container(
+                            width=LOGO_SIZE,
+                            height=LOGO_SIZE,
+                            border_radius=10,
+                            alignment=ft.Alignment.CENTER,
+                            content=ft.Image(
+                                src="pawplan_icon.png",
+                                width=LOGO_SIZE,
+                                height=LOGO_SIZE,
+                                fit=ft.BoxFit.CONTAIN,
+                            ),
+                        ),
+
+                        ft.Row(
+                            spacing=2,
+                            controls=[
+                                ft.Text("Paw", size=22, weight=ft.FontWeight.W_800, color=orange),
+                                ft.Text("Plan", size=22, weight=ft.FontWeight.W_800, color="#0B2E6B"),
+                            ],
+                        ),
+                    ],
+                ),
+                ft.Row(
+                    spacing=6,
+                    controls=[
+                        ft.Icon(ft.Icons.NOTIFICATIONS_NONE, color=black, size=26),
+                        ft.PopupMenuButton(
+                            icon=ft.Icons.MORE_VERT,
+                            icon_color=black,
+                            items=[
+                                ft.PopupMenuItem(
+                                    content = ft.Text("Settings"),
+                                    icon=ft.Icons.SETTINGS_OUTLINED,
+                                    on_click=go_settings,
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ],
         ),
     )
 
+
+    appbar_divider = ft.Container(height=5, bgcolor=orange)
+
+
+
+    def pet_card(pet):
+        return ft.Container(
+            width=110,
+            content=ft.Column(
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=6,
+                controls=[
+
+
+                    ft.Text(pet["name"], color=white, size=15, weight=ft.FontWeight.W_700),
+                    ft.Container(
+                        width=90,
+                        height=90,
+                        bgcolor=pet["photo_bg"],
+                        border_radius=10,
+                        border=ft.Border.all(2, white),
+                        alignment=ft.Alignment.CENTER,
+                        content=ft.Icon(pet["icon"], size=40, color="#8A6A3B"),
+
+                    ),
+                    ft.Button(
+                        content=ft.Text("View Reminder", size=8, color=white),
+                        bgcolor=green,
+                        on_click=view_reminder(pet["name"]),
+                    ),
+                ],
+            ),
+        )
+
     header = ft.Container(
-        padding=ft.Padding.symmetric(horizontal=16, vertical=12),
-        bgcolor=primary,
+        padding=ft.Padding.symmetric(horizontal=16, vertical=16),
+        bgcolor=header_blue,
         content=ft.Column(
-            spacing=10,
+            spacing=16,
             controls=[
+
                 ft.Row(
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
                     controls=[
                         ft.Text(
                             "Hello, John",
                             color=white,
-                            size=18,
-                            weight=ft.FontWeight.W_700,
+                            size=24,
+                            weight=ft.FontWeight.W_800,
                         ),
-
-                        # reroute to petprofile
                         ft.Button(
-                            "Add Pet",
-                            # bgcolor=white,
-                            # color=primary,
+                            content=ft.Row(
+                                spacing=6,
+                                tight=True,
+                                controls=[
+                                    ft.Text("Add Pet", color=primary, weight=ft.FontWeight.W_700),
+                                    ft.Icon(ft.Icons.ARROW_CIRCLE_RIGHT, color=primary, size=18),
+                                ],
+                            ),
+                            bgcolor=white,
                             on_click=go_petprofileinput,
                         ),
                     ],
                 ),
-                ft.Divider(height=1, color=white38),
+                ft.Row(
+                    spacing=14,
+                    scroll=ft.ScrollMode.AUTO,
+                    controls=[pet_card(pet) for pet in PETS],
+                ),
             ],
         ),
     )
 
-    calendar = ft.Container(
-        margin=ft.Margin.symmetric(horizontal=16),
-        padding=ft.Padding.all(12),
+    # Added Calendar (should have backend functions for vet scheduled visits)
+    today = datetime.date.today()
+    calendar_year, calendar_month = today.year, today.month
+    calendar.setfirstweekday(calendar.SUNDAY)
+    weeks = calendar.monthcalendar(calendar_year, calendar_month)
+    month_label = f"{calendar.month_name[calendar_month].upper()} {calendar_year}"
+
+    weekday_labels = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+
+    def day_cell(day, col_index):
+        weekend = col_index == 0 or col_index == 6
+        todays = day == today.day
+        text_color = weekend_blue if weekend else "#1F2937"
+        if day == 0:
+            return ft.Container(expand=1, height=30)
+        return ft.Container(
+            expand=1,
+            height=30,
+            border_radius=6,
+            bgcolor=primary if today else None,
+            alignment=ft.Alignment.CENTER,
+            content=ft.Text(
+                str(day),
+                size=11,
+                color=white if today else text_color,
+                weight=ft.FontWeight.W_700 if today else ft.FontWeight.W_400,
+            ),
+        )
+
+    calendar_rows = [
+        ft.Row(
+            spacing=2,
+            controls=[day_cell(d, i) for i, d in enumerate(week)],
+        )
+        for week in weeks
+    ]
+
+    calendar_widget = ft.Container(
+        margin=ft.Margin.only(left=16, right=16, top=14),
         bgcolor=white,
-        border_radius=12,
+        border_radius=10,
         border=ft.Border.all(1, soft_border),
+        clip_behavior=ft.ClipBehavior.ANTI_ALIAS,
+        content=ft.Column(
+            spacing=6,
+            controls=[
+
+                ft.Container(
+                    padding=ft.Padding.symmetric(vertical=8),
+                    bgcolor=calendar_header_blue,
+                    alignment=ft.Alignment.CENTER,
+                    content=ft.Text(
+                        month_label, size=12, weight=ft.FontWeight.W_700, color=white
+                    ),
+                ),
+
+                ft.Container(
+                    padding=ft.Padding.symmetric(horizontal=8),
+                    content=ft.Row(
+                        spacing=2,
+                        controls=[
+                            ft.Container(
+                                expand=1,
+                                alignment=ft.Alignment.CENTER,
+                                content=ft.Text(
+                                    label, size=9, weight=ft.FontWeight.W_700, color="#6B7280"
+                                ),
+                            )
+                            for label in weekday_labels
+                        ],
+                    ),
+                ),
+                ft.Container(
+
+                    padding=ft.Padding.only(left=8, right=8, bottom=10),
+                    content=ft.Column(spacing=4, controls=calendar_rows),
+                ),
+            ],
+        ),
+    )
+
+
+
+
+
+    # Today's Tasks (for backends this needs to be connected to reminder page)
+
+    def task_row(item):
+        return ft.Container(
+            border=ft.Border.all(1, soft_border),
+            border_radius=8,
+            padding=ft.Padding.symmetric(horizontal=14, vertical=12),
+            content=ft.Text(
+                f"{item['time']} - {item['task']}",
+                size=15,
+                weight=ft.FontWeight.W_600,
+                color=black,
+            ),
+        )
+
+
+    tasks_section = ft.Container(
+        margin=ft.Margin.only(left=16, right=16, top=16),
         content=ft.Column(
             spacing=10,
             controls=[
-                ft.Row(
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                    controls=[
-                        ft.Text("JULY 2026", size=12, color="#4B5563"),
-                        ft.Text("Calendar", size=12, color="#9CA3AF"),
-                    ],
+                ft.Text(
+                    "Today's Task",
+                    size=20,
+                    weight=ft.FontWeight.W_700,
+                    color=black,
                 ),
-                ft.GridView(
-                    runs_count=1,
-                    max_extent=28,
-                    spacing=4,
-                    child_aspect_ratio=1,
-                    controls=[
-                        ft.Container(bgcolor="#F3F4F6", border_radius=4, height=22)
-                        for _ in range(42)
-                    ],
+
+                *[task_row(item) for item in TODAYS_TASKS],
+                ft.Container(
+                    padding=ft.Padding.symmetric(horizontal=14, vertical=12),
+                    border=ft.Border.all(1, soft_border),
+                    border_radius=8,
+                    content=ft.Text(
+                        UPCOMING_EVENT,
+                        size=14,
+                        weight=ft.FontWeight.W_600,
+                        color=black,
+                    ),
                 ),
             ],
         ),
     )
 
-    tasks = ft.Container(
-        margin=ft.Margin.only(left=16, right=16, top=10),
-        content=ft.Text(
-            "Today's Tasks",
-            size=22,
-            weight=ft.FontWeight.W_700,
-            color="Black",
-        ),
-    )
+    # Navigation Bar (turned into a pill)
+    def nav_destination_tapped(index):
+        def handler(e):
+            NAV_ACTIONS[index](e)
+            restore_nav(e)
 
-    bottom_nav = ft.Container(
-        padding=ft.Padding.symmetric(horizontal=20, vertical=10),
-        bgcolor="#0B4FB0",
-        border_radius=ft.BorderRadius.only(top_left=20, top_right=20),
+        return handler
+
+    def pill_destination(index, label, icon):
+        return ft.Container(
+            padding=ft.Padding.symmetric(horizontal=10, vertical=8),
+            border_radius=20,
+            on_click=nav_destination_tapped(index),
+            content=ft.Column(
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing = 2,
+                tight=True,
+                controls=[
+                    ft.Icon(icon, color=white, size=20),
+                    ft.Text(label, size=11, color=white, weight=ft.FontWeight.W_600),
+                ],
+            ),
+        )
+
+    floating_nav = ft.Container(
+        bgcolor=nav_blue,
+        border_radius=32,
+        padding=ft.Padding.symmetric(horizontal=18, vertical=10),
+        scale=1.0,
+        animate_scale=ft.Animation(200, ft.AnimationCurve.EASE_OUT),
+        shadow=ft.BoxShadow(
+            blur_radius=16,
+            spread_radius=1,
+            color="#00000055",
+            offset=ft.Offset(0, 4),
+        ),
         content=ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_AROUND,
+            tight=True,
             controls=[
-                ft.TextButton(
-                    "Home", style=ft.ButtonStyle(color=white), on_click=lambda e: None
-                ),
-                ft.TextButton(
-                    "Calendar",
-                    style=ft.ButtonStyle(color=white),
-                    on_click=lambda e: None,
-                ),
-                ft.TextButton(
-                    "Profile",
-                    style=ft.ButtonStyle(color=white),
-                    on_click=lambda e: None,
-                ),
+                pill_destination(i, label, filled_icon)
+                for i, (label, outlined_icon, filled_icon) in enumerate(DESTINATIONS)
             ],
         ),
+    )
+
+    def shrink_nav():
+        if floating_nav.scale != NAV_SHRINK_SCALE:
+            floating_nav.scale = NAV_SHRINK_SCALE
+            floating_nav.update()
+
+    def restore_nav(e=None):
+        if floating_nav.scale != 1.0:
+            floating_nav.scale = 1.0
+            floating_nav.update()
+
+    floating_nav.on_click = restore_nav
+
+    def handle_content_scroll(e: ft.OnScrollEvent):
+        if e.event_type == ft.ScrollType.USER:
+            shrink_nav()
+
+    main_content = ft.Column(
+        spacing = 0,
+        expand = True,
+        scroll = ft.ScrollMode.AUTO,
+        on_scroll = handle_content_scroll,
+
+        controls = [
+            appbar,
+            appbar_divider,
+            header,
+            calendar_widget,
+            tasks_section,
+            ft.Container(height=100),
+        ],
     )
 
     return ft.View(
         route="/homepage",
         bgcolor="#FFFFFF",
-        scroll=None,
         padding=0,
         spacing=0,
         controls=[
-            ft.Column(
-                spacing=0,
+            ft.Stack(
                 expand=True,
                 controls=[
-                    appbar,
-                    header,
-                    calendar,
-                    tasks,
-                    ft.Container(expand=True),
-                    bottom_nav,
+                    main_content,
+                    ft.Container(
+                        align=ft.Alignment.BOTTOM_CENTER,
+                        padding = ft.Padding.only(bottom = 20),
+                        content = floating_nav,
+                        expand = True,
+                    ),
+
                 ],
             )
         ],
@@ -160,4 +446,4 @@ def _standalone_main(page: ft.Page):
 
 
 if __name__ == "__main__":
-    ft.run(_standalone_main)
+    ft.run(_standalone_main, assets_dir="assets")
