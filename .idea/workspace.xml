@@ -7,12 +7,7 @@
     <option name="selectedModelId" value="auto" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1ba19bff-17e9-4a2f-a6d4-bae29a6a567a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/homepage.py" beforeDir="false" afterPath="$PROJECT_DIR$/homepage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/owner_profile.py" beforeDir="false" afterPath="$PROJECT_DIR$/owner_profile.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pawplan.log" beforeDir="false" afterPath="$PROJECT_DIR$/pawplan.log" afterDir="false" />
-    </list>
+    <list default="true" id="1ba19bff-17e9-4a2f-a6d4-bae29a6a567a" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -138,7 +133,7 @@
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "copilot.chat.legacySessionMetadata.migrated": "true",
-    "git-widget-placeholder": "barebones-v2",
+    "git-widget-placeholder": "barebones-ui",
     "junie.onboarding.icon.badge.shown": "true",
     "last_opened_file_path": "/home/seoj/Documents/AppDev/PawPlan",
     "node.js.detected.package.eslint": "true",
