@@ -1,3 +1,5 @@
 .idea
 build
 .env
+test_scripts/service_account.json
+pawplan_account.json
