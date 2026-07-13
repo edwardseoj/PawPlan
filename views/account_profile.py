@@ -141,13 +141,13 @@ def account_profile_view(page: ft.Page) -> ft.View:
     )
 
 
-def _standalone_main(page: ft.Page):
-    page.title = "Account Profile"
-    page.window.width = 430
-    page.window.height = 900
-    page.views.append(account_profile_view(page))
-    page.update()
-
-
-if __name__ == "__main__":
-    ft.run(_standalone_main)
+# def _standalone_main(page: ft.Page):
+#     page.title = "Account Profile"
+#     page.window.width = 430
+#     page.window.height = 900
+#     page.views.append(account_profile_view(page))
+#     page.update()
+#
+#
+# if __name__ == "__main__":
+#     ft.run(_standalone_main, port=8550, view=ft.AppView.WEB_BROWSER)
