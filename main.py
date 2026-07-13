@@ -1,7 +1,7 @@
 import flet as ft
 from views.loginregister import startup_view, login_view, register_view, make_on_login
 from views.homepage import homepage_view
-from views.petprofile_input import petprofile_input_view\
+from views.petprofile_input import petprofile_input_view
 
 # logger setup
 from utility.logging_config import setup_logging

@@ -6,7 +6,6 @@ logger = logging.getLogger(__name__)
 import firebase_admin
 from firebase_admin import credentials, firestore
 cred = credentials.Certificate("pawplan_account.json")
-firebase_admin.initialize_app(cred)
 db = firestore.client(database_id="pawplan")
 
 # change this part later
