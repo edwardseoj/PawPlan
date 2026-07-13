@@ -12,13 +12,15 @@ from flet.controls import border_radius
 
 logger = logging.getLogger(__name__)
 
+# firestore setup
+import firebase_admin
+from firebase_admin import credentials, firestore
+cred = credentials.Certificate("./pawplan_account.json")
+firebase_admin.initialize_app(cred)
+db = firestore.client(database_id="pawplan")
+
 
 # Sample based on Mock Screens (will be updated later on)
-PETS = [
-    {"name": "Max", "icon": ft.Icons.PETS, "photo_bg": "#F1D9B0"},
-    {"name": "Bella", "icon": ft.Icons.PETS, "photo_bg": "#F1D9B0"},
-]
-
 TODAYS_TASKS = [
     {"time": "8:00 AM", "task": "Feed Bella"},
     {"time": "12:00 PM", "task": "Walk Max"},
@@ -41,10 +43,10 @@ NAV_SHRINK_SCALE = 0.6
 
 def homepage_view(page: ft.Page) -> ft.View:
     async def go_petprofileinput(e):
-        logger.info("Go to pet profile clicked")
+        # logger.info("Go to pet profile clicked")
         try:
             await page.push_route("/petprofile")
-            logger.info("Route pushed")
+            # logger.info("Route pushed")
         except Exception as ex:
             logger.error(f"Error occurred: {ex}")
 
@@ -53,17 +55,22 @@ def homepage_view(page: ft.Page) -> ft.View:
             logger.info(f"View reminder clicked for {pet_name}")
         return handler
 
+    # no navigation as of yet
     def go_home(e):
-        logger.info("Home nav clicked")
+        # logger.info("Home nav clicked")
+        print("Home nav clicked")
 
     def go_calendar(e):
-        logger.info("Calendar nav clicked")
+        # logger.info("Calendar nav clicked")
+        print("Calendar nav clicked")
 
     def go_profile(e):
-        logger.info("Profile nav clicked")
+        # logger.info("Profile nav clicked")
+        print("Profile nav clicked")
 
     def go_settings(e):
-        logger.info("Settings nav clicked")
+        # logger.info("Settings nav clicked")
+        print("Settings nav clicked")
 
     NAV_ACTIONS = [go_home, go_calendar, go_profile]
 
@@ -137,7 +144,32 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 
 
-    def pet_card(pet):
+    # pet list
+    # make dynamic later
+
+
+    # firestore code
+    current_user_id = "John Doe"
+    pets_ref = db.collection("users").document(current_user_id).collection("details").document("pets")
+
+    # get data
+    doc = pets_ref.get()
+    if doc.exists:
+        data = doc.to_dict()
+        pet_list = data.get("pets", [])
+        print(pet_list)
+        pet_count = len(data.get("pets", []))
+        print(pet_count)
+    else:
+        pet_count = 0
+        print("No such document!")
+
+
+
+    def pet_card(pet, index):
+        # get the name per index
+        pet_name = pet_list[index]["name"]
+
         return ft.Container(
             width=110,
             content=ft.Column(
@@ -145,17 +177,15 @@ def homepage_view(page: ft.Page) -> ft.View:
                 spacing=6,
                 controls=[
 
-
-                    ft.Text(pet["name"], color=white, size=15, weight=ft.FontWeight.W_700),
+                    ft.Text(pet_name, color=white, size=15, weight=ft.FontWeight.W_700),
                     ft.Container(
                         width=90,
                         height=90,
-                        bgcolor=pet["photo_bg"],
+                        bgcolor="#F1D9B0",
                         border_radius=10,
                         border=ft.Border.all(2, white),
                         alignment=ft.Alignment.CENTER,
-                        content=ft.Icon(pet["icon"], size=40, color="#8A6A3B"),
-
+                        content=ft.Icon(ft.Icons.PETS, size=40, color="#8A6A3B"),
                     ),
                     ft.Button(
                         content=ft.Text("View Reminder", size=8, color=white),
@@ -200,7 +230,9 @@ def homepage_view(page: ft.Page) -> ft.View:
                 ft.Row(
                     spacing=14,
                     scroll=ft.ScrollMode.AUTO,
-                    controls=[pet_card(pet) for pet in PETS],
+
+                    # pet_card gets added per pet in the pet_list
+                    controls=[pet_card(pet, index) for index, pet in enumerate(data.get("pets", []))],
                 ),
             ],
         ),
