@@ -15,6 +15,8 @@ def main(page: ft.Page):
     page.title = "PawPlan"
     page.on_login = make_on_login(page)
 
+    # originally a big chunk of elifs
+    # add here new routes
     ROUTES = {
         "/": startup_view,
         "/login": login_view,
