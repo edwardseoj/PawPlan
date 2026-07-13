@@ -6,15 +6,17 @@ import flet as ft
 # logger import
 # use in push.route to see route changes
 # will need to filter things though
-import logging
+# import logging
 
-from flet.controls import border_radius
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 # firestore setup
 import firebase_admin
 from firebase_admin import credentials, firestore
+
+from utility.navigation import go_to
+
 cred = credentials.Certificate("./pawplan_account.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client(database_id="pawplan")
@@ -42,37 +44,18 @@ NAV_SHRINK_SCALE = 0.6
 
 
 def homepage_view(page: ft.Page) -> ft.View:
-    async def go_petprofileinput(e):
-        # logger.info("Go to pet profile clicked")
-        try:
-            await page.push_route("/petprofile")
-            # logger.info("Route pushed")
-        except Exception as ex:
-            logger.error(f"Error occurred: {ex}")
 
-    def view_reminder(pet_name):
-        def handler(e):
-            logger.info(f"View reminder clicked for {pet_name}")
-        return handler
+    # def view_reminder(pet_name):
+    #     def handler(e):
+    #         logger.info(f"View reminder clicked for {pet_name}")
+    #     return handler
 
-    # no navigation as of yet
-    def go_home(e):
-        # logger.info("Home nav clicked")
-        print("Home nav clicked")
-
-    def go_calendar(e):
-        # logger.info("Calendar nav clicked")
-        print("Calendar nav clicked")
-
-    def go_profile(e):
-        # logger.info("Profile nav clicked")
-        print("Profile nav clicked")
-
+    # no navigation here yet
     def go_settings(e):
         # logger.info("Settings nav clicked")
         print("Settings nav clicked")
 
-    NAV_ACTIONS = [go_home, go_calendar, go_profile]
+    nav_routes = ["/homepage", "/calendar", "/account_profile"]
 
     primary = "#0D6EFD"
     header_blue = "#1450B4"
@@ -158,15 +141,12 @@ def homepage_view(page: ft.Page) -> ft.View:
         data = doc.to_dict()
         pet_list = data.get("pets", [])
         print(pet_list)
-        pet_count = len(data.get("pets", []))
-        print(pet_count)
     else:
-        pet_count = 0
         print("No such document!")
 
 
 
-    def pet_card(pet, index):
+    def pet_card(index):
         # get the name per index
         pet_name = pet_list[index]["name"]
 
@@ -190,7 +170,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                     ft.Button(
                         content=ft.Text("View Reminder", size=8, color=white),
                         bgcolor=green,
-                        on_click=view_reminder(pet["name"]),
+                        # on_click=view_reminder(pet["name"]),
                     ),
                 ],
             ),
@@ -223,7 +203,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                                 ],
                             ),
                             bgcolor=white,
-                            on_click=go_petprofileinput,
+                            on_click=go_to(page, "/petprofile"),
                         ),
                     ],
                 ),
@@ -232,7 +212,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                     scroll=ft.ScrollMode.AUTO,
 
                     # pet_card gets added per pet in the pet_list
-                    controls=[pet_card(pet, index) for index, pet in enumerate(data.get("pets", []))],
+                    controls=[pet_card(index) for index, pet in enumerate(pet_list)],
                 ),
             ],
         ),
@@ -368,18 +348,18 @@ def homepage_view(page: ft.Page) -> ft.View:
     )
 
     # Navigation Bar (turned into a pill)
-    def nav_destination_tapped(index):
-        def handler(e):
-            NAV_ACTIONS[index](e)
-            restore_nav(e)
-
-        return handler
 
     def pill_destination(index, label, icon):
+        async def handle_nav_click(e):
+            print(nav_routes[index])
+            str = nav_routes[index]
+            await page.push_route(str)
+            restore_nav(e)
+
         return ft.Container(
             padding=ft.Padding.symmetric(horizontal=10, vertical=8),
             border_radius=20,
-            on_click=nav_destination_tapped(index),
+            on_click=handle_nav_click,
             content=ft.Column(
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing = 2,

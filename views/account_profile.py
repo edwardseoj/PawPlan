@@ -1,6 +1,10 @@
 import flet as ft
 
+from utility.navigation import go_to
+
+
 def account_profile_view(page: ft.Page) -> ft.View:
+
     primary = "#0D6EFD"
     white = "#FFFFFF"
     black = "#000000"
@@ -104,7 +108,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
             alignment=ft.MainAxisAlignment.SPACE_AROUND,
             controls=[
                 ft.TextButton(
-                    "Home", style=ft.ButtonStyle(color=white), on_click=lambda e: None
+                    "Home", style=ft.ButtonStyle(color=white), on_click=go_to(page, "/homepage")
                 ),
                 ft.TextButton(
                     "Calendar",
@@ -114,7 +118,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
                 ft.TextButton(
                     "Profile",
                     style=ft.ButtonStyle(color=white),
-                    on_click=lambda e: None,
+                    on_click=go_to(page, "/account_profile"),
                 ),
             ],
         ),
