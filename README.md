@@ -24,6 +24,16 @@
       # Google client id can be copied
       # Google client secret must be generated
 
+- **pawplan_account.json**
+  - similar to the .env file
+  - Give me your email so I can add you as admin in the PawPlan project here
+    - https://console.cloud.google.com
+  - find PawPlan project -> IAM & admin -> Service Accounts -> click the first hyperlink -> keys -> Add Key -> Create new key -> JSON
+  - place the JSON file inside PawPlan folder
+  - rename to pawplan_account.json
+  - ***make sure to include the JSON in .gitignore***
+    - it contains sensitive information
+
 ## SCRUM
 - to be updated every week
 - flexible
