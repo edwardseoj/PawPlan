@@ -32,9 +32,21 @@ TODAYS_TASKS = [
 UPCOMING_EVENT = "Upcoming Vet Visit for Bella - June 15"
 
 DESTINATIONS = [
-    ("Home", ft.Icons.WIDGETS_OUTLINED, ft.Icons.HOUSE),
-    ("Calendar", ft.Icons.WIDGETS_OUTLINED, ft.Icons.CALENDAR_MONTH),
-    ("Profile", ft.Icons.WIDGETS_OUTLINED, ft.Icons.PERSON),
+    ft.NavigationBarDestination(
+        icon =  ft.Icons.WIDGETS_OUTLINED,
+        selected_icon = ft.Icons.HOUSE,
+        label = "Home"
+    ),
+    ft.NavigationBarDestination(
+        icon = ft.Icons.WIDGETS_OUTLINED,
+        selected_icon = ft.Icons.CALENDAR_MONTH,
+        label = "Calendar"
+    ),
+    ft.NavigationBarDestination(
+        icon = ft.Icons.WIDGETS_OUTLINED,
+        selected_icon = ft.Icons.PERSON,
+        label = "Profile"
+    ),
 ]
 
 LOGO_SIZE = 70
@@ -237,13 +249,13 @@ def homepage_view(page: ft.Page) -> ft.View:
             expand=1,
             height=30,
             border_radius=6,
-            bgcolor=primary if today else None,
+            bgcolor=primary if todays else None,
             alignment=ft.Alignment.CENTER,
             content=ft.Text(
                 str(day),
                 size=11,
-                color=white if today else text_color,
-                weight=ft.FontWeight.W_700 if today else ft.FontWeight.W_400,
+                color=white if todays else text_color,
+                weight=ft.FontWeight.W_700 if todays else ft.FontWeight.W_400,
             ),
         )
 
@@ -387,8 +399,9 @@ def homepage_view(page: ft.Page) -> ft.View:
             alignment=ft.MainAxisAlignment.SPACE_AROUND,
             tight=True,
             controls=[
-                pill_destination(i, label, filled_icon)
-                for i, (label, outlined_icon, filled_icon) in enumerate(DESTINATIONS)
+                pill_destination(i, dest.label, dest.selected_icon)
+
+                for i, dest in enumerate(DESTINATIONS)
             ],
         ),
     )
@@ -432,14 +445,14 @@ def homepage_view(page: ft.Page) -> ft.View:
         spacing=0,
         controls=[
             ft.Stack(
-                expand=True,
-                controls=[
+                expand = True,
+                controls = [
                     main_content,
                     ft.Container(
-                        align=ft.Alignment.BOTTOM_CENTER,
-                        padding = ft.Padding.only(bottom = 20),
-                        content = floating_nav,
+                        align = ft.Alignment.BOTTOM_CENTER,
                         expand = True,
+                        content = floating_nav,
+                        padding = ft.Padding.only(bottom = 20),
                     ),
 
                 ],

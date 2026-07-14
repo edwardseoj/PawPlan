@@ -767,3 +767,6 @@ SystemExit: 1
 2026-07-10 22:42:39,450 - flet_web.fastapi - INFO - Disposing FletApp: IL6vohXx
 2026-07-10 22:42:39,450 - flet_controls - DEBUG - Trigger event Page(1 - 4434593104).on_disconnect Event(name='disconnect', data=None)
 2026-07-10 22:42:39,450 - flet_web.fastapi - INFO - FletApp was garbage collected: IL6vohXx
+2026-07-12 02:22:32,200 - flet_web.fastapi - INFO - Shutting down Flet App Manager
+2026-07-12 02:22:32,203 - flet_web.fastapi - INFO - Deleting temp dir: /var/folders/s3/3kbx4x_s3411zs3j16gc7p180000gn/T/tmp2tz_ulj8
+2026-07-12 02:22:32,210 - flet - DEBUG - Gracefully terminating Flet app...
