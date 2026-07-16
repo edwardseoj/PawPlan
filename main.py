@@ -6,10 +6,10 @@ from views.homepage import homepage_view
 from views.petprofile_input import petprofile_input_view
 
 # logger setup
-from utility.logging_config import setup_logging
-setup_logging()
-import logging
-logger = logging.getLogger(__name__)
+# from utility.logging_config import setup_logging
+# setup_logging()
+# import logging
+# logger = logging.getLogger(__name__)
 
 def main(page: ft.Page):
     page.title = "PawPlan"
@@ -31,7 +31,7 @@ def main(page: ft.Page):
 
         view_builder = ROUTES.get(page.route)
         if view_builder is None:
-            logger.error(f"Unknown route: {page.route}")
+            # logger.error(f"Unknown route: {page.route}")
             view_builder = ROUTES["/homepage"]
 
         page.views.append(view_builder(page))
