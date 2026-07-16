@@ -45,46 +45,125 @@ def startup_view(page: ft.Page) -> ft.View:
     async def go_register(e):
         await page.push_route("/register")
 
-    # content variables
-    paw_text = ft.Text("Paw", size=32, weight=ft.FontWeight.BOLD)
-    plan_text = ft.Text("Plan", size=32, weight=ft.FontWeight.BOLD)
-    title_row = ft.Row([paw_text, plan_text], alignment=ft.MainAxisAlignment.CENTER)
-
-    login_btn = ft.Button("Login", on_click=go_login)
-    signup_btn = ft.Button("Sign Up", on_click=go_register)
-    button_row = ft.Row([login_btn, signup_btn], alignment=ft.MainAxisAlignment.CENTER, spacing=20)
-
-    divider = ft.Column(
+    # ---------- Logo: paw icon in a cyan rounded square + "PawPlan" wordmark ----------
+    paw_icon = ft.Container(
+        content=ft.Icon(ft.Icons.PETS, size=48, color=ft.Colors.BLACK),
+        width=90,
+        height=90,
+        bgcolor=ft.Colors.CYAN_200,
+        border_radius=20,
+        alignment=ft.Alignment.CENTER,
+    )
+    wordmark = ft.Row(
         [
-            ft.Divider(thickness=1),
-            ft.Text("Or Continue with"),
-            ft.Divider(thickness=1),
+            ft.Text("Paw", size=34, weight=ft.FontWeight.BOLD, color=ft.Colors.ORANGE),
+            ft.Text("Plan", size=34, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE_900),
         ],
+        spacing=0,
+    )
+    logo_row = ft.Row(
+        [paw_icon, wordmark],
         alignment=ft.MainAxisAlignment.CENTER,
-        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        spacing=15,
     )
 
-    google_btn = ft.Button("Sign in with Google", width=250, on_click=login_click)
+    # ---------- Login / Sign Up buttons ----------
+    login_btn = ft.ElevatedButton(
+        "Login",
+        width=140,
+        height=55,
+        on_click=go_login,
+        color=ft.Colors.WHITE,
+        bgcolor=ft.Colors.BLUE_900,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=10),
+            text_style=ft.TextStyle(size=18, weight=ft.FontWeight.BOLD),
+        ),
+    )
+    signup_btn = ft.ElevatedButton(
+        "Sign Up",
+        width=140,
+        height=55,
+        on_click=go_register,
+        color=ft.Colors.WHITE,
+        bgcolor=ft.Colors.GREEN_500,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=10),
+            text_style=ft.TextStyle(size=18, weight=ft.FontWeight.BOLD),
+        ),
+    )
+    button_row = ft.Row([login_btn, signup_btn], alignment=ft.MainAxisAlignment.CENTER, spacing=20)
+
+    # ---------- "Or Continue with" divider ----------
+    divider = ft.Row(
+        [
+            ft.Container(content=ft.Divider(thickness=1), expand=True),
+            ft.Text("Or Continue with", size=14, color=ft.Colors.GREY_600),
+            ft.Container(content=ft.Divider(thickness=1), expand=True),
+        ],
+        alignment=ft.MainAxisAlignment.CENTER,
+        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    )
+
+    # ---------- Google sign-in button ----------
+    # Using a styled "G" instead of a remote image so this still renders offline.
+    # Swap the ft.Text below for an ft.Image(src="google_logo.png", ...) if you
+    # add a real Google "G" asset to your app's /assets folder.
+    google_g = ft.Text("G", size=20, weight=ft.FontWeight.BOLD, color=ft.Colors.BLUE)
+    google_btn = ft.OutlinedButton(
+        content=ft.Row(
+            [
+                google_g,
+                ft.Text("Sign in with Google", size=16, weight=ft.FontWeight.BOLD, color=ft.Colors.BLACK),
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=10,
+        ),
+        width=280,
+        height=55,
+        on_click=login_click,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=10),
+            side=ft.BorderSide(1, ft.Colors.BLACK26),
+            bgcolor=ft.Colors.WHITE,
+        ),
+    )
+
+    # ---------- Bottom accent bars (blue over orange) ----------
+    bottom_bars = ft.Column(
+        [
+            ft.Container(height=25, bgcolor=ft.Colors.BLUE_900, expand=True),
+            ft.Container(height=25, bgcolor=ft.Colors.ORANGE, expand=True),
+        ],
+        spacing=0,
+    )
 
     # call content
     return ft.View(
         route="/",
+        bgcolor=ft.Colors.WHITE,
+        padding=0,
         controls=[
             ft.Column(
                 [
-                    title_row,
-                    ft.Container(height=20),
+                    ft.Container(height=80),
+                    logo_row,
+                    ft.Container(height=40),
                     button_row,
-                    ft.Container(height=20),
-                    divider,
-                    ft.Container(height=20),
+                    ft.Container(height=30),
+                    ft.Container(content=divider, width=340),
+                    ft.Container(height=30),
                     google_btn,
+                    ft.Container(expand=True),  # pushes the bottom bars down
+                    bottom_bars,
                 ],
-                alignment=ft.MainAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.START,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                expand=True,
+                spacing=0,
             )
         ],
-        vertical_alignment=ft.MainAxisAlignment.CENTER,
+        vertical_alignment=ft.MainAxisAlignment.START,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
