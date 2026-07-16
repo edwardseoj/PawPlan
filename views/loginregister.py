@@ -14,9 +14,16 @@ load_dotenv()
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 
+
+
+
+
 # error checking
 if not client_id or not client_secret:
     raise ValueError("Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET in .env file")
+
+
+
 
 
 # auth code
@@ -26,14 +33,20 @@ provider = GoogleOAuthProvider(
     redirect_url="http://localhost:8550/oauth_callback",
 )
 
-
 def make_on_login(page: ft.Page):
-    def on_login(e: ft.LoginEvent):
+    async def on_login(e: ft.LoginEvent):
         if e.error:
             print("Login error:", e.error)
             return
-        print("Logged in as:", page.auth.user["email"])
+        # debugging
+        if(page.auth != None):
+            print("Logged in as:", page.auth.user["email"])
+            await page.push_route("/homepage")
+
     return on_login
+
+
+
 
 
 # STARTUP PAGE ("/")
@@ -41,19 +54,19 @@ def startup_view(page: ft.Page) -> ft.View:
     async def login_click(e):
         await page.login(provider)
 
-    async def go_login(e):
-        await page.push_route("/login")
-
-    async def go_register(e):
-        await page.push_route("/register")
+    # async def go_login(e):
+    #     await page.push_route("/login")
+    #
+    # async def go_register(e):
+    #     await page.push_route("/register")
 
     # content variables
     paw_text = ft.Text("Paw", size=32, weight=ft.FontWeight.BOLD)
     plan_text = ft.Text("Plan", size=32, weight=ft.FontWeight.BOLD)
     title_row = ft.Row([paw_text, plan_text], alignment=ft.MainAxisAlignment.CENTER)
 
-    login_btn = ft.Button("Login", on_click=go_login)
-    signup_btn = ft.Button("Sign Up", on_click=go_register)
+    login_btn = ft.Button("Login", on_click=go_to(page, "/login"))
+    signup_btn = ft.Button("Sign Up", on_click=go_to(page, "/register"))
     button_row = ft.Row([login_btn, signup_btn], alignment=ft.MainAxisAlignment.CENTER, spacing=20)
 
     divider = ft.Column(
@@ -66,6 +79,7 @@ def startup_view(page: ft.Page) -> ft.View:
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
+    # oauth
     google_btn = ft.Button("Sign in with Google", width=250, on_click=login_click)
 
     # call content
@@ -89,6 +103,10 @@ def startup_view(page: ft.Page) -> ft.View:
         vertical_alignment=ft.MainAxisAlignment.CENTER,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
+
+
+
+
 
 
 # LOGIN SCREEN ("/login")
@@ -121,6 +139,10 @@ def login_view(page: ft.Page) -> ft.View:
         vertical_alignment=ft.MainAxisAlignment.CENTER,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
+
+
+
+
 
 
 # REGISTER SCREEN ("/register")

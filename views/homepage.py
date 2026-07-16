@@ -1,25 +1,21 @@
 import calendar
 import datetime
+import random
+import uuid
 
 import flet as ft
+from utility.navigation import go_to
 
-# logger import
-# use in push.route to see route changes
-# will need to filter things though
-# import logging
-
-
-# logger = logging.getLogger(__name__)
-
-# firestore setup
+# FIRESTORE SETUP
 import firebase_admin
 from firebase_admin import credentials, firestore
-
-from utility.navigation import go_to
 
 cred = credentials.Certificate("./pawplan_account.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client(database_id="pawplan")
+
+
+
 
 
 # Sample based on Mock Screens (will be updated later on)
@@ -50,11 +46,12 @@ DESTINATIONS = [
 ]
 
 LOGO_SIZE = 70
-
 NAV_SHRINK_SCALE = 0.6
 
 
 
+
+# START OF VIEWS
 def homepage_view(page: ft.Page) -> ft.View:
 
     # def view_reminder(pet_name):
@@ -62,6 +59,7 @@ def homepage_view(page: ft.Page) -> ft.View:
     #         logger.info(f"View reminder clicked for {pet_name}")
     #     return handler
 
+    # navigation
     # no navigation here yet
     def go_settings(e):
         # logger.info("Settings nav clicked")
@@ -69,6 +67,9 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     nav_routes = ["/homepage", "/calendar", "/account_profile"]
 
+
+
+    # content variables
     primary = "#0D6EFD"
     header_blue = "#1450B4"
     orange = "#F5821F"
@@ -81,6 +82,8 @@ def homepage_view(page: ft.Page) -> ft.View:
     weekend_blue = "#3B6FD6"
 
 
+
+
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=20, vertical=12),
         bgcolor=white,
@@ -90,7 +93,6 @@ def homepage_view(page: ft.Page) -> ft.View:
                 ft.Row(
                     spacing=10,
                     controls=[
-
                         ft.Container(
                             width=LOGO_SIZE,
                             height=LOGO_SIZE,
@@ -134,23 +136,40 @@ def homepage_view(page: ft.Page) -> ft.View:
         ),
     )
 
-
     appbar_divider = ft.Container(height=5, bgcolor=orange)
 
 
 
-    # pet list
-    # make dynamic later
-
-
     # firestore code
-    current_user_id = "John Doe"
+    print("User email:" , page.auth.user["email"])
+    current_user_id = page.auth.user["email"]
+
+    doc_ref = db.collection("users").document(current_user_id)
+    doc = doc_ref.get()
+
+    if doc.exists:
+        print("doc exists: ", current_user_id)
+    else:
+        rand_uid = uuid.uuid4().hex
+        uid = str(rand_uid)
+        data = {"uid":uid}
+        db.collection("users").document(current_user_id).set(data)
+        db.collection("users").document(current_user_id).collection("details").document("pets").set({"temp": "temp"})
+        print("doc created: ", current_user_id)
+
     pets_ref = db.collection("users").document(current_user_id).collection("details").document("pets")
 
+
+
     # get data
+    pet_list = []
     doc = pets_ref.get()
+
+    # need to refresh
     if doc.exists:
         data = doc.to_dict()
+        if not data.get("pets", []):
+            print("pet list empty")
         pet_list = data.get("pets", [])
         print(pet_list)
     else:
@@ -224,7 +243,13 @@ def homepage_view(page: ft.Page) -> ft.View:
                     scroll=ft.ScrollMode.AUTO,
 
                     # pet_card gets added per pet in the pet_list
-                    controls=[pet_card(index) for index, pet in enumerate(pet_list)],
+                    controls=(
+                        [pet_card(index) for index, pet in enumerate(pet_list)]
+                        if pet_list
+                        else [
+                            ft.Text("No pets yet") # needs design
+                        ]
+                    ),
                 ),
             ],
         ),

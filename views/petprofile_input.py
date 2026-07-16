@@ -1,16 +1,15 @@
 import flet as ft
 import logging
+
+
 logger = logging.getLogger(__name__)
 
 # firestore setup
-import firebase_admin
 from firebase_admin import credentials, firestore
 cred = credentials.Certificate("pawplan_account.json")
 db = firestore.client(database_id="pawplan")
 
 # change this part later
-current_user_id = "John Doe"
-
 def petprofile_input_view(page: ft.Page) -> ft.View:
     async def go_homepage(e):
         logger.info("Go to pet profile clicked")
@@ -36,6 +35,7 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
 
 
     # firestore code
+    current_user_id = page.auth.user["email"]
     pets_ref = db.collection("users").document(current_user_id).collection("details").document("pets")
 
     # normla functions can't call asynch functions
