@@ -8,11 +8,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1ba19bff-17e9-4a2f-a6d4-bae29a6a567a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/pawplan.log" beforeDir="false" afterPath="$PROJECT_DIR$/pawplan.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/petprofile_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/petprofile_input.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/account_profile.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/account_profile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/views/homepage.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/homepage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/views/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/loginregister.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/loginregister.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,61 +39,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.66764158407431" />
-      <entry key="MS500" value="2.704461815498445" />
-      <entry key="S2" value="5.773592942708006" />
-      <entry key="S5" value="8.252761354546696" />
-      <entry key="S10" value="9.563162699779648" />
-      <entry key="S30" value="14.379583630930554" />
-      <entry key="S60" value="24.0208493504336" />
-      <entry key="M2" value="38.74141107647501" />
-      <entry key="M5" value="62.278818170822994" />
-      <entry key="M10" value="86.47949166348675" />
-      <entry key="M15" value="108.00838698116038" />
-      <entry key="M30" value="170.32060784428387" />
-      <entry key="H1" value="284.12604251011356" />
-      <entry key="H2" value="455.6823995934134" />
-      <entry key="H4" value="690.5556781194967" />
-      <entry key="D1" value="1524.5691940191184" />
-      <entry key="W1" value="2004.7910290351226" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0" />
+      <entry key="S5" value="1.0" />
+      <entry key="S10" value="1.0000000020283053" />
+      <entry key="S30" value="1.0035316377724968" />
+      <entry key="S60" value="1.1973581644097477" />
+      <entry key="M2" value="3.52151801341341" />
+      <entry key="M5" value="17.2234575171283" />
+      <entry key="M10" value="33.366000235721735" />
+      <entry key="M15" value="42.347329115636356" />
+      <entry key="M30" value="61.37438522182553" />
+      <entry key="H1" value="120.26219768644329" />
+      <entry key="H2" value="272.40991135249476" />
+      <entry key="H4" value="533.1078854802188" />
+      <entry key="D1" value="1499.6842896252992" />
+      <entry key="W1" value="2060.4997454672016" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="2.7758359664367283E-189" />
-      <entry key="S5" value="3.935872333469547E-76" />
-      <entry key="S10" value="2.340745559147911E-38" />
-      <entry key="S30" value="4.296258673009547E-13" />
-      <entry key="S60" value="9.67370879646696E-7" />
-      <entry key="M2" value="0.0016389262052460463" />
-      <entry key="M5" value="0.22201312861297112" />
-      <entry key="M10" value="1.909527739883408" />
-      <entry key="M15" value="4.619560308961084" />
-      <entry key="M30" value="13.605470493708298" />
-      <entry key="H1" value="29.318695607455954" />
-      <entry key="H2" value="50.92947446241417" />
-      <entry key="H4" value="73.49046525505926" />
-      <entry key="D1" value="122.5003971935171" />
-      <entry key="W1" value="147.32778898222534" />
+      <entry key="MS500" value="4.211394423102953E-274" />
+      <entry key="S2" value="4.5303431588959854E-69" />
+      <entry key="S5" value="4.688683253255117E-28" />
+      <entry key="S10" value="2.4510145892345437E-14" />
+      <entry key="S30" value="4.91135978677422E-5" />
+      <entry key="S60" value="0.014301213274724969" />
+      <entry key="M2" value="0.29277221550948723" />
+      <entry key="M5" value="2.0201451058900086" />
+      <entry key="M10" value="3.9766202817261935" />
+      <entry key="M15" value="5.03533066443636" />
+      <entry key="M30" value="7.294837610952275" />
+      <entry key="H1" value="14.893752263402401" />
+      <entry key="H2" value="34.41497979725051" />
+      <entry key="H4" value="62.94176903414304" />
+      <entry key="D1" value="130.9129820976571" />
+      <entry key="W1" value="162.8272489744799" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.5177658594057704" />
-      <entry key="MS500" value="2.646485394929564" />
-      <entry key="S2" value="5.708226286122484" />
-      <entry key="S5" value="8.207170404080722" />
-      <entry key="S10" value="9.534878376028978" />
-      <entry key="S30" value="14.361820876795404" />
-      <entry key="S60" value="24.00298740887343" />
-      <entry key="M2" value="38.726248231015994" />
-      <entry key="M5" value="62.48735720012482" />
-      <entry key="M10" value="88.37387903418589" />
-      <entry key="M15" value="112.60912620844348" />
-      <entry key="M30" value="183.9004425472277" />
-      <entry key="H1" value="313.4166180239395" />
-      <entry key="H2" value="506.5868067002965" />
-      <entry key="H4" value="764.0263285902649" />
-      <entry key="D1" value="1647.0623518376326" />
-      <entry key="W1" value="2152.117484188656" />
+      <entry key="MS100" value="1.2524089365605885E-18" />
+      <entry key="MS500" value="2.627539367147942E-4" />
+      <entry key="S2" value="0.1273172671275883" />
+      <entry key="S5" value="0.4384851836036382" />
+      <entry key="S10" value="0.6621821398119535" />
+      <entry key="S30" value="0.875189293218854" />
+      <entry key="S60" value="1.1444654533400866" />
+      <entry key="M2" value="3.7727170450331196" />
+      <entry key="M5" value="19.2073475384554" />
+      <entry key="M10" value="37.31281432262045" />
+      <entry key="M15" value="47.35845843177504" />
+      <entry key="M30" value="68.65243530331774" />
+      <entry key="H1" value="135.139874961939" />
+      <entry key="H2" value="306.8069601207934" />
+      <entry key="H4" value="596.0324268494458" />
+      <entry key="D1" value="1630.5897173399183" />
+      <entry key="W1" value="2223.325557450954" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -121,41 +120,40 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.account_profile.executor": "Run",
-    "Python.firestore_test.executor": "Run",
-    "Python.homepage.executor": "Run",
-    "Python.logging_config.executor": "Run",
-    "Python.loginregister.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.owner_profile.executor": "Run",
-    "Python.petprofile_input.executor": "Run",
-    "Python.petreminder.executor": "Run",
-    "Python.settings.executor": "Run",
-    "Python.test2.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "copilot.chat.legacySessionMetadata.migrated": "true",
-    "git-widget-placeholder": "Merging barebones-ui",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/home/seoj/Documents/AppDev/PawPlan",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "settings.sync",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.firestore_test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.homepage.executor&quot;: &quot;Run&quot;,
+    &quot;Python.logging_config.executor&quot;: &quot;Run&quot;,
+    &quot;Python.loginregister.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.owner_profile.executor&quot;: &quot;Run&quot;,
+    &quot;Python.petprofile_input.executor&quot;: &quot;Run&quot;,
+    &quot;Python.petreminder.executor&quot;: &quot;Run&quot;,
+    &quot;Python.settings.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test2.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;barebones-ui&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/seoj/Documents/AppDev/PawPlan&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;settings.sync&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/test_scripts" />
@@ -180,7 +178,6 @@
       <workItem from="1783593376630" duration="4000" />
       <workItem from="1783593474567" duration="160000" />
       <workItem from="1783593701973" duration="24338000" />
-      <workItem from="1783993106857" duration="847000" />
     </task>
     <servers />
   </component>
@@ -188,14 +185,13 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/PawPlan$settings.coverage" NAME="settings Coverage Results" MODIFIED="1783667023074" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PawPlan$homepage.coverage" NAME="homepage Coverage Results" MODIFIED="1783694815514" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PawPlan$logging_config.coverage" NAME="logging_config Coverage Results" MODIFIED="1783593503219" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PawPlan$account_profile.coverage" NAME="account_profile Coverage Results" MODIFIED="1783994401454" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/views" />
+    <SUITE FILE_PATH="coverage/PawPlan$owner_profile.coverage" NAME="owner_profile Coverage Results" MODIFIED="1783616496974" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/PawPlan$main.coverage" NAME="main Coverage Results" MODIFIED="1783593488322" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PawPlan$loginregister.coverage" NAME="loginregister Coverage Results" MODIFIED="1783616525452" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PawPlan$petreminder.coverage" NAME="petreminder Coverage Results" MODIFIED="1783666074415" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PawPlan$main.coverage" NAME="main Coverage Results" MODIFIED="1783993710527" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PawPlan$settings.coverage" NAME="settings Coverage Results" MODIFIED="1783667023074" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PawPlan$petprofile_input.coverage" NAME="petprofile_input Coverage Results" MODIFIED="1783667011829" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/PawPlan$owner_profile.coverage" NAME="owner_profile Coverage Results" MODIFIED="1783616496974" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/PawPlan$logging_config.coverage" NAME="logging_config Coverage Results" MODIFIED="1783593503219" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
