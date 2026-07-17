@@ -50,6 +50,29 @@ NAV_SHRINK_SCALE = 0.6
 
 
 
+def create_user_doc(current_user_email):
+    rand_uid = uuid.uuid4().hex
+    uid = str(rand_uid)
+    data = {"uid": uid}
+    db.collection("users").document(current_user_email).set(data)
+    db.collection("users").document(current_user_email).collection("details").document("pets").set({"temp": "temp"})
+    db.collection("users").document(current_user_email).collection("details").document("user details").set(
+        {"email": current_user_email})
+    print("doc created: ", current_user_email)
+
+def check_user_doc(page: ft.Page):
+    print("User email:" , page.auth.user["email"])
+    current_user_id = page.auth.user["email"]
+
+    doc_ref = db.collection("users").document(current_user_id)
+    doc = doc_ref.get()
+
+    if doc.exists:
+        print("doc exists: ", current_user_id)
+    else:
+        create_user_doc(current_user_id)
+
+
 
 # START OF VIEWS
 def homepage_view(page: ft.Page) -> ft.View:
@@ -144,28 +167,24 @@ def homepage_view(page: ft.Page) -> ft.View:
     print("User email:" , page.auth.user["email"])
     current_user_id = page.auth.user["email"]
 
+
+    # check if doc exists
     doc_ref = db.collection("users").document(current_user_id)
     doc = doc_ref.get()
 
     if doc.exists:
         print("doc exists: ", current_user_id)
     else:
-        rand_uid = uuid.uuid4().hex
-        uid = str(rand_uid)
-        data = {"uid":uid}
-        db.collection("users").document(current_user_id).set(data)
-        db.collection("users").document(current_user_id).collection("details").document("pets").set({"temp": "temp"})
-        print("doc created: ", current_user_id)
+        check_user_doc(page)
 
     pets_ref = db.collection("users").document(current_user_id).collection("details").document("pets")
-
 
 
     # get data
     pet_list = []
     doc = pets_ref.get()
 
-    # need to refresh
+    # extra debugging
     if doc.exists:
         data = doc.to_dict()
         if not data.get("pets", []):
