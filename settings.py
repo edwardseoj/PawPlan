@@ -1,134 +1,106 @@
 import flet as ft
-
-import logging
-logger = logging.getLogger(__name__)
-
-
-
-primary = "#0D6EFD"
-black = "#000000"
-white = "#FFFFFF"
-soft_border = "#DDE3EE"
-header_blue = "#1450B4"
-
-
-
-SETTINGS_OPTIONS = [
-    "Change Name",
-    "Change Email",
-    "Change Password",
-    "Change Appearance"
-]
+from flet import NavigationBar
 
 
 def settings_view(page: ft.Page) -> ft.View:
-    async def go_back(e):
-        logger.info("Back to homepage clicked")
-        try:
-            await page.pop_route()
-            logger.info("Route popped")
-        except Exception as ex:
-            logger.error(f"Error occurred: {ex}")
+    primary = "#0D6EFD"
+    soft_border = "#DDE3EE"
+    white = "#FFFFFF"
+    white38 = "#FFFFFF66"
 
-
-    def setting_option_tapped(label):
-        def handler(e):
-            logger.info("Setting option tapped clicked")
-        return handler
-
-
-
-    #APPBAR
+    #TODO: add back button
     appbar = ft.Container(
-        padding = ft.Padding.symmetric(horizontal=16, vertical=16),
-        bgcolor = header_blue,
+        padding=ft.Padding.symmetric(horizontal=20, vertical=10),
+        bgcolor="#8C52FF",
         content=ft.Row(
-            vertical_alignment = ft.CrossAxisAlignment.CENTER,
+            alignment=ft.MainAxisAlignment.CENTER,
             controls=[
-                ft.IconButton(
-                    icon = ft.Icons.ARROW_BACK,
-                    icon_color = white,
-                    on_click = go_back,
-                ),
-
-                ft.Text(
-                    "Settings",
-                    color = white,
-                    size = 25,
-                    weight = ft.FontWeight.W_800,
-                )
+                ft.Text("Settings", size=20, weight=ft.FontWeight.W_700, color="#FFFFFF"),
             ]
         ),
     )
 
-    def toggle_appearance(e):
-        logger.info("Toggle appearance clicked: {'Dark' if e.control. value else 'Light'} mode")
-
-    def setting_row(label):
-        if label ==  "Change Appearance":
-            trailing = ft.Switch(
-                value = False,
-                active_color = primary,
-                on_change = toggle_appearance,
-            )
-        else:
-            trailing = ft.Icon(ft.Icons.CHEVRON_RIGHT, color = "#9CA3AF", size = 20)
-
-
-        return ft.Container(
-            border = ft.Border.all(1, soft_border),
-            border_radius = 8,
-            padding = ft.Padding.symmetric(horizontal=14, vertical=16),
-
-            on_click = None if label == "Change Appearance" else setting_option_tapped(label),
-            content = ft.Row(
-                alignment = ft.MainAxisAlignment.SPACE_BETWEEN,
-                vertical_alignment = ft.CrossAxisAlignment.CENTER,
-
-                controls = [
-                    ft.Text(label, size = 15, weight = ft.FontWeight.W_400, color = black),
-                    trailing,
-                ],
-            ),
+    #settings buttons
+    settings = ft.Container(
+        padding=ft.Padding.symmetric(horizontal=20, vertical=10),
+        bgcolor=white,
+        content=ft.Column(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
+                ft.TextButton(
+                    "Change Name"
+                ),
+                ft.TextButton(
+                    "Change Username"
+                ),
+                ft.TextButton(
+                    "Change Password"
+                ),
+                ft.TextButton(
+                    "Change Appearance"
+                )
+            ],
         )
+    )
 
-    settings_list = ft.Container(
-        margin = ft.Margin.only(left = 16,
-                                right = 16,
-                                top = 16
-        ),
-
-        content = ft.Column(
-            spacing = 10,
-            controls = [
-                setting_row(label) for label in SETTINGS_OPTIONS
+    bottom_nav = ft.Container(
+        padding=ft.Padding.symmetric(horizontal=20, vertical=10),
+        bgcolor="#0B4FB0",
+        border_radius=ft.BorderRadius.only(top_left=20, top_right=20),
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_AROUND,
+            controls=[
+                ft.TextButton(
+                    "Home", style=ft.ButtonStyle(color=white), on_click=lambda e: None
+                ),
+                ft.TextButton(
+                    "Calendar",
+                    style=ft.ButtonStyle(color=white),
+                    on_click=lambda e: None,
+                ),
+                ft.TextButton(
+                    "Profile",
+                    style=ft.ButtonStyle(color=white),
+                    on_click=lambda e: None,
+                ),
             ],
         ),
     )
 
-
-
-    main_content = ft.Column(
-        spacing=0,
-        expand=True,
-        scroll=ft.ScrollMode.AUTO,
-        controls=[
-            appbar,
-            settings_list,
-            ft.Container(height=100),
-        ],
-    )
+#TODO: implement
+# replacement nav bar
+    # page.navigation_bar = ft.NavigationBar(
+    #     destinations=[
+    #         ft.NavigationBarDestination(icon=ft.Icons.EXPLORE, label="Home"),
+    #         ft.NavigationBarDestination(icon=ft.Icons.COMMUTE, label="Calendar"),
+    #         ft.NavigationBarDestination(
+    #             icon=ft.Icons.BOOKMARK_BORDER,
+    #             selected_icon=ft.Icons.BOOKMARK,
+    #             label="Profile",
+    #         ),
+    #     ]
+    # )
 
     return ft.View(
-        route="/settings",
-        bgcolor=white,
+        route="/homepage",
+        bgcolor="#FFFFFF",
+        scroll=None,
         padding=0,
         spacing=0,
         controls=[
-            main_content
+            ft.Column(
+                spacing=0,
+                expand=True,
+                controls=[
+                    appbar,
+                    settings,
+                    ft.Container(expand=True),
+                    #NavigationBar()
+                    bottom_nav,
+                ],
+            )
         ],
     )
-
 
 def _standalone_main(page: ft.Page):
     # Lets you run `python homepage.py` on its own to preview this screen
