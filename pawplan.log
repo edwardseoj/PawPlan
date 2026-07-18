@@ -941,3 +941,7 @@ AttributeError: module 'flet.controls.alignment' has no attribute 'center'
 2026-07-16 23:26:22,028 - flet_web.fastapi - INFO - Disposing FletApp: 4sl6nHOK
 2026-07-16 23:26:22,029 - flet_controls - DEBUG - Trigger event Page(1 - 4478887184).on_disconnect Event(name='disconnect', data=None)
 2026-07-16 23:26:22,030 - flet_web.fastapi - INFO - FletApp was garbage collected: 4sl6nHOK
+2026-07-16 23:35:31,075 - flet_web.fastapi - INFO - Shutting down Flet App Manager
+2026-07-16 23:35:31,079 - flet_web.fastapi - INFO - Deleting temp dir: /var/folders/s3/3kbx4x_s3411zs3j16gc7p180000gn/T/tmp3rhicjoq
+2026-07-16 23:35:31,081 - flet - DEBUG - Gracefully terminating Flet app...
+2026-07-16 23:35:31,082 - flet_web.fastapi - INFO - Closing Flet web server...
