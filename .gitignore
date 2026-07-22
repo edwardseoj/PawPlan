@@ -3,3 +3,6 @@ build
 .env
 pawplan_account.json
 /test_scripts
+__pycache__/
+*.pyc
+*.pyo
