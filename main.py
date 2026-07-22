@@ -1,7 +1,9 @@
 import flet as ft
 
 from views.account_profile import account_profile_view
-from views.loginregister import startup_view, login_view, register_view, make_on_login
+from views.startup import startup_view, make_on_login
+from views.login import login_view
+from views.register import register_view
 from views.homepage import homepage_view
 from views.petprofile_input import petprofile_input_view
 
@@ -13,6 +15,9 @@ from views.petprofile_input import petprofile_input_view
 
 def main(page: ft.Page):
     page.title = "PawPlan"
+    page.window.height = 900
+    page.window.width = 430
+    page.window.resizable = False
     page.on_login = make_on_login(page)
 
     # originally a big chunk of elifs
