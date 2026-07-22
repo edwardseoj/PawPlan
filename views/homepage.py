@@ -406,11 +406,13 @@ def homepage_view(page: ft.Page) -> ft.View:
     # Navigation Bar (turned into a pill)
 
     def pill_destination(index, label, icon):
+
+        is_active = page.route == nav_routes[index]
+
         async def handle_nav_click(e):
-            print(nav_routes[index])
-            str = nav_routes[index]
-            await page.push_route(str)
             restore_nav(e)
+            print(nav_routes[index])
+            await page.push_route(nav_routes[index])
 
         return ft.Container(
             padding=ft.Padding.symmetric(horizontal=10, vertical=8),
@@ -421,8 +423,21 @@ def homepage_view(page: ft.Page) -> ft.View:
                 spacing = 2,
                 tight=True,
                 controls=[
-                    ft.Icon(icon, color=white, size=20),
-                    ft.Text(label, size=11, color=white, weight=ft.FontWeight.W_600),
+                    ft.Container(
+                        width=34,
+                        height=34,
+                        border_radius=17,
+                        bgcolor=orange if is_active else None,
+                        alignment=ft.Alignment.CENTER,
+                        animate=ft.Animation(100, ft.AnimationCurve.EASE_OUT_CUBIC),
+                        content=ft.Icon(icon, color=white, size=20),
+                    ),
+                    ft.Text(
+                        label,
+                        size=11,
+                        color=white,
+                        weight=ft.FontWeight.W_700 if is_active else ft.FontWeight.W_600,
+                    ),
                 ],
             ),
         )
@@ -468,7 +483,10 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     main_content = ft.Column(
         spacing = 0,
-        expand = True,
+        left = 0,
+        top = 0,
+        right = 0,
+        bottom = 0,
         scroll = ft.ScrollMode.AUTO,
         on_scroll = handle_content_scroll,
 
@@ -482,6 +500,19 @@ def homepage_view(page: ft.Page) -> ft.View:
         ],
     )
 
+    # FIX: position the nav bar with Stack's absolute-positioning attributes
+    # (left/right/bottom) instead of wrapping it in an expand=True Container.
+    # Having two expand=True siblings in the Stack was preventing the
+    # scrollable Column above from ever getting a bounded height, so
+    # ft.ScrollMode.AUTO had nothing to scroll within and just clipped content.
+    floating_nav_overlay = ft.Container(
+        left=0,
+        right=0,
+        bottom=20,
+        alignment=ft.Alignment.CENTER,
+        content=floating_nav,
+    )
+
     return ft.View(
         route="/homepage",
         bgcolor="#FFFFFF",
@@ -492,13 +523,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                 expand = True,
                 controls = [
                     main_content,
-                    ft.Container(
-                        align = ft.Alignment.BOTTOM_CENTER,
-                        expand = True,
-                        content = floating_nav,
-                        padding = ft.Padding.only(bottom = 20),
-                    ),
-
+                    floating_nav_overlay,
                 ],
             )
         ],
