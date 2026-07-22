@@ -48,14 +48,6 @@ OWNER = {
 
 
 def account_profile_view(page: ft.Page) -> ft.View:
-    def go_home(e):
-        logger.info("Home nav clicked")
-
-    def go_calendar(e):
-        logger.info("Calendar nav clicked")
-
-    def go_profile(e):
-        logger.info("Profile nav clicked")
 
     def go_settings(e):
         logger.info("Settings clicked")
@@ -67,7 +59,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
         logger.info("Log out clicked")
 
 
-    NAV_ACTIONS = [go_home, go_calendar, go_profile]
+    pill_nav_routes = ["/homepage", "/calendar", "/account_profile"]
 
     section_state = {"active": "owner"}
 
@@ -262,17 +254,17 @@ def account_profile_view(page: ft.Page) -> ft.View:
         floating_nav.scale = scale
         floating_nav.update()
 
-    def nav_destination_tapped(index):
-        def handler(e):
-            NAV_ACTIONS[index](e)
-            restore_nav(e)
-        return handler
-
     def pill_destination(index, label, icon):
+        async def handle_nav_click(e):
+            print(pill_nav_routes[index])
+            route = str(pill_nav_routes[index])
+            await page.push_route(route)
+            restore_nav(e)
+
         return ft.Container(
             padding=ft.Padding.symmetric(horizontal=10, vertical=8),
             border_radius=20,
-            on_click=nav_destination_tapped(index),
+            on_click=handle_nav_click, # navigation call, may need to be changed
             content=ft.Column(
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=2,
@@ -301,7 +293,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
             alignment=ft.MainAxisAlignment.SPACE_AROUND,
             tight=True,
             controls=[
-                pill_destination(i, dest.label, dest.selected_icon)
+                pill_destination(i, dest.label, dest.selected_icon) # may need to change this one too
                 for i, dest in enumerate(DESTINATIONS)
             ],
         ),
