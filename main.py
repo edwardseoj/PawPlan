@@ -2,6 +2,8 @@ import flet as ft
 
 # logger setup
 from utility.logging_config import setup_logging
+from views.petreminder import petreminder_view
+
 setup_logging()
 import logging
 logger = logging.getLogger(__name__)
@@ -26,6 +28,7 @@ def main(page: ft.Page):
         "/homepage": homepage_view,
         "/petprofile": petprofile_input_view,
         "/account_profile": account_profile_view,
+        "/petreminder": petreminder_view
     }
 
     def route_change(e):
