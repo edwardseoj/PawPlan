@@ -1,16 +1,17 @@
 import os
 import flet as ft
+import logging
 from flet.auth.providers import GoogleOAuthProvider
 
 # note that this one would not work in the build app
 # find an alternative
 from dotenv import load_dotenv
-
 from utility.navigation import go_to
 
-load_dotenv()
+logger = logging.getLogger(f"pawplan.{__name__}")
 
 # get values from .env
+load_dotenv()
 client_id = os.getenv("GOOGLE_CLIENT_ID")
 client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 
@@ -36,11 +37,11 @@ provider = GoogleOAuthProvider(
 def make_on_login(page: ft.Page):
     async def on_login(e: ft.LoginEvent):
         if e.error:
-            print("Login error:", e.error)
+            logger.error("Login error: %s", e.error)
             return
         # debugging
         if(page.auth != None):
-            print("Logged in as:", page.auth.user["email"])
+            logger.info("Logged in as: %s", page.auth.user["email"])
             await page.push_route("/homepage")
 
     return on_login
@@ -54,17 +55,6 @@ def startup_view(page: ft.Page) -> ft.View:
     async def login_click(e):
         await page.login(provider)
 
-
-    # content variables
-    # paw_text = ft.Text("Paw", size=32, weight=ft.FontWeight.BOLD)
-    # plan_text = ft.Text("Plan", size=32, weight=ft.FontWeight.BOLD)
-    # title_row = ft.Row([paw_text, plan_text], alignment=ft.MainAxisAlignment.CENTER)
-    #
-    # login_btn = ft.Button("Login", on_click=go_to(page, "/login"))
-    # signup_btn = ft.Button("Sign Up", on_click=go_to(page, "/register"))
-    # button_row = ft.Row([login_btn, signup_btn], alignment=ft.MainAxisAlignment.CENTER, spacing=20)
-    #
-    # divider = ft.Column(
 
     # ---------- Logo: paw icon in a cyan rounded square + "PawPlan" wordmark ----------
     paw_icon = ft.Container(

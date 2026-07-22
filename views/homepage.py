@@ -1,10 +1,13 @@
 import calendar
 import datetime
-import random
+import logging
 import uuid
 
 import flet as ft
 from utility.navigation import go_to
+
+# LOGGER SETUP
+logger = logging.getLogger(f"pawplan.{__name__}")
 
 # FIRESTORE SETUP
 import firebase_admin
@@ -58,17 +61,17 @@ def create_user_doc(current_user_email):
     db.collection("users").document(current_user_email).collection("details").document("pets").set({"temp": "temp"})
     db.collection("users").document(current_user_email).collection("details").document("user details").set(
         {"email": current_user_email})
-    print("doc created: ", current_user_email)
+    logger.debug("doc created: %s", current_user_email)
 
 def check_user_doc(page: ft.Page):
-    print("User email:" , page.auth.user["email"])
+    logger.debug("User email: %s", page.auth.user["email"])
     current_user_id = page.auth.user["email"]
 
     doc_ref = db.collection("users").document(current_user_id)
     doc = doc_ref.get()
 
     if doc.exists:
-        print("doc exists: ", current_user_id)
+        logger.debug("doc exists: %s", current_user_id)
     else:
         create_user_doc(current_user_id)
 
@@ -77,7 +80,8 @@ def check_user_doc(page: ft.Page):
 # START OF VIEWS
 def homepage_view(page: ft.Page) -> ft.View:
 
-    # def view_reminder(pet_name):
+    def view_reminder(pet_name): # need to change code here
+        logger.debug("Pet reminder: %s", pet_name)
     #     def handler(e):
     #         logger.info(f"View reminder clicked for {pet_name}")
     #     return handler
@@ -86,10 +90,9 @@ def homepage_view(page: ft.Page) -> ft.View:
     # no navigation here yet
     def go_settings(e):
         # logger.info("Settings nav clicked")
-        print("Settings nav clicked")
+        logger.debug("Settings nav clicked")
 
-    nav_routes = ["/homepage", "/calendar", "/account_profile"]
-
+    pill_nav_routes = ["/homepage", "/calendar", "/account_profile"]
 
 
     # content variables
@@ -164,7 +167,7 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 
     # firestore code
-    print("User email:" , page.auth.user["email"])
+    logger.debug("User email: %s", page.auth.user["email"])
     current_user_id = page.auth.user["email"]
 
 
@@ -173,7 +176,7 @@ def homepage_view(page: ft.Page) -> ft.View:
     doc = doc_ref.get()
 
     if doc.exists:
-        print("doc exists: ", current_user_id)
+        logger.debug("doc exists: %s", current_user_id)
     else:
         check_user_doc(page)
 
@@ -188,11 +191,11 @@ def homepage_view(page: ft.Page) -> ft.View:
     if doc.exists:
         data = doc.to_dict()
         if not data.get("pets", []):
-            print("pet list empty")
+            logger.debug("pet list empty")
         pet_list = data.get("pets", [])
-        print(pet_list)
+        logger.debug("Pet list: %s", pet_list)
     else:
-        print("No such document!")
+        logger.debug("No such document!")
 
 
 
@@ -220,7 +223,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                     ft.Button(
                         content=ft.Text("View Reminder", size=8, color=white),
                         bgcolor=green,
-                        # on_click=view_reminder(pet["name"]),
+                        on_click=lambda _: view_reminder(pet_name), # logic to go to view reminder
                     ),
                 ],
             ),
@@ -407,9 +410,9 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     def pill_destination(index, label, icon):
         async def handle_nav_click(e):
-            print(nav_routes[index])
-            str = nav_routes[index]
-            await page.push_route(str)
+            print(pill_nav_routes[index])
+            route = str(pill_nav_routes[index])
+            await page.push_route(route)
             restore_nav(e)
 
         return ft.Container(
