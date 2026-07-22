@@ -4,18 +4,15 @@ import logging
 import uuid
 
 import flet as ft
+from google.cloud.firestore_v1 import FieldFilter
+
 from utility.navigation import go_to
+from utility.firebase_setup import db
 
 # LOGGER SETUP
 logger = logging.getLogger(f"pawplan.{__name__}")
 
 # FIRESTORE SETUP
-import firebase_admin
-from firebase_admin import credentials, firestore
-
-cred = credentials.Certificate("./pawplan_account.json")
-firebase_admin.initialize_app(cred)
-db = firestore.client(database_id="pawplan")
 
 
 
@@ -80,11 +77,25 @@ def check_user_doc(page: ft.Page):
 # START OF VIEWS
 def homepage_view(page: ft.Page) -> ft.View:
 
-    def view_reminder(pet_name): # need to change code here
+
+    def view_reminder_handler(pet_name):
+        async def handler(e):
+            await view_reminder(pet_name)
+        return handler
+    async def view_reminder(pet_name): # need to change code here
         logger.debug("Pet reminder: %s", pet_name)
-    #     def handler(e):
-    #         logger.info(f"View reminder clicked for {pet_name}")
-    #     return handler
+        reminder_ref = (
+            db.collection("users").document(current_user_id).collection("details").document("pets").collection("reminders").
+            where(filter=FieldFilter("pet","==",pet_name))
+            .stream()
+        )
+        for reminders in reminder_ref:
+            print(f"{reminders.id} => {reminders.to_dict()}")
+
+        await page.push_route("/petreminder")
+
+
+
 
     # navigation
     # no navigation here yet
@@ -223,7 +234,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                     ft.Button(
                         content=ft.Text("View Reminder", size=8, color=white),
                         bgcolor=green,
-                        on_click=lambda _: view_reminder(pet_name), # logic to go to view reminder
+                        on_click= view_reminder_handler(pet_name), # logic to go to view reminder
                     ),
                 ],
             ),
