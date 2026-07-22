@@ -3,6 +3,8 @@ import flet as ft
 import logging
 logger = logging.getLogger(__name__)
 
+from utility.navigation import go_to
+
 primary = "#0D6EFD"
 orange = "#F5821F"
 header_blue = "#1450B4"
@@ -48,26 +50,13 @@ OWNER = {
 
 
 def account_profile_view(page: ft.Page) -> ft.View:
-    def go_home(e):
-        logger.info("Home nav clicked")
-
-    def go_calendar(e):
-        logger.info("Calendar nav clicked")
-
-    def go_profile(e):
-        logger.info("Profile nav clicked")
-
-    def go_settings(e):
-        logger.info("Settings clicked")
+    nav_routes = ["/homepage", "/calendar", "/account_profile"]
 
     def go_help(e):
         logger.info("Help clicked")
 
     def go_logout(e):
         logger.info("Log out clicked")
-
-
-    NAV_ACTIONS = [go_home, go_calendar, go_profile]
 
     section_state = {"active": "owner"}
 
@@ -124,7 +113,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
                                 ft.PopupMenuItem(
                                     content=ft.Text("Settings"),
                                     icon=ft.Icons.SETTINGS_OUTLINED,
-                                    on_click=go_settings,
+                                    on_click=go_to(page, "/settings"),
                                 ),
                                 ft.PopupMenuItem(
                                     content=ft.Text("Help"),
@@ -257,18 +246,56 @@ def account_profile_view(page: ft.Page) -> ft.View:
 
     # ---------------- Floating nav bar ----------------
     nav_state = {"resting_scale": 1.0, "hovering": False}
+    # This is the Account Profile page, so "Profile" (index 2) starts active.
+    nav_active_index = {"value": 2}
+    nav_icon_containers = []
+    nav_labels = []
 
     def apply_nav_scale(scale):
         floating_nav.scale = scale
         floating_nav.update()
 
+    def update_nav_highlight():
+        active = nav_active_index["value"]
+        for i, (icon_box, label_text) in enumerate(zip(nav_icon_containers, nav_labels)):
+            icon_box.bgcolor = orange if i == active else None
+            label_text.weight = ft.FontWeight.W_700 if i == active else ft.FontWeight.W_600
+        floating_nav.update()
+
     def nav_destination_tapped(index):
-        def handler(e):
-            NAV_ACTIONS[index](e)
+        async def handler(e):
+            nav_active_index["value"] = index
+            update_nav_highlight()
             restore_nav(e)
+
+            target_route = nav_routes[index]
+            logger.info(f"Bottom nav tapped: {target_route}")
+            if page.route != target_route:
+                await page.push_route(target_route)
         return handler
 
     def pill_destination(index, label, icon):
+        is_active = nav_active_index["value"] == index
+
+        icon_box = ft.Container(
+            width=34,
+            height=34,
+            border_radius=17,
+            bgcolor=orange if is_active else None,
+            alignment=ft.Alignment.CENTER,
+            animate=ft.Animation(200, ft.AnimationCurve.EASE_OUT_CUBIC),
+            content=ft.Icon(icon, color=white, size=20),
+        )
+        label_text = ft.Text(
+            label,
+            size=11,
+            color=white,
+            weight=ft.FontWeight.W_700 if is_active else ft.FontWeight.W_600,
+        )
+
+        nav_icon_containers.append(icon_box)
+        nav_labels.append(label_text)
+
         return ft.Container(
             padding=ft.Padding.symmetric(horizontal=10, vertical=8),
             border_radius=20,
@@ -277,10 +304,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=2,
                 tight=True,
-                controls=[
-                    ft.Icon(icon, color=white, size=20),
-                    ft.Text(label, size=11, color=white, weight=ft.FontWeight.W_600),
-                ],
+                controls=[icon_box, label_text],
             ),
         )
 

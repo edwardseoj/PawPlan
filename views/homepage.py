@@ -106,7 +106,6 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 
 
-
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=20, vertical=12),
         bgcolor=white,
@@ -149,7 +148,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                                 ft.PopupMenuItem(
                                     content = ft.Text("Settings"),
                                     icon=ft.Icons.SETTINGS_OUTLINED,
-                                    on_click=go_settings,
+                                    on_click=go_to(page, "views/settings"),
                                 ),
                             ],
                         ),
@@ -532,9 +531,24 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 def _standalone_main(page: ft.Page):
     # Lets you run `python homepage.py` on its own to preview this screen
+
     page.title = "PawPlan"
     page.window.width = 430
     page.window.height = 900
+
+    # Disable the default slide/zoom page-route transition on every
+    # platform, so switching views (Home/Calendar/Profile) is instant
+    # with no animation.
+    page.theme = ft.Theme(
+        page_transitions=ft.PageTransitionsTheme(
+            windows=ft.PageTransitionTheme.NONE,
+            macos=ft.PageTransitionTheme.NONE,
+            linux=ft.PageTransitionTheme.NONE,
+            android=ft.PageTransitionTheme.NONE,
+            ios=ft.PageTransitionTheme.NONE,
+        )
+    )
+
     page.views.append(homepage_view(page))
     page.update()
 
