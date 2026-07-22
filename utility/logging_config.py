@@ -14,9 +14,9 @@ def setup_logging():
     stream_handler.setFormatter(formatter)
     root.addHandler(stream_handler)
 
-    file_handler = logging.FileHandler("pawplan.log", mode="a")
-    file_handler.setFormatter(formatter)
-    root.addHandler(file_handler)
+    # file_handler = logging.FileHandler("pawplan.log", mode="a")
+    # file_handler.setFormatter(formatter)
+    # root.addHandler(file_handler)
 
     # your app's own namespace stays verbose
     logging.getLogger("pawplan").setLevel(logging.DEBUG)
