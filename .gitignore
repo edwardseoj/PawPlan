@@ -6,3 +6,5 @@ pawplan_account.json
 __pycache__/
 *.pyc
 *.pyo
+views/__pycache__/
+utility/__pycache__/
