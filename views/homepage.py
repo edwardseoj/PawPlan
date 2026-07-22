@@ -99,9 +99,10 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     # navigation
     # no navigation here yet
-    def go_settings(e):
+    async def go_settings(e):
         # logger.info("Settings nav clicked")
         logger.debug("Settings nav clicked")
+        await page.push_route("/settings")
 
     pill_nav_routes = ["/homepage", "/calendar", "/account_profile"]
 
