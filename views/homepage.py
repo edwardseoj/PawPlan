@@ -12,6 +12,12 @@ from utility.navigation import go_to
 from model.firebase_setup import db
 
 # LOGGER SETUP
+# === COPILOT NOTE ===
+# Changed by Copilot: Pets are now loaded in a background thread to avoid
+# blocking UI rendering during navigation. The view now renders quickly
+# and updates when pet data arrives. Also fixed IndexError by updating
+# the shared pet_list before building pet cards.
+# === END NOTE ===
 logger = logging.getLogger(f"pawplan.{__name__}")
 
 # Sample based on Mock Screens (will be updated later on)

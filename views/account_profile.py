@@ -8,7 +8,12 @@ from model.pet_crud import get_pet_list, remove_pet
 from model.user_account_crud import get_data
 
 logger = logging.getLogger(__name__)
-
+# === COPILOT NOTE ===
+# Changed by Copilot: Account profile now renders a quick placeholder
+# ("Loading profile...") and fetches owner/pet data in a background
+# thread. Deleting a pet is performed in a background thread too.
+# This avoids blocking navigation and speeds up route transitions.
+# === END NOTE ===
 
 primary = "#0D6EFD"
 orange = "#F5821F"

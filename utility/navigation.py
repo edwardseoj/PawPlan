@@ -1,17 +1,18 @@
 import logging
 import flet as ft
-import time
 
 logger = logging.getLogger(__name__)
+# === COPILOT NOTE ===
+# go_to is a small helper used across the app to call page.push_route.
+# It attempts navigation and then calls an optional on_after callback.
+# Note: timing logs added earlier to main were removed per request.
+# === END NOTE ===
 
 # for push route with no extra conditions
 def go_to(page: ft.Page, route: str, on_after=None):
     async def handler(e):
         try:
-            t0 = time.perf_counter()
             await page.push_route(route)
-            t1 = time.perf_counter()
-            logger.debug(f"push_route to {route!r} took {t1-t0:.4f}s")
         except Exception as ex:
             logger.error(f"Navigation to {route} failed: {ex}")
         if on_after:

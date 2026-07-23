@@ -6,7 +6,11 @@ from model.firebase_setup import db
 from model.firestore_auth import get_uid
 
 logger = logging.getLogger(__name__)
-
+# === COPILOT NOTE ===
+# Changed by Copilot: Reminder list is loaded asynchronously in a
+# background thread so the view renders immediately. This prevents
+# blocking during navigation when Firestore I/O is performed.
+# === END NOTE ===
 
 
 def petreminder_view(page: ft.Page) -> ft.View:

@@ -7,6 +7,12 @@ from utility.navigation import go_to
 from model.google_dotenv_setup import provider
 
 logger = logging.getLogger(f"pawplan.{__name__}")
+# === COPILOT NOTE ===
+# Changed by Copilot: During login the local uid is set immediately so
+# other views can read it. Creating the Firestore user document
+# (create_oauth_user_doc) can take time, so that call now runs in a
+# daemon background thread so navigation (page.push_route) is not blocked.
+# === END NOTE ===
 
 def make_on_login(page: ft.Page): # called on main
     async def on_login(e: ft.LoginEvent):
