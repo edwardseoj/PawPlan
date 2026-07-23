@@ -121,7 +121,6 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 
 
-
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=20, vertical=12),
         bgcolor=white,
@@ -164,7 +163,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                                 ft.PopupMenuItem(
                                     content = ft.Text("Settings"),
                                     icon=ft.Icons.SETTINGS_OUTLINED,
-                                    on_click=go_settings,
+                                    on_click=go_to(page, "views/settings"),
                                 ),
                             ],
                         ),
@@ -421,6 +420,9 @@ def homepage_view(page: ft.Page) -> ft.View:
     # Navigation Bar (turned into a pill)
 
     def pill_destination(index, label, icon):
+
+        is_active = page.route == pill_nav_routes[index]
+
         async def handle_nav_click(e):
             print(pill_nav_routes[index])
             route = str(pill_nav_routes[index])
@@ -436,8 +438,21 @@ def homepage_view(page: ft.Page) -> ft.View:
                 spacing = 2,
                 tight=True,
                 controls=[
-                    ft.Icon(icon, color=white, size=20),
-                    ft.Text(label, size=11, color=white, weight=ft.FontWeight.W_600),
+                    ft.Container(
+                        width=34,
+                        height=34,
+                        border_radius=17,
+                        bgcolor=orange if is_active else None,
+                        alignment=ft.Alignment.CENTER,
+                        animate=ft.Animation(100, ft.AnimationCurve.EASE_OUT_CUBIC),
+                        content=ft.Icon(icon, color=white, size=20),
+                    ),
+                    ft.Text(
+                        label,
+                        size=11,
+                        color=white,
+                        weight=ft.FontWeight.W_700 if is_active else ft.FontWeight.W_600,
+                    ),
                 ],
             ),
         )
@@ -483,7 +498,10 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     main_content = ft.Column(
         spacing = 0,
-        expand = True,
+        left = 0,
+        top = 0,
+        right = 0,
+        bottom = 0,
         scroll = ft.ScrollMode.AUTO,
         on_scroll = handle_content_scroll,
 
@@ -497,6 +515,19 @@ def homepage_view(page: ft.Page) -> ft.View:
         ],
     )
 
+    # FIX: position the nav bar with Stack's absolute-positioning attributes
+    # (left/right/bottom) instead of wrapping it in an expand=True Container.
+    # Having two expand=True siblings in the Stack was preventing the
+    # scrollable Column above from ever getting a bounded height, so
+    # ft.ScrollMode.AUTO had nothing to scroll within and just clipped content.
+    floating_nav_overlay = ft.Container(
+        left=0,
+        right=0,
+        bottom=20,
+        alignment=ft.Alignment.CENTER,
+        content=floating_nav,
+    )
+
     return ft.View(
         route="/homepage",
         bgcolor="#FFFFFF",
@@ -507,13 +538,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                 expand = True,
                 controls = [
                     main_content,
-                    ft.Container(
-                        align = ft.Alignment.BOTTOM_CENTER,
-                        expand = True,
-                        content = floating_nav,
-                        padding = ft.Padding.only(bottom = 20),
-                    ),
-
+                    floating_nav_overlay,
                 ],
             )
         ],
@@ -522,9 +547,24 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 def _standalone_main(page: ft.Page):
     # Lets you run `python homepage.py` on its own to preview this screen
+
     page.title = "PawPlan"
     page.window.width = 430
     page.window.height = 900
+
+    # Disable the default slide/zoom page-route transition on every
+    # platform, so switching views (Home/Calendar/Profile) is instant
+    # with no animation.
+    page.theme = ft.Theme(
+        page_transitions=ft.PageTransitionsTheme(
+            windows=ft.PageTransitionTheme.NONE,
+            macos=ft.PageTransitionTheme.NONE,
+            linux=ft.PageTransitionTheme.NONE,
+            android=ft.PageTransitionTheme.NONE,
+            ios=ft.PageTransitionTheme.NONE,
+        )
+    )
+
     page.views.append(homepage_view(page))
     page.update()
 
