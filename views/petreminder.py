@@ -81,20 +81,12 @@ def petreminder_view(page: ft.Page) -> ft.View:
         page.update()
 
 
+    import threading
+
     # temporary code
     # change all later
     pet_name = "ben" # temporary, change later
-    current_user_id = get_uid()  # Get the current user's email
-    reminder_ref = (
-        db.collection("users").document(current_user_id).collection("details").document("pets").collection("reminders").
-        where(filter=FieldFilter("pet", "==", pet_name))
-        .stream()
-    )
     reminder_list = []
-    for reminder in reminder_ref:
-        data = reminder.to_dict()
-        reminder_list.append(data["name"])
-    print(reminder)
 
     def create_reminder_control(reminder_name):
         def delete_alarm(e):
@@ -113,14 +105,35 @@ def petreminder_view(page: ft.Page) -> ft.View:
     alarm_list_layout = ft.Column(
         expand=True,
         scroll=ft.ScrollMode.ADAPTIVE,
-        controls=(
-            [create_reminder_control(reminder) for reminder in reminder_list]
-            if reminder_list
-            else [
-                ft.Text("No reminders")
-            ]
-        )
+        controls=[ft.Text("Loading reminders...")]
     )
+
+    def _fetch_reminders():
+        try:
+            current_user_id = get_uid()  # Get the current user's email
+            reminder_ref = (
+                db.collection("users").document(current_user_id).collection("details").document("pets").collection("reminders").
+                where(filter=FieldFilter("pet", "==", pet_name))
+                .stream()
+            )
+            reminders = []
+            for reminder in reminder_ref:
+                data = reminder.to_dict()
+                reminders.append(data.get("name", ""))
+
+            reminder_list[:] = reminders
+            if reminders:
+                alarm_list_layout.controls[:] = [create_reminder_control(r) for r in reminders]
+            else:
+                alarm_list_layout.controls[:] = [ft.Text("No reminders")]
+            page.update()
+        except Exception as ex:
+            logger.exception("Failed fetching reminders: %s", ex)
+            alarm_list_layout.controls[:] = [ft.Text("Failed to load reminders")]
+            page.update()
+
+    threading.Thread(target=_fetch_reminders, daemon=True).start()
+
 
     # reminder container
     alarm_cont = ft.Container(

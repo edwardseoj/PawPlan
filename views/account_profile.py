@@ -1,6 +1,7 @@
 import flet as ft
 
 import logging
+import threading
 
 from model.firestore_auth import get_uid
 from model.pet_crud import get_pet_list, remove_pet
@@ -46,7 +47,7 @@ NAV_HOVER_SCALE = 1.1
 
 
 # Sample owner data (swap for real data later)
-OWNER = {
+SAMPLE_OWNER = {
     "name": "Juan Dela Cruz",
     "email": "@juan_dcruz",
     "dob": "1990-01-01",
@@ -55,9 +56,10 @@ OWNER = {
 
 
 def account_profile_view(page: ft.Page) -> ft.View:
-    # print data from db
+    # start with placeholders; load real data in background
 
-    OWNER = get_data(get_uid())
+    OWNER_DATA = {}
+    pet_list = []
 
     # ROUTE PUSH
     async def go_settings(e):
@@ -235,24 +237,30 @@ def account_profile_view(page: ft.Page) -> ft.View:
                         alignment=ft.Alignment.CENTER,
                         content=ft.Icon(ft.Icons.PERSON, size=44, color=primary),
                     ),
-                    ft.Text(OWNER["username"], size=20, weight=ft.FontWeight.W_800,
+                    ft.Text(OWNER_DATA.get("username", ""), size=20, weight=ft.FontWeight.W_800,
                             color=black, text_align=ft.TextAlign.CENTER),
-                    ft.Text(f"Email: {OWNER['email']}", size=13, color="#6B7280",
+                    ft.Text(f"Email: {OWNER_DATA.get('email', '')}", size=13, color="#6B7280",
                             text_align=ft.TextAlign.CENTER),
                     ft.Container(height=1, bgcolor=soft_border),
-                    detail_row("Date of Birth (MM-DD-YYYY)", OWNER["dob"]),
-                    detail_row("Gender", OWNER["gender"]),
+                    detail_row("Date of Birth (MM-DD-YYYY)", OWNER_DATA.get("dob", "")),
+                    detail_row("Gender", OWNER_DATA.get("gender", "")),
                 ],
             ),
         )
 
     def make_delete_handler(pet_name):
         def handler(e):
-            remove_pet(get_uid(), pet_name)
-            nonlocal pet_list
-            pet_list = get_pet_list(get_uid())
-            profile_content.content = build_profile_content()
-            profile_content.update()
+            def _do_delete():
+                try:
+                    remove_pet(get_uid(), pet_name)
+                    pets = get_pet_list(get_uid())
+                    pet_list[:] = pets
+                    profile_content.content = build_profile_content()
+                    page.update()
+                except Exception as ex:
+                    logger.exception("Failed deleting pet: %s", ex)
+
+            threading.Thread(target=_do_delete, daemon=True).start()
 
         return handler
     def pet_profile_card(pet):
@@ -290,7 +298,8 @@ def account_profile_view(page: ft.Page) -> ft.View:
             ),
         )
 
-    pet_list = get_pet_list(get_uid())
+    # start with empty UI; populate in background
+    profile_content = ft.Container(content=ft.Text("Loading profile..."))
 
     def build_profile_content():
         if section_state["active"] == "owner":
@@ -298,9 +307,6 @@ def account_profile_view(page: ft.Page) -> ft.View:
         if pet_list:
             return ft.Column(spacing=12, controls=[pet_profile_card(p) for p in pet_list])
         return ft.Text("No pets yet", color="#6B7280", text_align=ft.TextAlign.CENTER)
-
-    # single stable container that lives in the tree — always update THIS one
-    profile_content = ft.Container(content=build_profile_content())
 
     profile_details = ft.Container(
         margin=ft.Margin.only(left=16, right=16, top=16, bottom=16),
@@ -312,6 +318,22 @@ def account_profile_view(page: ft.Page) -> ft.View:
             ],
         ),
     )
+
+    # fetch data in background
+    def _fetch_profile():
+        try:
+            uid = get_uid()
+            data = get_data(uid) or {}
+            pets = get_pet_list(uid) or []
+            OWNER_DATA.clear()
+            OWNER_DATA.update(data)
+            pet_list[:] = pets
+            profile_content.content = build_profile_content()
+            page.update()
+        except Exception as ex:
+            logger.exception("Failed fetching profile data: %s", ex)
+
+    threading.Thread(target=_fetch_profile, daemon=True).start()
 
     # ---------------- Floating nav bar ----------------
     nav_state = {"resting_scale": 1.0, "hovering": False}
