@@ -3,6 +3,7 @@ import datetime
 import logging
 
 import flet as ft
+import threading
 from google.cloud.firestore_v1 import FieldFilter
 
 from model.firestore_auth import get_uid
@@ -154,7 +155,7 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 
 
-    # firestore code
+    # firestore code (load pets in background to avoid blocking UI)
     # current_user_id = get_uid()
     # logger.debug("current_user_id: %s", current_user_id)
     #
@@ -174,7 +175,32 @@ def homepage_view(page: ft.Page) -> ft.View:
     #     logger.debug("Pet list: %s", pet_list)
     # else:
     #     logger.debug("No such document!")
-    pet_list = get_pet_list(return_uid(page))
+
+    pet_list = []
+
+    # placeholder row for pet cards; populated asynchronously
+    pet_cards_row = ft.Row(
+        spacing=14,
+        scroll=ft.ScrollMode.AUTO,
+        controls=[ft.Text("Loading pets...")]
+    )
+
+    def _fetch_pets():
+        try:
+            pets = get_pet_list(return_uid(page))
+            if pets:
+                pet_cards = [pet_card(i) for i, _ in enumerate(pets)]
+            else:
+                pet_cards = [ft.Text("No pets yet")]
+            pet_cards_row.controls[:] = pet_cards
+            page.update()
+        except Exception as e:
+            logger.exception("Failed fetching pets: %s", e)
+            pet_cards_row.controls[:] = [ft.Text("Failed to load pets")]
+            page.update()
+
+    # start background thread to fetch pets without blocking UI
+    threading.Thread(target=_fetch_pets, daemon=True).start()
 
 
 
@@ -239,19 +265,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                         ),
                     ],
                 ),
-                ft.Row(
-                    spacing=14,
-                    scroll=ft.ScrollMode.AUTO,
-
-                    # pet_card gets added per pet in the pet_list
-                    controls=(
-                        [pet_card(index) for index, pet in enumerate(pet_list)]
-                        if pet_list
-                        else [
-                            ft.Text("No pets yet") # needs design
-                        ]
-                    ),
-                ),
+                pet_cards_row,
             ],
         ),
     )
