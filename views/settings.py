@@ -1,7 +1,7 @@
 import flet as ft
 
 import logging
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(f"pawplan.{__name__}")
 
 
 
@@ -22,18 +22,29 @@ SETTINGS_OPTIONS = [
 
 
 def settings_view(page: ft.Page) -> ft.View:
+
+    # async def go_back(e: ft.ViewPopEvent):
+    #     logger.debug("Back to homepage clicked")
+    #     try:
+    #         if e.view is not None:
+    #             print("View pop:", e.view)
+    #             page.views.remove(e.view)
+    #             top_view = page.views[-1]
+    #             await page.push_route(top_view.route)
+    #             logger.debug("Route popped")
+    #         else:
+    #             logger.debug("Route stuck")
+    #         # await page.pop_route()
+    #     except Exception as ex:
+    #         logger.error(f"Error occurred: {ex}")
     async def go_back(e):
-        logger.info("Back to homepage clicked")
-        try:
-            await page.pop_route()
-            logger.info("Route popped")
-        except Exception as ex:
-            logger.error(f"Error occurred: {ex}")
+        logger.debug("Going back")
+        await page.push_route("/homepage")
 
 
     def setting_option_tapped(label):
         def handler(e):
-            logger.info("Setting option tapped clicked")
+            logger.debug("Setting option tapped clicked")
         return handler
 
 
@@ -62,7 +73,7 @@ def settings_view(page: ft.Page) -> ft.View:
     )
 
     def toggle_appearance(e):
-        logger.info("Toggle appearance clicked: {'Dark' if e.control. value else 'Light'} mode")
+        logger.debug("Toggle appearance clicked: {'Dark' if e.control. value else 'Light'} mode")
 
     def setting_row(label):
         if label ==  "Change Appearance":

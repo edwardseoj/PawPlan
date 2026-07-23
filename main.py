@@ -1,8 +1,10 @@
 import flet as ft
+import time
 
 # logger setup
 from utility.logging_config import setup_logging
 from views.petreminder import petreminder_view
+from views.settings import settings_view
 
 setup_logging()
 import logging
@@ -10,13 +12,18 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 from views.account_profile import account_profile_view
-from views.loginregister import startup_view, login_view, register_view, make_on_login
+from views.startup import startup_view, make_on_login
+from views.login import login_view
+from views.register import register_view
 from views.homepage import homepage_view
 from views.petprofile_input import petprofile_input_view
 
 
 def main(page: ft.Page):
     page.title = "PawPlan"
+    page.window.height = 900
+    page.window.width = 430
+    page.window.resizable = False
     page.on_login = make_on_login(page)
 
     # originally a big chunk of elifs
@@ -28,21 +35,24 @@ def main(page: ft.Page):
         "/homepage": homepage_view,
         "/petprofile": petprofile_input_view,
         "/account_profile": account_profile_view,
-        "/petreminder": petreminder_view
+        "/petreminder": petreminder_view,
+        "/settings": settings_view
     }
 
     def route_change(e):
+        # Route change should be quick; view builders should avoid blocking I/O.
         page.views.clear()
-
         view_builder = ROUTES.get(page.route)
+
         if view_builder is None:
-            # logger.error(f"Unknown route: {page.route}")
-            view_builder = ROUTES["/homepage"]
+            view_builder = ROUTES["/homepage"] # default route
 
         page.views.append(view_builder(page))
         page.update()
 
+
     async def view_pop(e: ft.ViewPopEvent):
+        # Keep view_pop simple and avoid timing/logging here as requested.
         if e.view is not None:
             page.views.remove(e.view)
             if page.views:

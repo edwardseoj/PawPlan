@@ -1,22 +1,24 @@
 import calendar
 import datetime
 import logging
-import uuid
 
 import flet as ft
+import threading
 from google.cloud.firestore_v1 import FieldFilter
 
+from model.firestore_auth import get_uid
+from model.pet_crud import get_pet_list
 from utility.navigation import go_to
-from utility.firebase_setup import db
+from model.firebase_setup import db
 
 # LOGGER SETUP
+# === COPILOT NOTE ===
+# Changed by Copilot: Pets are now loaded in a background thread to avoid
+# blocking UI rendering during navigation. The view now renders quickly
+# and updates when pet data arrives. Also fixed IndexError by updating
+# the shared pet_list before building pet cards.
+# === END NOTE ===
 logger = logging.getLogger(f"pawplan.{__name__}")
-
-# FIRESTORE SETUP
-
-
-
-
 
 # Sample based on Mock Screens (will be updated later on)
 TODAYS_TASKS = [
@@ -50,28 +52,10 @@ NAV_SHRINK_SCALE = 0.6
 
 
 
-def create_user_doc(current_user_email):
-    rand_uid = uuid.uuid4().hex
-    uid = str(rand_uid)
-    data = {"uid": uid}
-    db.collection("users").document(current_user_email).set(data)
-    db.collection("users").document(current_user_email).collection("details").document("pets").set({"temp": "temp"})
-    db.collection("users").document(current_user_email).collection("details").document("user details").set(
-        {"email": current_user_email})
-    logger.debug("doc created: %s", current_user_email)
-
-def check_user_doc(page: ft.Page):
-    logger.debug("User email: %s", page.auth.user["email"])
-    current_user_id = page.auth.user["email"]
-
-    doc_ref = db.collection("users").document(current_user_id)
-    doc = doc_ref.get()
-
-    if doc.exists:
-        logger.debug("doc exists: %s", current_user_id)
-    else:
-        create_user_doc(current_user_id)
-
+# returns uid from model
+def return_uid(page):
+    current_user_id = get_uid()
+    return current_user_id
 
 
 # START OF VIEWS
@@ -80,12 +64,12 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     def view_reminder_handler(pet_name):
         async def handler(e):
-            await view_reminder(pet_name)
+            await view_reminder(pet_name, return_uid(page))
         return handler
-    async def view_reminder(pet_name): # need to change code here
+    async def view_reminder(pet_name, uid): # need to change code here
         logger.debug("Pet reminder: %s", pet_name)
         reminder_ref = (
-            db.collection("users").document(current_user_id).collection("details").document("pets").collection("reminders").
+            db.collection("users").document(uid).collection("details").document("pets").collection("reminders").
             where(filter=FieldFilter("pet","==",pet_name))
             .stream()
         )
@@ -99,9 +83,10 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     # navigation
     # no navigation here yet
-    def go_settings(e):
+    async def go_settings(e):
         # logger.info("Settings nav clicked")
         logger.debug("Settings nav clicked")
+        await page.push_route("/settings")
 
     pill_nav_routes = ["/homepage", "/calendar", "/account_profile"]
 
@@ -117,7 +102,6 @@ def homepage_view(page: ft.Page) -> ft.View:
     nav_blue = "#0B4FB0"
     calendar_header_blue = "#2F6FCB"
     weekend_blue = "#3B6FD6"
-
 
 
 
@@ -177,36 +161,54 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 
 
-    # firestore code
-    logger.debug("User email: %s", page.auth.user["email"])
-    current_user_id = page.auth.user["email"]
+    # firestore code (load pets in background to avoid blocking UI)
+    # current_user_id = get_uid()
+    # logger.debug("current_user_id: %s", current_user_id)
+    #
+    # pets_ref = db.collection("users").document(current_user_id).collection("details").document("pets")
+    #
+    #
+    # # get data
+    # pet_list = []
+    # doc = pets_ref.get()
+    #
+    # # extra debugging
+    # if doc.exists:
+    #     data = doc.to_dict()
+    #     if not data.get("pets", []):
+    #         logger.debug("pet list empty")
+    #     pet_list = data.get("pets", [])
+    #     logger.debug("Pet list: %s", pet_list)
+    # else:
+    #     logger.debug("No such document!")
 
-
-    # check if doc exists
-    doc_ref = db.collection("users").document(current_user_id)
-    doc = doc_ref.get()
-
-    if doc.exists:
-        logger.debug("doc exists: %s", current_user_id)
-    else:
-        check_user_doc(page)
-
-    pets_ref = db.collection("users").document(current_user_id).collection("details").document("pets")
-
-
-    # get data
     pet_list = []
-    doc = pets_ref.get()
 
-    # extra debugging
-    if doc.exists:
-        data = doc.to_dict()
-        if not data.get("pets", []):
-            logger.debug("pet list empty")
-        pet_list = data.get("pets", [])
-        logger.debug("Pet list: %s", pet_list)
-    else:
-        logger.debug("No such document!")
+    # placeholder row for pet cards; populated asynchronously
+    pet_cards_row = ft.Row(
+        spacing=14,
+        scroll=ft.ScrollMode.AUTO,
+        controls=[ft.Text("Loading pets...")]
+    )
+
+    def _fetch_pets():
+        try:
+            pets = get_pet_list(return_uid(page))
+            # update outer pet_list so pet_card can access correct data
+            pet_list[:] = pets
+            if pets:
+                pet_cards = [pet_card(i) for i, _ in enumerate(pets)]
+            else:
+                pet_cards = [ft.Text("No pets yet")]
+            pet_cards_row.controls[:] = pet_cards
+            page.update()
+        except Exception as e:
+            logger.exception("Failed fetching pets: %s", e)
+            pet_cards_row.controls[:] = [ft.Text("Failed to load pets")]
+            page.update()
+
+    # start background thread to fetch pets without blocking UI
+    threading.Thread(target=_fetch_pets, daemon=True).start()
 
 
 
@@ -271,19 +273,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                         ),
                     ],
                 ),
-                ft.Row(
-                    spacing=14,
-                    scroll=ft.ScrollMode.AUTO,
-
-                    # pet_card gets added per pet in the pet_list
-                    controls=(
-                        [pet_card(index) for index, pet in enumerate(pet_list)]
-                        if pet_list
-                        else [
-                            ft.Text("No pets yet") # needs design
-                        ]
-                    ),
-                ),
+                pet_cards_row,
             ],
         ),
     )
@@ -420,6 +410,9 @@ def homepage_view(page: ft.Page) -> ft.View:
     # Navigation Bar (turned into a pill)
 
     def pill_destination(index, label, icon):
+
+        is_active = page.route == pill_nav_routes[index]
+
         async def handle_nav_click(e):
             print(pill_nav_routes[index])
             route = str(pill_nav_routes[index])
@@ -435,8 +428,21 @@ def homepage_view(page: ft.Page) -> ft.View:
                 spacing = 2,
                 tight=True,
                 controls=[
-                    ft.Icon(icon, color=white, size=20),
-                    ft.Text(label, size=11, color=white, weight=ft.FontWeight.W_600),
+                    ft.Container(
+                        width=34,
+                        height=34,
+                        border_radius=17,
+                        bgcolor=orange if is_active else None,
+                        alignment=ft.Alignment.CENTER,
+                        animate=ft.Animation(100, ft.AnimationCurve.EASE_OUT_CUBIC),
+                        content=ft.Icon(icon, color=white, size=20),
+                    ),
+                    ft.Text(
+                        label,
+                        size=11,
+                        color=white,
+                        weight=ft.FontWeight.W_700 if is_active else ft.FontWeight.W_600,
+                    ),
                 ],
             ),
         )
@@ -482,7 +488,10 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     main_content = ft.Column(
         spacing = 0,
-        expand = True,
+        left = 0,
+        top = 0,
+        right = 0,
+        bottom = 0,
         scroll = ft.ScrollMode.AUTO,
         on_scroll = handle_content_scroll,
 
@@ -496,6 +505,19 @@ def homepage_view(page: ft.Page) -> ft.View:
         ],
     )
 
+    # FIX: position the nav bar with Stack's absolute-positioning attributes
+    # (left/right/bottom) instead of wrapping it in an expand=True Container.
+    # Having two expand=True siblings in the Stack was preventing the
+    # scrollable Column above from ever getting a bounded height, so
+    # ft.ScrollMode.AUTO had nothing to scroll within and just clipped content.
+    floating_nav_overlay = ft.Container(
+        left=0,
+        right=0,
+        bottom=20,
+        alignment=ft.Alignment.CENTER,
+        content=floating_nav,
+    )
+
     return ft.View(
         route="/homepage",
         bgcolor="#FFFFFF",
@@ -506,13 +528,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                 expand = True,
                 controls = [
                     main_content,
-                    ft.Container(
-                        align = ft.Alignment.BOTTOM_CENTER,
-                        expand = True,
-                        content = floating_nav,
-                        padding = ft.Padding.only(bottom = 20),
-                    ),
-
+                    floating_nav_overlay,
                 ],
             )
         ],
@@ -521,9 +537,24 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 def _standalone_main(page: ft.Page):
     # Lets you run `python homepage.py` on its own to preview this screen
+
     page.title = "PawPlan"
     page.window.width = 430
     page.window.height = 900
+
+    # Disable the default slide/zoom page-route transition on every
+    # platform, so switching views (Home/Calendar/Profile) is instant
+    # with no animation.
+    page.theme = ft.Theme(
+        page_transitions=ft.PageTransitionsTheme(
+            windows=ft.PageTransitionTheme.NONE,
+            macos=ft.PageTransitionTheme.NONE,
+            linux=ft.PageTransitionTheme.NONE,
+            android=ft.PageTransitionTheme.NONE,
+            ios=ft.PageTransitionTheme.NONE,
+        )
+    )
+
     page.views.append(homepage_view(page))
     page.update()
 
