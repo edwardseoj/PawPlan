@@ -6,6 +6,8 @@ import uuid
 import flet as ft
 from google.cloud.firestore_v1 import FieldFilter
 
+from model import temp_user
+from model.temp_user import UserIdStore
 from utility.navigation import go_to
 from utility.firebase_setup import db
 
@@ -61,8 +63,16 @@ def create_user_doc(current_user_email):
     logger.debug("doc created: %s", current_user_email)
 
 def check_user_doc(page: ft.Page):
-    logger.debug("User email: %s", page.auth.user["email"])
-    current_user_id = page.auth.user["email"]
+
+    if(page.auth is not None):
+        current_user_id = page.auth.user["email"]
+    else:
+        user_session = UserIdStore()
+        current_user_id = user_session.get()
+        user_session.clear()
+
+
+    logger.debug(f"current_user_id: {current_user_id}")
 
     doc_ref = db.collection("users").document(current_user_id)
     doc = doc_ref.get()
@@ -163,7 +173,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                                 ft.PopupMenuItem(
                                     content = ft.Text("Settings"),
                                     icon=ft.Icons.SETTINGS_OUTLINED,
-                                    on_click=go_to(page, "views/settings"),
+                                    on_click=go_settings,
                                 ),
                             ],
                         ),
@@ -178,8 +188,13 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 
     # firestore code
-    logger.debug("User email: %s", page.auth.user["email"])
-    current_user_id = page.auth.user["email"]
+    # logger.debug("User email: %s", page.auth.user["email"])
+    if(page.auth is not None):
+        current_user_id = page.auth.user["email"]
+    else:
+        user_session = UserIdStore()
+        current_user_id = user_session.get()
+        user_session.clear()
 
 
     # check if doc exists

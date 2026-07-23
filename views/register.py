@@ -1,6 +1,10 @@
 import flet as ft
+import logging
 
 from views.login import header_bar, labeled_field
+from model.temp_user import UserIdStore
+
+logger = logging.getLogger(f"pawplan.{__name__}")
 
 
 # REGISTER SCREEN ("/register")
@@ -101,6 +105,10 @@ def register_view(page: ft.Page) -> ft.View:
             page.update()
             return
         error_text.visible = False
+
+        logger.debug(f"Attempting registration with username: {username_col.field.value} and password: {password_col.field.value}")
+        user_session = UserIdStore()
+        user_session.set(str(username_col.field.value))
         await page.push_route("/homepage")
 
     create_btn = ft.Button(

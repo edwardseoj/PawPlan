@@ -1,8 +1,12 @@
 import flet as ft
+import logging
 from dataclasses import dataclass
 
+from model import temp_user
+from model.temp_user import UserIdStore
 from utility.navigation import go_to
 
+logger = logging.getLogger(f"pawplan.{__name__}")
 
 def header_bar(page: ft.Page, title: str) -> ft.Container:
     return ft.Container(
@@ -72,7 +76,7 @@ def labeled_field(
         spacing = 0,
         horizontal_alignment = horizontal_alignment,
     )
-    #handles the textfield for readding .value
+    #handles the textfield for reading .value
     return LabeledField(views = view, field = field)
 
 
@@ -97,6 +101,10 @@ def login_view(page: ft.Page) -> ft.View:
             page.update()
             return
         error_text.visible = False
+
+        logger.debug(f"Attempting login with username: {username.field.value} and password: {password.field.value}")
+        user_session = UserIdStore()
+        user_session.set(str(username.field.value))
         await page.push_route("/homepage")
 
     not_registered = ft.TextButton(
