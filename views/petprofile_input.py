@@ -1,13 +1,13 @@
 import flet as ft
 import logging
+from firebase_admin import firestore
 
+from model.temp_user import UserIdStore
+from utility.firebase_setup import db
 
 logger = logging.getLogger(__name__)
 
 # firestore setup
-from firebase_admin import credentials, firestore
-cred = credentials.Certificate("pawplan_account.json")
-db = firestore.client(database_id="pawplan")
 
 
 primary = "#0D6EFD"
@@ -29,7 +29,6 @@ def labeled_input(label: str, field: ft.Control) -> ft.Column:
     )
 
 
-# change this part later
 def petprofile_input_view(page: ft.Page) -> ft.View:
     async def go_homepage(e):
         logger.info("Go to pet profile clicked")
@@ -39,10 +38,12 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
         except Exception as e:
             logger.error(f"Error occurred: {e}")
 
+    # back nav
     async def go_back(e):
         logger.info("Back from pet profile clicked")
         try:
-            await page.pop_route()
+            await page.push_route("/homepage")
+            logger.debug(f"Homepage route pushed")
         except Exception as e:
             logger.error(f"Error occurred: {e}")
 
@@ -130,7 +131,13 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
     )
 
     # firestore code
-    current_user_id = page.auth.user["email"]
+    current_user_id = None
+    if (page.auth is not None):
+        current_user_id = page.auth.user["email"]
+    else:
+        user_session = UserIdStore()
+        current_user_id = user_session.get()
+
     pets_ref = db.collection("users").document(current_user_id).collection("details").document("pets")
 
     # normla functions can't call asynch functions

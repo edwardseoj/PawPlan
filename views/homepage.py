@@ -6,7 +6,6 @@ import uuid
 import flet as ft
 from google.cloud.firestore_v1 import FieldFilter
 
-from model import temp_user
 from model.temp_user import UserIdStore
 from utility.navigation import go_to
 from utility.firebase_setup import db
@@ -69,7 +68,7 @@ def check_user_doc(page: ft.Page):
     else:
         user_session = UserIdStore()
         current_user_id = user_session.get()
-        user_session.clear()
+        # user_session.clear()
 
 
     logger.debug(f"current_user_id: {current_user_id}")

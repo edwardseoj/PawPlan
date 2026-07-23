@@ -2,7 +2,6 @@ import flet as ft
 import logging
 from dataclasses import dataclass
 
-from model import temp_user
 from model.temp_user import UserIdStore
 from utility.navigation import go_to
 

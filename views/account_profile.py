@@ -3,7 +3,6 @@ import flet as ft
 import logging
 logger = logging.getLogger(__name__)
 
-from utility.navigation import go_to
 
 primary = "#0D6EFD"
 orange = "#F5821F"
@@ -50,19 +49,24 @@ OWNER = {
 
 
 def account_profile_view(page: ft.Page) -> ft.View:
-
-    def go_settings(e):
-        logger.info("Settings clicked")
+    # ROUTE PUSH
+    async def go_settings(e):
+        logger.debug(f"Settings route pushed: {e}")
+        await page.push_route("/settings")
 
     def go_help(e):
         logger.info("Help clicked")
 
-    def go_logout(e):
-        logger.info("Log out clicked")
+    async def go_logout(e):
+        logger.debug(f"Logout route pushed: {e}")
+        await page.push_route("/")
 
 
     pill_nav_routes = ["/homepage", "/calendar", "/account_profile"]
 
+
+
+    # PILL COLOR STATE
     section_state = {"active": "owner"}
 
     def select_section(section):
@@ -77,6 +81,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
         return handler
 
 
+    # APPBAR
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=20, vertical=12),
         bgcolor=white,
@@ -118,7 +123,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
                                 ft.PopupMenuItem(
                                     content=ft.Text("Settings"),
                                     icon=ft.Icons.SETTINGS_OUTLINED,
-                                    on_click=go_to(page, "/settings"),
+                                    on_click=go_settings,
                                 ),
                                 ft.PopupMenuItem(
                                     content=ft.Text("Help"),
@@ -260,12 +265,6 @@ def account_profile_view(page: ft.Page) -> ft.View:
         floating_nav.scale = scale
         floating_nav.update()
 
-    # def pill_destination(index, label, icon):
-    #     async def handle_nav_click(e):
-    #         print(pill_nav_routes[index])
-    #         route = str(pill_nav_routes[index])
-    #         await page.push_route(route)
-    #         restore_nav(e)
     def update_nav_highlight():
         active = nav_active_index["value"]
         for i, (icon_box, label_text) in enumerate(zip(nav_icon_containers, nav_labels)):
@@ -401,6 +400,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
     )
 
 
+# Standalone runnable
 def _standalone_main(page: ft.Page):
     page.title = "Account Profile"
     page.window.width = 430
