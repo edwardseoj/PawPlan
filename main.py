@@ -40,11 +40,10 @@ def main(page: ft.Page):
 
     def route_change(e):
         page.views.clear()
-
         view_builder = ROUTES.get(page.route)
+
         if view_builder is None:
-            # logger.error(f"Unknown route: {page.route}")
-            view_builder = ROUTES["/homepage"]
+            view_builder = ROUTES["/homepage"] # default route
 
         page.views.append(view_builder(page))
         page.update()

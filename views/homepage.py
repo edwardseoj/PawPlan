@@ -1,23 +1,17 @@
 import calendar
 import datetime
 import logging
-import uuid
 
 import flet as ft
 from google.cloud.firestore_v1 import FieldFilter
 
-from model.temp_user import UserIdStore
+from model.firestore_auth import get_uid
+from model.pet_crud import get_pet_list
 from utility.navigation import go_to
-from utility.firebase_setup import db
+from model.firebase_setup import db
 
 # LOGGER SETUP
 logger = logging.getLogger(f"pawplan.{__name__}")
-
-# FIRESTORE SETUP
-
-
-
-
 
 # Sample based on Mock Screens (will be updated later on)
 TODAYS_TASKS = [
@@ -51,36 +45,10 @@ NAV_SHRINK_SCALE = 0.6
 
 
 
-def create_user_doc(current_user_email):
-    rand_uid = uuid.uuid4().hex
-    uid = str(rand_uid)
-    data = {"uid": uid}
-    db.collection("users").document(current_user_email).set(data)
-    db.collection("users").document(current_user_email).collection("details").document("pets").set({"temp": "temp"})
-    db.collection("users").document(current_user_email).collection("details").document("user details").set(
-        {"email": current_user_email})
-    logger.debug("doc created: %s", current_user_email)
-
-def check_user_doc(page: ft.Page):
-
-    if(page.auth is not None):
-        current_user_id = page.auth.user["email"]
-    else:
-        user_session = UserIdStore()
-        current_user_id = user_session.get()
-        # user_session.clear()
-
-
-    logger.debug(f"current_user_id: {current_user_id}")
-
-    doc_ref = db.collection("users").document(current_user_id)
-    doc = doc_ref.get()
-
-    if doc.exists:
-        logger.debug("doc exists: %s", current_user_id)
-    else:
-        create_user_doc(current_user_id)
-
+# returns uid from model
+def return_uid(page):
+    current_user_id = get_uid()
+    return current_user_id
 
 
 # START OF VIEWS
@@ -89,12 +57,12 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     def view_reminder_handler(pet_name):
         async def handler(e):
-            await view_reminder(pet_name)
+            await view_reminder(pet_name, return_uid(page))
         return handler
-    async def view_reminder(pet_name): # need to change code here
+    async def view_reminder(pet_name, uid): # need to change code here
         logger.debug("Pet reminder: %s", pet_name)
         reminder_ref = (
-            db.collection("users").document(current_user_id).collection("details").document("pets").collection("reminders").
+            db.collection("users").document(uid).collection("details").document("pets").collection("reminders").
             where(filter=FieldFilter("pet","==",pet_name))
             .stream()
         )
@@ -187,40 +155,26 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 
     # firestore code
-    # logger.debug("User email: %s", page.auth.user["email"])
-    if(page.auth is not None):
-        current_user_id = page.auth.user["email"]
-    else:
-        user_session = UserIdStore()
-        current_user_id = user_session.get()
-        user_session.clear()
-
-
-    # check if doc exists
-    doc_ref = db.collection("users").document(current_user_id)
-    doc = doc_ref.get()
-
-    if doc.exists:
-        logger.debug("doc exists: %s", current_user_id)
-    else:
-        check_user_doc(page)
-
-    pets_ref = db.collection("users").document(current_user_id).collection("details").document("pets")
-
-
-    # get data
-    pet_list = []
-    doc = pets_ref.get()
-
-    # extra debugging
-    if doc.exists:
-        data = doc.to_dict()
-        if not data.get("pets", []):
-            logger.debug("pet list empty")
-        pet_list = data.get("pets", [])
-        logger.debug("Pet list: %s", pet_list)
-    else:
-        logger.debug("No such document!")
+    # current_user_id = get_uid()
+    # logger.debug("current_user_id: %s", current_user_id)
+    #
+    # pets_ref = db.collection("users").document(current_user_id).collection("details").document("pets")
+    #
+    #
+    # # get data
+    # pet_list = []
+    # doc = pets_ref.get()
+    #
+    # # extra debugging
+    # if doc.exists:
+    #     data = doc.to_dict()
+    #     if not data.get("pets", []):
+    #         logger.debug("pet list empty")
+    #     pet_list = data.get("pets", [])
+    #     logger.debug("Pet list: %s", pet_list)
+    # else:
+    #     logger.debug("No such document!")
+    pet_list = get_pet_list(return_uid(page))
 
 
 

@@ -2,7 +2,8 @@ import flet as ft
 import logging
 
 from google.cloud.firestore_v1 import FieldFilter
-from utility.firebase_setup import db
+from model.firebase_setup import db
+from model.firestore_auth import get_uid
 
 logger = logging.getLogger(__name__)
 
@@ -80,8 +81,10 @@ def petreminder_view(page: ft.Page) -> ft.View:
         page.update()
 
 
+    # temporary code
+    # change all later
     pet_name = "ben" # temporary, change later
-    current_user_id = page.auth.user["email"]  # Get the current user's email
+    current_user_id = get_uid()  # Get the current user's email
     reminder_ref = (
         db.collection("users").document(current_user_id).collection("details").document("pets").collection("reminders").
         where(filter=FieldFilter("pet", "==", pet_name))

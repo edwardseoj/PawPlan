@@ -2,8 +2,8 @@ import flet as ft
 import logging
 from firebase_admin import firestore
 
-from model.temp_user import UserIdStore
-from utility.firebase_setup import db
+from model.uid_json import UserIdStore
+from model.firebase_setup import db
 
 logger = logging.getLogger(__name__)
 

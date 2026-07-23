@@ -1,8 +1,9 @@
 import flet as ft
 import logging
 
+from model.firestore_auth import create_user_doc
 from views.login import header_bar, labeled_field
-from model.temp_user import UserIdStore
+from model.create_account_json import NewAccountStore
 
 logger = logging.getLogger(f"pawplan.{__name__}")
 
@@ -16,7 +17,7 @@ def register_view(page: ft.Page) -> ft.View:
     selected_gender = {"value": None}
 
     username_col = labeled_field("Username", horizontal_alignment=ft.CrossAxisAlignment.CENTER)
-    fullname_col = labeled_field("Full Name", horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+    email_col = labeled_field("Email", horizontal_alignment=ft.CrossAxisAlignment.CENTER)
     password_col = labeled_field("Password", password=True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
 
     def make_gender_btn(label: str):
@@ -81,6 +82,7 @@ def register_view(page: ft.Page) -> ft.View:
     dd = dob_field("DD", 85)
     yyyy = dob_field("YYYY", 110)
 
+
     dob_row = ft.Row(
         [
             ft.Text("Date of Birth:\n", size=14, weight=ft.FontWeight.BOLD, color=ft.Colors.BLACK),
@@ -97,8 +99,9 @@ def register_view(page: ft.Page) -> ft.View:
         run_spacing=12,
     )
 
+    # validation
     async def do_register(e):
-        missing = not all([username_col.field.value, fullname_col.field.value, password_col.field.value])
+        missing = not all([username_col.field.value, email_col.field.value, password_col.field.value])
         if missing:
             error_text.value = "Please fill in all required fields."
             error_text.visible = True
@@ -106,9 +109,23 @@ def register_view(page: ft.Page) -> ft.View:
             return
         error_text.visible = False
 
-        logger.debug(f"Attempting registration with username: {username_col.field.value} and password: {password_col.field.value}")
-        user_session = UserIdStore()
-        user_session.set(str(username_col.field.value))
+        # LOGIC
+        # save data to json
+        dob = f"{mm.value}-{dd.value}-{yyyy.value}"
+
+        try:
+            create_account  = NewAccountStore()
+            create_account.set(
+                username=username_col.field.value,
+                email=email_col.field.value,
+                gender=selected_gender["value"],
+                date_of_birth=dob
+            )
+            create_user_doc()  # db access
+            create_account.clear() # delete create account json afterwards
+        except Exception as e:
+            logger.exception("Error during registration process.")
+
         await page.push_route("/homepage")
 
     create_btn = ft.Button(
@@ -141,7 +158,7 @@ def register_view(page: ft.Page) -> ft.View:
                 ft.Container(
                     height=22
                 ),
-                fullname_col.views,
+                email_col.views,
                 ft.Container(
                     height=22
                 ),

@@ -1,6 +1,11 @@
 import flet as ft
 
 import logging
+
+from model.firestore_auth import get_uid
+from model.pet_crud import get_pet_list, remove_pet
+from model.user_account_crud import get_data
+
 logger = logging.getLogger(__name__)
 
 
@@ -39,16 +44,21 @@ LOGO_SIZE = 56
 NAV_SHRINK_SCALE = 0.6
 NAV_HOVER_SCALE = 1.1
 
+
 # Sample owner data (swap for real data later)
 OWNER = {
     "name": "Juan Dela Cruz",
-    "username": "@juan_dcruz",
-    "age": "20",
+    "email": "@juan_dcruz",
+    "dob": "1990-01-01",
     "gender": "Male",
 }
 
 
 def account_profile_view(page: ft.Page) -> ft.View:
+    # print data from db
+
+    OWNER = get_data(get_uid())
+
     # ROUTE PUSH
     async def go_settings(e):
         logger.debug(f"Settings route pushed: {e}")
@@ -77,7 +87,11 @@ def account_profile_view(page: ft.Page) -> ft.View:
             pet_tab.bgcolor = primary if section == "pet" else soft_blue_bg
             pet_tab_text.color = white if section == "pet" else primary
             logger.info(f"Profile section switched to: {section}")
+
+            profile_content.content = build_profile_content()
+            profile_content.update()
             profile_nav_bar.update()
+
         return handler
 
 
@@ -206,42 +220,87 @@ def account_profile_view(page: ft.Page) -> ft.View:
             ],
         )
 
-    owner_profile = ft.Container(
-        padding=ft.Padding.all(20),
-        bgcolor=white,
-        border_radius=12,
-        border=ft.Border.all(1, soft_border),
-        content=ft.Column(
-            spacing=16,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[
-                ft.Container(
-                    width=80,
-                    height=80,
-                    bgcolor=soft_blue_bg,
-                    border_radius=40,
-                    alignment=ft.Alignment.CENTER,
-                    content=ft.Icon(ft.Icons.PERSON, size=44, color=primary),
-                ),
-                ft.Text(
-                    OWNER["name"],
-                    size=20,
-                    weight=ft.FontWeight.W_800,
-                    color=black,
-                    text_align=ft.TextAlign.CENTER,
-                ),
-                ft.Text(
-                    f"Username: {OWNER['username']}",
-                    size=13,
-                    color="#6B7280",
-                    text_align=ft.TextAlign.CENTER,
-                ),
-                ft.Container(height=1, bgcolor=soft_border),
-                detail_row("Age", OWNER["age"]),
-                detail_row("Gender", OWNER["gender"]),
-            ],
-        ),
-    )
+    def owner_profile_card():
+        return ft.Container(
+            padding=ft.Padding.all(20),
+            bgcolor=white,
+            border_radius=12,
+            border=ft.Border.all(1, soft_border),
+            content=ft.Column(
+                spacing=16,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Container(
+                        width=80, height=80, bgcolor=soft_blue_bg, border_radius=40,
+                        alignment=ft.Alignment.CENTER,
+                        content=ft.Icon(ft.Icons.PERSON, size=44, color=primary),
+                    ),
+                    ft.Text(OWNER["username"], size=20, weight=ft.FontWeight.W_800,
+                            color=black, text_align=ft.TextAlign.CENTER),
+                    ft.Text(f"Email: {OWNER['email']}", size=13, color="#6B7280",
+                            text_align=ft.TextAlign.CENTER),
+                    ft.Container(height=1, bgcolor=soft_border),
+                    detail_row("Date of Birth (MM-DD-YYYY)", OWNER["dob"]),
+                    detail_row("Gender", OWNER["gender"]),
+                ],
+            ),
+        )
+
+    def make_delete_handler(pet_name):
+        def handler(e):
+            remove_pet(get_uid(), pet_name)
+            nonlocal pet_list
+            pet_list = get_pet_list(get_uid())
+            profile_content.content = build_profile_content()
+            profile_content.update()
+
+        return handler
+    def pet_profile_card(pet):
+        return ft.Container(
+            padding=ft.Padding.all(20),
+            bgcolor=white,
+            border_radius=12,
+            border=ft.Border.all(1, soft_border),
+            content=ft.Column(
+                spacing=16,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Container(
+                        width=80, height=80, bgcolor=soft_blue_bg, border_radius=40,
+                        alignment=ft.Alignment.CENTER,
+                        content=ft.Icon(ft.Icons.PETS, size=44, color=primary),
+                    ),
+                    ft.Text(pet.get("name", "Pet"), size=20, weight=ft.FontWeight.W_800,
+                            color=black, text_align=ft.TextAlign.CENTER),
+                    ft.Text(pet.get("breed", ""), size=13, color="#6B7280",
+                            text_align=ft.TextAlign.CENTER),
+                    ft.Container(height=1, bgcolor=soft_border),
+                    detail_row("Age", pet.get("age", "")),
+                    detail_row("Gender", pet.get("gender", "")),
+
+                    ft.Button(
+                        content = "Delete pet",
+                        style=ft.ButtonStyle(
+                            bgcolor=ft.Colors.RED
+                        ),
+                        icon = ft.Icons.DELETE,
+                        on_click = make_delete_handler(pet.get("name", ""))
+                    )
+                ],
+            ),
+        )
+
+    pet_list = get_pet_list(get_uid())
+
+    def build_profile_content():
+        if section_state["active"] == "owner":
+            return owner_profile_card()
+        if pet_list:
+            return ft.Column(spacing=12, controls=[pet_profile_card(p) for p in pet_list])
+        return ft.Text("No pets yet", color="#6B7280", text_align=ft.TextAlign.CENTER)
+
+    # single stable container that lives in the tree — always update THIS one
+    profile_content = ft.Container(content=build_profile_content())
 
     profile_details = ft.Container(
         margin=ft.Margin.only(left=16, right=16, top=16, bottom=16),
@@ -249,7 +308,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
             spacing=12,
             controls=[
                 profile_nav_bar,
-                owner_profile,
+                profile_content,
             ],
         ),
     )

@@ -1,42 +1,23 @@
-import os
 import flet as ft
 import logging
-from flet.auth.providers import GoogleOAuthProvider
 
-# note that this one would not work in the build app
-# find an alternative
-from dotenv import load_dotenv
+from model.firestore_auth import uid_account, create_oauth_user_doc
 from utility.navigation import go_to
+from model.google_dotenv_setup import provider
 
 logger = logging.getLogger(f"pawplan.{__name__}")
 
-# get values from .env
-load_dotenv()
-client_id = os.getenv("GOOGLE_CLIENT_ID")
-client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
-
-
-# error checking
-if not client_id or not client_secret:
-    raise ValueError("Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET in .env file")
-
-
-# auth code
-provider = GoogleOAuthProvider(
-    client_id=client_id,
-    client_secret=client_secret,
-    redirect_url="http://localhost:8550/oauth_callback",
-)
-
-
-def make_on_login(page: ft.Page):
+def make_on_login(page: ft.Page): # called on main
     async def on_login(e: ft.LoginEvent):
         if e.error:
             logger.error("Login error: %s", e.error)
             return
         # debugging
         if(page.auth != None):
-            logger.info("Logged in as: %s", page.auth.user["email"])
+            email = str(page.auth.user["email"])
+            logger.info("Logged in as: %s", email)
+            uid_account.set(email)
+            create_oauth_user_doc(email)
             await page.push_route("/homepage")
 
     return on_login
@@ -118,10 +99,6 @@ def startup_view(page: ft.Page) -> ft.View:
     )
 
     # ---------- Google sign-in button ----------
-    # Using a styled "G" instead of a remote image so this still renders offline.
-    # Swap the ft.Text below for a ft.Image(src="google_logo.png", ...) if you
-    # add a real Google "G" asset to your app's /assets folder.
-
     google_logo = ft.Container(
         height = 20,
         width = 20,
@@ -152,7 +129,7 @@ def startup_view(page: ft.Page) -> ft.View:
         ),
         width=280,
         height=55,
-        on_click=login_click,
+        on_click=login_click, # get provider
         style=ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=10),
             side={ft.ControlState.DEFAULT: ft.BorderSide(1, "#000000")},
