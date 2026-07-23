@@ -1,5 +1,6 @@
 import flet as ft
 import logging
+import threading
 
 from model.firestore_auth import uid_account, create_oauth_user_doc
 from utility.navigation import go_to
@@ -16,8 +17,18 @@ def make_on_login(page: ft.Page): # called on main
         if(page.auth != None):
             email = str(page.auth.user["email"])
             logger.info("Logged in as: %s", email)
+            # set local uid immediately so other views can read it
             uid_account.set(email)
-            create_oauth_user_doc(email)
+
+            # create firestore user document in background to avoid blocking navigation
+            def _create_doc():
+                try:
+                    create_oauth_user_doc(email)
+                except Exception as ex:
+                    logger.exception("Failed to create oauth user doc: %s", ex)
+
+            threading.Thread(target=_create_doc, daemon=True).start()
+
             await page.push_route("/homepage")
 
     return on_login
