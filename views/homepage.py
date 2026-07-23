@@ -188,6 +188,8 @@ def homepage_view(page: ft.Page) -> ft.View:
     def _fetch_pets():
         try:
             pets = get_pet_list(return_uid(page))
+            # update outer pet_list so pet_card can access correct data
+            pet_list[:] = pets
             if pets:
                 pet_cards = [pet_card(i) for i, _ in enumerate(pets)]
             else:
