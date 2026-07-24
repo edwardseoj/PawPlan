@@ -3,8 +3,42 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="BackgroundAgentGlobalSettings">
+    <option name="selectedModelId" value="auto" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="1ba19bff-17e9-4a2f-a6d4-bae29a6a567a" name="Changes" comment="" />
+    <list default="true" id="1ba19bff-17e9-4a2f-a6d4-bae29a6a567a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/.ai/mcp/mcp.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/.python-version" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/assets/pawplan_icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/create_account_json.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/firebase_setup.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/firestore_auth.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/google_dotenv_setup.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/pet_crud.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/uid_json.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/user_account_crud.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/user_details_json.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/pyproject.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/utility/logging_config.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/utility/navigation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/uv.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/account_profile.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/homepage.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/login.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/petprofile.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/petprofile_input.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/petreminder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/register.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/settings.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/startup.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/taskboard.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/taskmaker.py" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,6 +49,13 @@
       <entry key="_/home/cereal/Documents/School Projects/appdev/PawPlan" value="3FqikhCAs5lFObm5IdWpFRVbkYS" />
     </persistenceIdMap>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -24,61 +65,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="3.544113382705212E-8" />
-      <entry key="MS500" value="0.03235202887004305" />
-      <entry key="S2" value="0.4241069411143285" />
-      <entry key="S5" value="0.7095616781001912" />
-      <entry key="S10" value="0.842354840966793" />
-      <entry key="S30" value="0.9444196733550676" />
-      <entry key="S60" value="0.97181257110364" />
-      <entry key="M2" value="0.9858055442650139" />
-      <entry key="M5" value="0.9942978550550912" />
-      <entry key="M10" value="0.9971448515913277" />
-      <entry key="M15" value="0.998095660812657" />
-      <entry key="M30" value="0.9990473766607151" />
-      <entry key="H1" value="0.999523574839891" />
-      <entry key="H2" value="0.9997617590405681" />
-      <entry key="H4" value="0.9998808724245944" />
-      <entry key="D1" value="0.9999801444185149" />
-      <entry key="W1" value="0.9999971634642215" />
+      <entry key="MS100" value="3.120048746618421E-6" />
+      <entry key="MS500" value="0.08048094618695505" />
+      <entry key="S2" value="1.321126675740378" />
+      <entry key="S5" value="3.9608139724125886" />
+      <entry key="S10" value="6.922256478032043" />
+      <entry key="S30" value="17.304853603081565" />
+      <entry key="S60" value="27.68879709722646" />
+      <entry key="M2" value="48.882059502995986" />
+      <entry key="M5" value="97.42792671964105" />
+      <entry key="M10" value="141.47999648624304" />
+      <entry key="M15" value="170.59380116963604" />
+      <entry key="M30" value="230.97206884664283" />
+      <entry key="H1" value="306.8067226414559" />
+      <entry key="H2" value="387.74197002185196" />
+      <entry key="H4" value="461.10087463686693" />
+      <entry key="D1" value="564.9621367804347" />
+      <entry key="W1" value="589.625188654867" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="1.0" />
       <entry key="MS500" value="1.0" />
       <entry key="S2" value="1.0" />
       <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0" />
-      <entry key="S30" value="1.0" />
-      <entry key="S60" value="1.0" />
-      <entry key="M2" value="1.0" />
-      <entry key="M5" value="1.0" />
-      <entry key="M10" value="1.0" />
-      <entry key="M15" value="1.0" />
-      <entry key="M30" value="1.0" />
-      <entry key="H1" value="1.0" />
-      <entry key="H2" value="1.0" />
-      <entry key="H4" value="1.0" />
-      <entry key="D1" value="1.0" />
-      <entry key="W1" value="1.0" />
+      <entry key="S10" value="1.0000000132504159" />
+      <entry key="S30" value="1.0037549452849532" />
+      <entry key="S60" value="1.0880664143299588" />
+      <entry key="M2" value="1.4696691009133933" />
+      <entry key="M5" value="2.5872206124201167" />
+      <entry key="M10" value="3.9192993941456074" />
+      <entry key="M15" value="4.945004557185611" />
+      <entry key="M30" value="6.953662110903407" />
+      <entry key="H1" value="9.037158857564624" />
+      <entry key="H2" value="11.511042320763027" />
+      <entry key="H4" value="14.582786690625971" />
+      <entry key="D1" value="20.222111956876308" />
+      <entry key="W1" value="21.727631723884603" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.04239388675620104" />
-      <entry key="MS500" value="0.5486889893674322" />
-      <entry key="S2" value="1.2161788160582756" />
-      <entry key="S5" value="1.6050213732088865" />
-      <entry key="S10" value="1.7851464074425751" />
-      <entry key="S30" value="1.9240843104429777" />
-      <entry key="S60" value="1.9614748708344847" />
-      <entry key="M2" value="1.9805932543505445" />
-      <entry key="M5" value="1.9922023916024811" />
-      <entry key="M10" value="1.9960953516937665" />
-      <entry key="M15" value="1.9973956005241564" />
-      <entry key="M30" value="1.9986971494802768" />
-      <entry key="H1" value="1.9993484119547578" />
-      <entry key="H2" value="1.9996741652697871" />
-      <entry key="H4" value="1.9998370724565893" />
-      <entry key="D1" value="1.9999728439956588" />
-      <entry key="W1" value="1.9999961205361838" />
+      <entry key="MS100" value="5.609245596136085E-4" />
+      <entry key="MS500" value="0.2569851776419546" />
+      <entry key="S2" value="1.8495970825211647" />
+      <entry key="S5" value="4.685309184691295" />
+      <entry key="S10" value="7.759096954410701" />
+      <entry key="S30" value="18.246011066683348" />
+      <entry key="S60" value="28.742436311741912" />
+      <entry key="M2" value="50.32334515617915" />
+      <entry key="M5" value="99.97497124068168" />
+      <entry key="M10" value="145.35900771923704" />
+      <entry key="M15" value="175.50232317320769" />
+      <entry key="M30" value="237.89853529196606" />
+      <entry key="H1" value="315.82599924191874" />
+      <entry key="H2" value="399.2420882014447" />
+      <entry key="H4" value="475.67724765534035" />
+      <entry key="D1" value="585.1829293895727" />
+      <entry key="W1" value="611.3526228727331" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -92,11 +133,12 @@
         <option name="modeId" value="Agent" />
         <option name="model">
           <model>
-            <option name="modelType" value="builtin_family" />
+            <option name="modelType" value="builtin_id" />
             <option name="modelValue" value="auto" />
           </model>
         </option>
         <option name="targetType" value="BACKGROUND" />
+        <option name="worktreeMode" value="WORKSPACE" />
       </template>
     </option>
   </component>
@@ -107,6 +149,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.taskmaker.executor": "Run",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
@@ -115,9 +158,15 @@
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
     "copilot.chat.legacySessionMetadata.migrated": "true",
-    "git-widget-placeholder": "backend-v2",
+    "git-widget-placeholder": "backend-dev-v2",
     "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/Users/macbookpro/Desktop/PythonProject/PawPlan-backend-dev",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
     "to.speed.mode.migration.done": "true"
   }
 }]]></component>
