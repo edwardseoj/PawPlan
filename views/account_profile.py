@@ -304,7 +304,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
         )
 
     # start with empty UI; populate in background
-    profile_content = ft.Container(content=ft.Text("Loading profile..."))
+    profile_content = ft.Container(content=ft.Text("Loading profile...", color="#000000"))
 
     def build_profile_content():
         if section_state["active"] == "owner":
