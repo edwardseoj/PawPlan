@@ -242,6 +242,8 @@ def homepage_view(page: ft.Page) -> ft.View:
             ),
         )
 
+    header_text = f"Hello {str(return_uid(page))}"
+
     header = ft.Container(
         padding=ft.Padding.symmetric(horizontal=16, vertical=16),
         bgcolor=header_blue,
@@ -254,7 +256,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
                     controls=[
                         ft.Text(
-                            "Hello, John",
+                            header_text,
                             color=white,
                             size=24,
                             weight=ft.FontWeight.W_800,
