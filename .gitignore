@@ -9,3 +9,4 @@ __pycache__/
 *.pyo
 views/__pycache__/
 utility/__pycache__/
+.idea/
