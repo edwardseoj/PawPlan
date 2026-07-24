@@ -4,13 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def petprofile_view(page: ft.Page):
-    page.title = "PawPlan"
-    page.bgcolor = "#FFFFFF"
-    page.vertical_alignment = ft.MainAxisAlignment.START
-    page.scroll = None
-    page.padding = 0
-
+def petprofile_view(page: ft.Page) -> ft.View:
     orange = "#F5893C"
     blue = "#0B4FB0"
     purple = "#8B7AE8"
@@ -28,7 +22,7 @@ def petprofile_view(page: ft.Page):
     async def go_back(e):
         logger.info("Back nav clicked")
         try:
-            await page.pop_route()
+            await page.push_route("/homepage")
             logger.info("Route popped")
         except Exception as ex:
             logger.error(f"Error occurred: {ex}")
@@ -165,30 +159,39 @@ def petprofile_view(page: ft.Page):
         ),
     )
 
-    page.add(
-        ft.Column(
-            spacing=0,
-            expand=True,
-            horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
-            controls=[
-                appbar,
-                ft.Container(
+    main_column = ft.Column(
+        spacing=0,
+        expand=True,
+        horizontal_alignment=ft.CrossAxisAlignment.STRETCH,
+        controls=[
+            appbar,
+            ft.Container(
+                expand=True,
+                content=ft.Column(
+                    spacing=0,
                     expand=True,
-                    content=ft.Column(
-                        spacing=0,
-                        expand=True,
-                        scroll=ft.ScrollMode.AUTO,
-                        controls=[
-                            photo_cont,
-                            info_section,
-                            body_section,
-                        ],
-                    ),
+                    scroll=ft.ScrollMode.AUTO,
+                    controls=[
+                        photo_cont,
+                        info_section,
+                        body_section,
+                    ],
                 ),
-            ],
-        )
+            ),
+        ],
+    )
+
+    return ft.View(
+        route="/petprofile",
+        bgcolor=white,
+        padding=0,
+        controls=[main_column],
     )
 
 
 if __name__ == "__main__":
-    ft.run(petprofile_view)
+    def _main(page: ft.Page):
+        page.views.append(petprofile_view(page))
+        page.update()
+
+    ft.run(_main)

@@ -3,6 +3,7 @@ import time
 
 # logger setup
 from utility.logging_config import setup_logging
+from views.petprofile import petprofile_view
 from views.settings import settings_view
 
 setup_logging()
@@ -33,10 +34,11 @@ def main(page: ft.Page):
         "/login": login_view,
         "/register": register_view,
         "/homepage": homepage_view,
-        "/petprofile": petprofile_input_view,
+        "/petprofile_input": petprofile_input_view,
         "/account_profile": account_profile_view,
         "/petreminder": pet_reminder_view,
-        "/settings": settings_view
+        "/settings": settings_view,
+        "/petprofile": petprofile_view
     }
 
     def route_change(e):

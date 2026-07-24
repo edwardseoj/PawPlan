@@ -21,7 +21,8 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
     async def go_back(e):
         logger.info("Back nav clicked")
         try:
-            await page.pop_route()
+            # await page.pop_route()
+            await page.push_route("/homepage")
             logger.info("Route popped")
         except Exception as e:
             logger.error(f"Error occurred: {e}")

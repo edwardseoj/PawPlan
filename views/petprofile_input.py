@@ -241,7 +241,7 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
     )
 
     return ft.View(
-        route="/petprofile",
+        route="/petprofile_input",
         bgcolor=white,
         padding=0,
         spacing=0,
