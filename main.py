@@ -1,48 +1,68 @@
 import flet as ft
+import time
+
+# logger setup
+from utility.logging_config import setup_logging
+from views.petreminder import petreminder_view
+from views.settings import settings_view
+
+setup_logging()
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+from views.account_profile import account_profile_view
+from views.startup import startup_view, make_on_login
+from views.login import login_view
+from views.register import register_view
+from views.homepage import homepage_view
+from views.petprofile_input import petprofile_input_view
+
 
 def main(page: ft.Page):
     page.title = "PawPlan"
-    page.vertical_alignment = ft.MainAxisAlignment.CENTER
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.window.height = 900
+    page.window.width = 430
+    page.window.resizable = False
+    page.on_login = make_on_login(page)
 
-    paw_text = ft.Text("Paw", size=32, weight=ft.FontWeight.BOLD)
-    plan_text = ft.Text("Plan", size=32, weight=ft.FontWeight.BOLD)
-    title_row = ft.Row([paw_text, plan_text], alignment=ft.MainAxisAlignment.CENTER)
+    # originally a big chunk of elifs
+    # add here new routes
+    ROUTES = {
+        "/": startup_view,
+        "/login": login_view,
+        "/register": register_view,
+        "/homepage": homepage_view,
+        "/petprofile": petprofile_input_view,
+        "/account_profile": account_profile_view,
+        "/petreminder": petreminder_view,
+        "/settings": settings_view
+    }
 
-    login_btn = ft.Container(
-        content=ft.ElevatedButton(text="Login"),
-        width=200,
-        height=50
-    )
-    signup_btn = ft.Container(
-        content=ft.ElevatedButton(text="Sign Up"),
-        width=200,
-        height=50
-    )
-    button_row = ft.Row([login_btn, signup_btn], alignment=ft.MainAxisAlignment.CENTER, spacing=20)
+    def route_change(e):
+        # Route change should be quick; view builders should avoid blocking I/O.
+        page.views.clear()
+        view_builder = ROUTES.get(page.route)
 
-    divider = ft.Column([
-        ft.Divider(thickness=1),
-        ft.Text("Or Continue with"),
-        ft.Divider(thickness=1)
-    ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+        if view_builder is None:
+            view_builder = ROUTES["/homepage"] # default route
 
-    google_btn = ft.Container(
-        content=ft.ElevatedButton(text="Sign in with Google"),
-        width=250,
-        height=50
-    )
+        page.views.append(view_builder(page))
+        page.update()
 
-    page.add(
-        ft.Column([
-            title_row,
-            ft.Container(height=20),
-            button_row,
-            ft.Container(height=20),
-            divider,
-            ft.Container(height=20),
-            google_btn
-        ], alignment=ft.MainAxisAlignment.CENTER, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
-    )
 
-ft.app(target=main)
+    async def view_pop(e: ft.ViewPopEvent):
+        # Keep view_pop simple and avoid timing/logging here as requested.
+        if e.view is not None:
+            page.views.remove(e.view)
+            if page.views:
+                top_view = page.views[-1]
+                await page.push_route(top_view.route)
+            else:
+                await page.push_route("/homepage")
+    page.on_route_change = route_change
+    page.on_view_pop = view_pop
+    route_change(None)
+
+
+ft.run(main, port=8550, view=ft.AppView.WEB_BROWSER)
