@@ -12,32 +12,32 @@
       <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/.ai/mcp/mcp.json" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/.gitignore" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/.python-version" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/assets/pawplan_icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/main.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/create_account_json.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/firebase_setup.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/firestore_auth.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/google_dotenv_setup.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/pet_crud.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/uid_json.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/user_account_crud.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/user_details_json.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/pyproject.toml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/utility/logging_config.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/utility/navigation.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/uv.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/account_profile.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/homepage.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/login.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/petprofile.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/petprofile_input.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/petreminder.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/register.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/settings.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/startup.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/taskboard.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/taskmaker.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/assets/pawplan_icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/pawplan_icon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/create_account_json.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/create_account_json.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/firebase_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/firebase_setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/firestore_auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/firestore_auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/google_dotenv_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/google_dotenv_setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/pet_crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/pet_crud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/uid_json.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/uid_json.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/user_account_crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/user_account_crud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/user_details_json.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/user_details_json.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/utility/logging_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/utility/logging_config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/utility/navigation.py" beforeDir="false" afterPath="$PROJECT_DIR$/utility/navigation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/account_profile.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/account_profile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/homepage.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/homepage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/login.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/login.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/petprofile.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/petprofile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/petprofile_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/petprofile_input.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/petreminder.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/petreminder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/register.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/register.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/startup.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/startup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/taskboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/taskboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/taskmaker.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/taskmaker.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,61 +65,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="3.120048746618421E-6" />
-      <entry key="MS500" value="0.08048094618695505" />
-      <entry key="S2" value="1.321126675740378" />
-      <entry key="S5" value="3.9608139724125886" />
-      <entry key="S10" value="6.922256478032043" />
-      <entry key="S30" value="17.304853603081565" />
-      <entry key="S60" value="27.68879709722646" />
-      <entry key="M2" value="48.882059502995986" />
-      <entry key="M5" value="97.42792671964105" />
-      <entry key="M10" value="141.47999648624304" />
-      <entry key="M15" value="170.59380116963604" />
-      <entry key="M30" value="230.97206884664283" />
-      <entry key="H1" value="306.8067226414559" />
-      <entry key="H2" value="387.74197002185196" />
-      <entry key="H4" value="461.10087463686693" />
-      <entry key="D1" value="564.9621367804347" />
-      <entry key="W1" value="589.625188654867" />
+      <entry key="MS100" value="1.043336852113833" />
+      <entry key="MS500" value="3.11986317158726" />
+      <entry key="S2" value="8.664940267967868" />
+      <entry key="S5" value="12.999964704823052" />
+      <entry key="S10" value="17.9005705258603" />
+      <entry key="S30" value="27.880325980081412" />
+      <entry key="S60" value="36.266701866140444" />
+      <entry key="M2" value="50.37304011638454" />
+      <entry key="M5" value="92.41634709244133" />
+      <entry key="M10" value="148.7766517501954" />
+      <entry key="M15" value="188.85989853878309" />
+      <entry key="M30" value="267.57323373095653" />
+      <entry key="H1" value="358.43312078207595" />
+      <entry key="H2" value="451.04173035415585" />
+      <entry key="H4" value="532.7341454431357" />
+      <entry key="D1" value="646.429312875093" />
+      <entry key="W1" value="673.2474089351134" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0000000132504159" />
-      <entry key="S30" value="1.0037549452849532" />
-      <entry key="S60" value="1.0880664143299588" />
-      <entry key="M2" value="1.4696691009133933" />
-      <entry key="M5" value="2.5872206124201167" />
-      <entry key="M10" value="3.9192993941456074" />
-      <entry key="M15" value="4.945004557185611" />
-      <entry key="M30" value="6.953662110903407" />
-      <entry key="H1" value="9.037158857564624" />
-      <entry key="H2" value="11.511042320763027" />
-      <entry key="H4" value="14.582786690625971" />
-      <entry key="D1" value="20.222111956876308" />
-      <entry key="W1" value="21.727631723884603" />
+      <entry key="MS100" value="7.658E-320" />
+      <entry key="MS500" value="1.505373059104041E-64" />
+      <entry key="S2" value="1.3379705964775614E-16" />
+      <entry key="S5" value="6.361199817355541E-7" />
+      <entry key="S10" value="0.0011162595421412046" />
+      <entry key="S30" value="0.1831613986583661" />
+      <entry key="S60" value="0.7698915448430412" />
+      <entry key="M2" value="1.7593104757986435" />
+      <entry key="M5" value="3.5541751748272166" />
+      <entry key="M10" value="5.447326800550771" />
+      <entry key="M15" value="6.812410114616896" />
+      <entry key="M30" value="9.414902188214405" />
+      <entry key="H1" value="12.02576129625664" />
+      <entry key="H2" value="14.867673542344523" />
+      <entry key="H4" value="18.178215208288513" />
+      <entry key="D1" value="24.12956260753311" />
+      <entry key="W1" value="25.713453463781978" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="5.609245596136085E-4" />
-      <entry key="MS500" value="0.2569851776419546" />
-      <entry key="S2" value="1.8495970825211647" />
-      <entry key="S5" value="4.685309184691295" />
-      <entry key="S10" value="7.759096954410701" />
-      <entry key="S30" value="18.246011066683348" />
-      <entry key="S60" value="28.742436311741912" />
-      <entry key="M2" value="50.32334515617915" />
-      <entry key="M5" value="99.97497124068168" />
-      <entry key="M10" value="145.35900771923704" />
-      <entry key="M15" value="175.50232317320769" />
-      <entry key="M30" value="237.89853529196606" />
-      <entry key="H1" value="315.82599924191874" />
-      <entry key="H2" value="399.2420882014447" />
-      <entry key="H4" value="475.67724765534035" />
-      <entry key="D1" value="585.1829293895727" />
-      <entry key="W1" value="611.3526228727331" />
+      <entry key="MS100" value="1.014930302307649" />
+      <entry key="MS500" value="3.1013288377047408" />
+      <entry key="S2" value="8.649466681523224" />
+      <entry key="S5" value="12.990107692652703" />
+      <entry key="S10" value="17.894769899307985" />
+      <entry key="S30" value="28.055583345883775" />
+      <entry key="S60" value="37.02519387758606" />
+      <entry key="M2" value="52.119713779377214" />
+      <entry key="M5" value="95.95169873242726" />
+      <entry key="M10" value="154.1980944273028" />
+      <entry key="M15" value="195.6452107864146" />
+      <entry key="M30" value="276.96444180539595" />
+      <entry key="H1" value="370.4419388406294" />
+      <entry key="H2" value="465.8986131412378" />
+      <entry key="H4" value="550.9058998110577" />
+      <entry key="D1" value="670.557526295815" />
+      <entry key="W1" value="698.9606599310367" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
