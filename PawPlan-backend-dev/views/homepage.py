@@ -12,12 +12,6 @@ from utility.navigation import go_to
 from model.firebase_setup import db
 
 # LOGGER SETUP
-# === COPILOT NOTE ===
-# Changed by Copilot: Pets are now loaded in a background thread to avoid
-# blocking UI rendering during navigation. The view now renders quickly
-# and updates when pet data arrives. Also fixed IndexError by updating
-# the shared pet_list before building pet cards.
-# === END NOTE ===
 logger = logging.getLogger(f"pawplan.{__name__}")
 
 # Sample based on Mock Screens (will be updated later on)
@@ -37,8 +31,8 @@ DESTINATIONS = [
     ),
     ft.NavigationBarDestination(
         icon = ft.Icons.WIDGETS_OUTLINED,
-        selected_icon = ft.Icons.CALENDAR_MONTH,
-        label = "Calendar"
+        selected_icon = ft.Icons.CHECKLIST,
+        label = "Taskboard"
     ),
     ft.NavigationBarDestination(
         icon = ft.Icons.WIDGETS_OUTLINED,
@@ -61,7 +55,6 @@ def return_uid(page):
 # START OF VIEWS
 def homepage_view(page: ft.Page) -> ft.View:
 
-
     def view_reminder_handler(pet_name):
         async def handler(e):
             await view_reminder(pet_name, return_uid(page))
@@ -70,8 +63,7 @@ def homepage_view(page: ft.Page) -> ft.View:
         logger.debug("Pet reminder: %s", pet_name)
         reminder_ref = (
             db.collection("users").document(uid).collection("details").document("pets").collection("reminders").
-            where(filter=FieldFilter("pet","==",pet_name))
-            .stream()
+            where(filter=FieldFilter("pet","==",pet_name)).stream()
         )
         for reminders in reminder_ref:
             print(f"{reminders.id} => {reminders.to_dict()}")
@@ -80,15 +72,12 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 
 
-
-    # navigation
-    # no navigation here yet
     async def go_settings(e):
         # logger.info("Settings nav clicked")
         logger.debug("Settings nav clicked")
         await page.push_route("/settings")
 
-    pill_nav_routes = ["/homepage", "/calendar", "/account_profile"]
+    pill_nav_routes = ["/homepage", "/taskboard", "/account_profile"]
 
 
     # content variables
@@ -182,13 +171,24 @@ def homepage_view(page: ft.Page) -> ft.View:
     # else:
     #     logger.debug("No such document!")
 
+
     pet_list = []
+
+    pet_cards_row_height = 30
+
+    def empty_state(message: str) -> ft.Container:
+        return ft.Container(
+            height = pet_cards_row_height,
+            alignment = ft.Alignment.CENTER,
+            content = ft.Text(message, color=white),
+        )
+
 
     # placeholder row for pet cards; populated asynchronously
     pet_cards_row = ft.Row(
         spacing=14,
         scroll=ft.ScrollMode.AUTO,
-        controls=[ft.Text("Loading pets...")]
+        controls=[empty_state("Loading pets...")]
     )
 
     def _fetch_pets():
@@ -199,12 +199,12 @@ def homepage_view(page: ft.Page) -> ft.View:
             if pets:
                 pet_cards = [pet_card(i) for i, _ in enumerate(pets)]
             else:
-                pet_cards = [ft.Text("No pets yet")]
+                pet_cards = [empty_state("No pets yet")]
             pet_cards_row.controls[:] = pet_cards
             page.update()
         except Exception as e:
             logger.exception("Failed fetching pets: %s", e)
-            pet_cards_row.controls[:] = [ft.Text("Failed to load pets")]
+            pet_cards_row.controls[:] = [empty_state("Failed to load pets")]
             page.update()
 
     # start background thread to fetch pets without blocking UI
@@ -232,6 +232,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                         border=ft.Border.all(2, white),
                         alignment=ft.Alignment.CENTER,
                         content=ft.Icon(ft.Icons.PETS, size=40, color="#8A6A3B"),
+                        on_click = go_to(page, "/petprofile")# edit code to reroute to a page
                     ),
                     ft.Button(
                         content=ft.Text("View Reminder", size=8, color=white),
@@ -241,6 +242,8 @@ def homepage_view(page: ft.Page) -> ft.View:
                 ],
             ),
         )
+
+    header_text = f"Hello {str(return_uid(page))}"
 
     header = ft.Container(
         padding=ft.Padding.symmetric(horizontal=16, vertical=16),
@@ -254,7 +257,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
                     controls=[
                         ft.Text(
-                            "Hello, John",
+                            header_text,
                             color=white,
                             size=24,
                             weight=ft.FontWeight.W_800,
@@ -269,7 +272,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                                 ],
                             ),
                             bgcolor=white,
-                            on_click=go_to(page, "/petprofile"),
+                            on_click=go_to(page, "/petprofile_input"),
                         ),
                     ],
                 ),
@@ -505,11 +508,7 @@ def homepage_view(page: ft.Page) -> ft.View:
         ],
     )
 
-    # FIX: position the nav bar with Stack's absolute-positioning attributes
-    # (left/right/bottom) instead of wrapping it in an expand=True Container.
-    # Having two expand=True siblings in the Stack was preventing the
-    # scrollable Column above from ever getting a bounded height, so
-    # ft.ScrollMode.AUTO had nothing to scroll within and just clipped content.
+
     floating_nav_overlay = ft.Container(
         left=0,
         right=0,
@@ -542,9 +541,7 @@ def _standalone_main(page: ft.Page):
     page.window.width = 430
     page.window.height = 900
 
-    # Disable the default slide/zoom page-route transition on every
-    # platform, so switching views (Home/Calendar/Profile) is instant
-    # with no animation.
+
     page.theme = ft.Theme(
         page_transitions=ft.PageTransitionsTheme(
             windows=ft.PageTransitionTheme.NONE,

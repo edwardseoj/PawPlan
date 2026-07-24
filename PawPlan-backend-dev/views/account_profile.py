@@ -8,12 +8,7 @@ from model.pet_crud import get_pet_list, remove_pet
 from model.user_account_crud import get_data
 
 logger = logging.getLogger(__name__)
-# === COPILOT NOTE ===
-# Changed by Copilot: Account profile now renders a quick placeholder
-# ("Loading profile...") and fetches owner/pet data in a background
-# thread. Deleting a pet is performed in a background thread too.
-# This avoids blocking navigation and speeds up route transitions.
-# === END NOTE ===
+
 
 primary = "#0D6EFD"
 orange = "#F5821F"
@@ -35,8 +30,8 @@ DESTINATIONS = [
     ),
     ft.NavigationBarDestination(
         icon=ft.Icons.WIDGETS_OUTLINED,
-        selected_icon=ft.Icons.CALENDAR_MONTH,
-        label="Calendar",
+        selected_icon=ft.Icons.CHECKLIST,
+        label="Taskboard",
     ),
     ft.NavigationBarDestination(
         icon=ft.Icons.WIDGETS_OUTLINED,
@@ -79,7 +74,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
         await page.push_route("/")
 
 
-    pill_nav_routes = ["/homepage", "/calendar", "/account_profile"]
+    pill_nav_routes = ["/homepage", "/taskboard", "/account_profile"]
 
 
 
@@ -255,9 +250,21 @@ def account_profile_view(page: ft.Page) -> ft.View:
 
     def make_delete_handler(pet_name):
         def handler(e):
+            # Code for UI responsiveness
+            try:
+                idx = next((i for i, p in enumerate(pet_list) if p.get("name") == pet_name), None)
+                if idx is not None:
+                    pet_list.pop(idx)
+                    profile_content.content = build_profile_content()
+                    page.update()
+            except Exception as ex:
+                logger.exception("Failed updating UI for delete: %s", ex)
+
+            # Perform backend deletion in background
             def _do_delete():
                 try:
                     remove_pet(get_uid(), pet_name)
+                    # refresh authoritative list
                     pets = get_pet_list(get_uid())
                     pet_list[:] = pets
                     profile_content.content = build_profile_content()
@@ -304,7 +311,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
         )
 
     # start with empty UI; populate in background
-    profile_content = ft.Container(content=ft.Text("Loading profile..."))
+    profile_content = ft.Container(content=ft.Text("Loading profile...", color="#000000"))
 
     def build_profile_content():
         if section_state["active"] == "owner":
