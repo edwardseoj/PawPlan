@@ -23,34 +23,36 @@ def register_view(page: ft.Page) -> ft.View:
     def make_gender_btn(label: str):
         def on_click(e):
             selected_gender["value"] = label
+            male_btn.bgcolor = ft.Colors.BLUE_700 if label == "Male" else ft.Colors.BLUE_400
+            female_btn.bgcolor = ft.Colors.PINK_700 if label == "Female" else ft.Colors.PINK_400
             page.update()
 
         return on_click
 
     male_btn = ft.Button(
-        "Male",
+        content="Male",
         width=110,
         height=48,
-        bgcolor=ft.Colors.BLUE_400,
         color=ft.Colors.WHITE,
-        on_click=make_gender_btn("Male"),
+        bgcolor=ft.Colors.BLUE_400,
         style=ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=30),
             text_style=ft.TextStyle(size=16, weight=ft.FontWeight.W_600),
         ),
     )
     female_btn = ft.Button(
-        "Female",
+        content="Female",
         width=110,
         height=48,
-        bgcolor=ft.Colors.PINK_300,
         color=ft.Colors.WHITE,
-        on_click=make_gender_btn("Female"),
+        bgcolor=ft.Colors.PINK_400,  # was PINK_600
         style=ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=30),
             text_style=ft.TextStyle(size=16, weight=ft.FontWeight.W_600),
         ),
     )
+    male_btn.on_click = make_gender_btn("Male")
+    female_btn.on_click = make_gender_btn("Female")
 
     gender_row = ft.Row(
         [
