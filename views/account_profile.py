@@ -8,12 +8,7 @@ from model.pet_crud import get_pet_list, remove_pet
 from model.user_account_crud import get_data
 
 logger = logging.getLogger(__name__)
-# === COPILOT NOTE ===
-# Changed by Copilot: Account profile now renders a quick placeholder
-# ("Loading profile...") and fetches owner/pet data in a background
-# thread. Deleting a pet is performed in a background thread too.
-# This avoids blocking navigation and speeds up route transitions.
-# === END NOTE ===
+
 
 primary = "#0D6EFD"
 orange = "#F5821F"
@@ -35,8 +30,8 @@ DESTINATIONS = [
     ),
     ft.NavigationBarDestination(
         icon=ft.Icons.WIDGETS_OUTLINED,
-        selected_icon=ft.Icons.CALENDAR_MONTH,
-        label="Calendar",
+        selected_icon=ft.Icons.CHECKLIST,
+        label="Taskboard",
     ),
     ft.NavigationBarDestination(
         icon=ft.Icons.WIDGETS_OUTLINED,
@@ -79,7 +74,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
         await page.push_route("/")
 
 
-    pill_nav_routes = ["/homepage", "/calendar", "/account_profile"]
+    pill_nav_routes = ["/homepage", "/taskboard", "/account_profile"]
 
 
 

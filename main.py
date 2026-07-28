@@ -18,13 +18,20 @@ from views.register import register_view
 from views.homepage import homepage_view
 from views.petprofile_input import petprofile_input_view
 from views.petreminder import pet_reminder_view
-
+from views.taskboard import taskboard_view
 
 def main(page: ft.Page):
     page.title = "PawPlan"
     page.window.height = 900
     page.window.width = 430
+    page.window.min_height = 900
+    page.window.max_height = 900
+    page.window.min_width = 430
+    page.window.max_height = 900
     page.window.resizable = False
+    page.window.center()
+    page.update()
+
     page.on_login = make_on_login(page)
 
     # originally a big chunk of elifs
@@ -38,7 +45,8 @@ def main(page: ft.Page):
         "/account_profile": account_profile_view,
         "/petreminder": pet_reminder_view,
         "/settings": settings_view,
-        "/petprofile": petprofile_view
+        "/petprofile": petprofile_view,
+        "/taskboard": taskboard_view,
     }
 
     def route_change(e):
