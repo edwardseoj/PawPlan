@@ -1,6 +1,8 @@
 import flet as ft
 import logging
 
+from model.pet_crud import get_specific_pet
+
 logger = logging.getLogger(__name__)
 
 
@@ -10,14 +12,21 @@ def petprofile_view(page: ft.Page) -> ft.View:
     purple = "#8B7AE8"
     white = "#FFFFFF"
 
+    # get page session values
+    index = page.session.store.get("index")
+    uid = page.session.store.get("uid")
+    logger.debug(f"uid: {uid}")
+    logger.debug(f"index: {index}")
+
     # temporary pet data, wire up to Firestore later
-    pet = {
-        "name": "Bella",
-        "age": 4,
-        "breed": "Chihuahua",
-        "photo_url": "https://example.com/this-image-does-not-exist.png",
-        "allergies": ["Chicken Sensitivity"],
-    }
+    pet = get_specific_pet(uid, index)
+    # pet = {
+    #     "name": "Bella",
+    #     "age": 4,
+    #     "breed": "Chihuahua",
+    #     "photo_url": "https://example.com/this-image-does-not-exist.png",
+    #     "allergies": ["Chicken Sensitivity"],
+    # }
 
     async def go_back(e):
         logger.info("Back nav clicked")
@@ -69,7 +78,8 @@ def petprofile_view(page: ft.Page) -> ft.View:
             width=photo_size,
             height=photo_size,
             content=ft.Image(
-                src=pet["photo_url"],
+                src = "https://example.com/this-image-does-not-exist.png",
+                # src=pet["photo_url"],
                 width=photo_size,
                 height=photo_size,
                 fit="cover",
@@ -83,7 +93,7 @@ def petprofile_view(page: ft.Page) -> ft.View:
         ),
     )
 
-    # name / age / breed
+    # connect to firebase
     info_section = ft.Container(
         padding=ft.Padding.only(top=18, bottom=10),
         alignment=ft.Alignment.CENTER,
@@ -125,6 +135,7 @@ def petprofile_view(page: ft.Page) -> ft.View:
             ),
         )
 
+    # connect to firestore
     def build_allergies_content():
         controls = []
 

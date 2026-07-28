@@ -4,6 +4,13 @@ from model.firebase_setup import db
 import logging
 logger = logging.getLogger(f"pawplan.{__name__}")
 
+def get_specific_pet(uid, index):
+    pet_list = get_pet_list(uid)
+
+    # return dict
+    pet_details = pet_list[index]
+    return pet_details
+
 def get_pet_list(uid):
     pet_list = []
 

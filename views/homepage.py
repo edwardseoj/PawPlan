@@ -215,6 +215,15 @@ def homepage_view(page: ft.Page) -> ft.View:
     def pet_card(index):
         # get the name per index
         pet_name = pet_list[index]["name"]
+        uid = return_uid(page)
+
+        # page session
+        page.session.store.set("index", index)
+        page.session.store.set("uid", uid)
+
+
+        async def handle_pet_click(e):
+            await page.push_route("/petprofile")
 
         return ft.Container(
             width=110,
@@ -232,7 +241,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                         border=ft.Border.all(2, white),
                         alignment=ft.Alignment.CENTER,
                         content=ft.Icon(ft.Icons.PETS, size=40, color="#8A6A3B"),
-                        on_click = go_to(page, "/petprofile")# edit code to reroute to a page
+                        on_click=handle_pet_click,
                     ),
                     ft.Button(
                         content=ft.Text("View Reminder", size=8, color=white),
