@@ -55,11 +55,11 @@ def return_uid(page):
 # START OF VIEWS
 def homepage_view(page: ft.Page) -> ft.View:
 
-    def view_reminder_handler(pet_name):
+    def view_task_handler(pet_name):
         async def handler(e):
-            await view_reminder(pet_name, return_uid(page))
+            await view_task(pet_name, return_uid(page))
         return handler
-    async def view_reminder(pet_name, uid): # need to change code here
+    async def view_task(pet_name, uid): # need to change code here
         logger.debug("Pet reminder: %s", pet_name)
         reminder_ref = (
             db.collection("users").document(uid).collection("details").document("pets").collection("reminders").
@@ -244,9 +244,9 @@ def homepage_view(page: ft.Page) -> ft.View:
                         on_click=handle_pet_click,
                     ),
                     ft.Button(
-                        content=ft.Text("View Reminder", size=8, color=white),
+                        content=ft.Text("View Task", size=8, color=white),
                         bgcolor=green,
-                        on_click= view_reminder_handler(pet_name), # logic to go to view reminder
+                        on_click= view_task_handler(pet_name), # logic to go to view reminder
                     ),
                 ],
             ),

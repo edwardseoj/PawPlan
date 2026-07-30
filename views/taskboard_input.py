@@ -351,7 +351,7 @@ class AlarmClockSelector(ft.Container):
         # Quick selection buttons
         quick_row = ft.Row(
             [
-                ft.ElevatedButton(
+                ft.Button(
                     "Weekdays",
                     on_click=lambda e: self.quick_select([0, 1, 2, 3, 4]),
                     style=ft.ButtonStyle(
@@ -360,7 +360,7 @@ class AlarmClockSelector(ft.Container):
                         shape=ft.RoundedRectangleBorder(radius=8),
                     ),
                 ),
-                ft.ElevatedButton(
+                ft.Button(
                     "Weekends",
                     on_click=lambda e: self.quick_select([5, 6]),
                     style=ft.ButtonStyle(
@@ -369,7 +369,7 @@ class AlarmClockSelector(ft.Container):
                         shape=ft.RoundedRectangleBorder(radius=8),
                     ),
                 ),
-                ft.ElevatedButton(
+                ft.Button(
                     "Every Day",
                     on_click=lambda e: self.quick_select([0, 1, 2, 3, 4, 5, 6]),
                     style=ft.ButtonStyle(
@@ -378,7 +378,7 @@ class AlarmClockSelector(ft.Container):
                         shape=ft.RoundedRectangleBorder(radius=8),
                     ),
                 ),
-                ft.ElevatedButton(
+                ft.Button(
                     "Clear",
                     on_click=lambda e: self.clear_days(),
                     style=ft.ButtonStyle(
@@ -656,7 +656,7 @@ def taskboard_input_view(page: ft.Page) -> ft.View:
             error_text.visible = True
             page.update()
 
-    submit_btn = ft.ElevatedButton(
+    submit_btn = ft.Button(
         content=ft.Text("Save Task", size=16, weight=ft.FontWeight.W_700),
         width=340,
         height=54,

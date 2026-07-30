@@ -5,6 +5,7 @@ import datetime
 from datetime import time
 from flet.controls import page
 
+# feels redundant
 
 def taskmaker_view(page: ft.Page) -> ft.View:
     page.scroll = ft.ScrollMode.AUTO

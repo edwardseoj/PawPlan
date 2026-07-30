@@ -4,6 +4,7 @@ import logging
 from google.cloud.firestore_v1 import FieldFilter
 from model.firebase_setup import db
 from model.firestore_auth import get_uid
+from utility.navigation import go_to
 
 logger = logging.getLogger(__name__)
 
@@ -167,7 +168,8 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
                 icon_color="white",
                 icon_size=26,
                 tooltip="Add reminder",
-                on_click=create_alarm,
+                on_click=go_to(page, "/taskboard_input")
+                # on_click=create_alarm,
             ),
         ),
     )
