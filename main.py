@@ -17,7 +17,7 @@ from views.login import login_view
 from views.register import register_view
 from views.homepage import homepage_view
 from views.petprofile_input import petprofile_input_view
-from views.petreminder import pet_reminder_view
+from views.pet_tasks import pet_reminder_view
 from views.taskboard import taskboard_view
 from views.taskboard_input import taskboard_input_view
 
@@ -51,27 +51,37 @@ def main(page: ft.Page):
         "/taskboard_input": taskboard_input_view,
     }
 
+    route_history = []
+    nav_state = {"going_back": False}
+
     def route_change(e):
-        # Route change should be quick; view builders should avoid blocking I/O.
         page.views.clear()
         view_builder = ROUTES.get(page.route)
-
         if view_builder is None:
-            view_builder = ROUTES["/homepage"] # default route
+            view_builder = ROUTES["/homepage"]
+
+        if nav_state["going_back"]:
+            nav_state["going_back"] = False
+        elif not route_history or route_history[-1] != page.route:
+            route_history.append(page.route)
 
         page.views.append(view_builder(page))
         page.update()
 
+    async def go_back(e=None):
+        if len(route_history) > 1:
+            route_history.pop()  # drop current route
+            previous_route = route_history[-1]
+            nav_state["going_back"] = True
+            await page.push_route(previous_route)
+        else:
+            await page.push_route("/homepage")
 
     async def view_pop(e: ft.ViewPopEvent):
-        # Keep view_pop simple and avoid timing/logging here as requested.
-        if e.view is not None:
-            page.views.remove(e.view)
-            if page.views:
-                top_view = page.views[-1]
-                await page.push_route(top_view.route)
-            else:
-                await page.push_route("/homepage")
+        # also handles the browser/hardware back button
+        await go_back()
+
+    page.go_back = go_back
     page.on_route_change = route_change
     page.on_view_pop = view_pop
     route_change(None)

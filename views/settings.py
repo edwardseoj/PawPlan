@@ -39,7 +39,7 @@ def settings_view(page: ft.Page) -> ft.View:
     #         logger.error(f"Error occurred: {ex}")
     async def go_back(e):
         logger.debug("Going back")
-        await page.push_route("/homepage")
+        await page.go_back()
 
 
     def setting_option_tapped(label):

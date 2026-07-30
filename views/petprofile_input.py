@@ -42,8 +42,8 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
     async def go_back(e):
         logger.info("Back from pet profile clicked")
         try:
-            await page.push_route("/homepage")
-            logger.debug(f"Homepage route pushed")
+            await page.go_back()
+            logger.debug(f"Back route pushed")
         except Exception as e:
             logger.error(f"Error occurred: {e}")
     async def go_settings(e):

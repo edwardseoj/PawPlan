@@ -32,7 +32,7 @@ def petprofile_view(page: ft.Page) -> ft.View:
     async def go_back(e):
         logger.info("Back nav clicked")
         try:
-            await page.push_route("/homepage")
+            await page.go_back()
             logger.info("Route popped")
         except Exception as ex:
             logger.error(f"Error occurred: {ex}")
