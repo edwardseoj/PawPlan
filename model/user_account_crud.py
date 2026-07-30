@@ -1,5 +1,5 @@
 import logging
-from model.firebase_setup import db
+from setup.firebase_setup import db
 
 logger = logging.getLogger(f"pawplan.{__name__}")
 

@@ -11,6 +11,7 @@ def petprofile_view(page: ft.Page) -> ft.View:
     blue = "#0B4FB0"
     purple = "#8B7AE8"
     white = "#FFFFFF"
+    black = "#000000"
 
     # get page session values
     index = page.session.store.get("index")
@@ -35,13 +36,32 @@ def petprofile_view(page: ft.Page) -> ft.View:
             logger.info("Route popped")
         except Exception as ex:
             logger.error(f"Error occurred: {ex}")
+    async def go_settings(e):
+        logger.debug(f"Settings route pushed: {e}")
+        await page.push_route("/settings")
+
+    async def go_logout(e):
+        logger.debug(f"Logout route pushed: {e}")
+        await page.push_route("/")
 
     # header
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=10, vertical=10),
         bgcolor=orange,
-        content=ft.Stack(
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             controls=[
+                ft.Row(
+                    alignment=ft.MainAxisAlignment.START,
+                    controls=[
+                        ft.IconButton(
+                            icon=ft.Icons.ARROW_BACK,
+                            icon_color=white,
+                            icon_size=26,
+                            on_click=go_back,
+                        ),
+                    ],
+                ),
                 ft.Row(
                     alignment=ft.MainAxisAlignment.CENTER,
                     controls=[
@@ -54,13 +74,24 @@ def petprofile_view(page: ft.Page) -> ft.View:
                     ],
                 ),
                 ft.Row(
-                    alignment=ft.MainAxisAlignment.START,
+                    spacing=6,
                     controls=[
-                        ft.IconButton(
-                            icon=ft.Icons.ARROW_BACK,
-                            icon_color=white,
-                            icon_size=26,
-                            on_click=go_back,
+                        ft.Icon(ft.Icons.NOTIFICATIONS_NONE, color=black, size=26),
+                        ft.PopupMenuButton(
+                            icon=ft.Icons.MORE_VERT,
+                            icon_color=black,
+                            items=[
+                                ft.PopupMenuItem(
+                                    content=ft.Text("Settings"),
+                                    icon=ft.Icons.SETTINGS_OUTLINED,
+                                    on_click=go_settings,
+                                ),
+                                ft.PopupMenuItem(
+                                    content=ft.Text("Log out"),
+                                    icon=ft.Icons.LOGOUT,
+                                    on_click=go_logout,
+                                ),
+                            ],
                         ),
                     ],
                 ),

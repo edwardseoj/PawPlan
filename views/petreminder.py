@@ -2,7 +2,7 @@ import flet as ft
 import logging
 
 from google.cloud.firestore_v1 import FieldFilter
-from model.firebase_setup import db
+from setup.firebase_setup import db
 from model.firestore_auth import get_uid
 from utility.navigation import go_to
 
@@ -15,6 +15,7 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
     soft_border = "#DDE3EE"
     white = "#FFFFFF"
     white38 = "#FFFFFF66"
+    black = "#000000"
 
     # colors used for the reminder pills, cycled by index to match mockup
     pill_colors = ["#6C5CE7", "#F05648"]
@@ -27,13 +28,32 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
             logger.info("Route popped")
         except Exception as e:
             logger.error(f"Error occurred: {e}")
+    async def go_settings(e):
+        logger.debug(f"Settings route pushed: {e}")
+        await page.push_route("/settings")
+
+    async def go_logout(e):
+        logger.debug(f"Logout route pushed: {e}")
+        await page.push_route("/")
 
     # header: back arrow + centered title, no overflow menu
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=20, vertical=10),
         bgcolor="#FFFFFF",
-        content=ft.Stack(
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             controls=[
+                ft.Row(
+                    alignment=ft.MainAxisAlignment.START,
+                    controls=[
+                        ft.IconButton(
+                            icon=ft.Icons.ARROW_BACK,
+                            icon_color="#000000",
+                            icon_size=26,
+                            on_click=go_back,
+                        ),
+                    ],
+                ),
                 ft.Row(
                     alignment=ft.MainAxisAlignment.CENTER,
                     controls=[
@@ -46,13 +66,24 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
                     ],
                 ),
                 ft.Row(
-                    alignment=ft.MainAxisAlignment.START,
+                    spacing=6,
                     controls=[
-                        ft.IconButton(
-                            icon=ft.Icons.ARROW_BACK,
-                            icon_color="#000000",
-                            icon_size=26,
-                            on_click=go_back,
+                        ft.Icon(ft.Icons.NOTIFICATIONS_NONE, color=black, size=26),
+                        ft.PopupMenuButton(
+                            icon=ft.Icons.MORE_VERT,
+                            icon_color=black,
+                            items=[
+                                ft.PopupMenuItem(
+                                    content=ft.Text("Settings"),
+                                    icon=ft.Icons.SETTINGS_OUTLINED,
+                                    on_click=go_settings,
+                                ),
+                                ft.PopupMenuItem(
+                                    content=ft.Text("Log out"),
+                                    icon=ft.Icons.LOGOUT,
+                                    on_click=go_logout,
+                                ),
+                            ],
                         ),
                     ],
                 ),

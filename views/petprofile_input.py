@@ -2,8 +2,8 @@ import flet as ft
 import logging
 from firebase_admin import firestore
 
-from model.uid_json import UserIdStore
-from model.firebase_setup import db
+from model.json.uid_json import UserIdStore
+from setup.firebase_setup import db
 
 logger = logging.getLogger(__name__)
 
@@ -46,12 +46,21 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
             logger.debug(f"Homepage route pushed")
         except Exception as e:
             logger.error(f"Error occurred: {e}")
+    async def go_settings(e):
+        # logger.info("Settings nav clicked")
+        logger.debug("Settings nav clicked")
+        await page.push_route("/settings")
+    async def go_logout(e):
+        # logger.info("Settings nav clicked")
+        logger.debug("Logout clicked")
+        await page.push_route("/")
 
     # ---------- App bar (matches header_blue style used on Homepage/Settings) ----------
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=16, vertical=16),
         bgcolor=header_blue,
         content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 ft.IconButton(
@@ -64,6 +73,28 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
                     color=white,
                     size=22,
                     weight=ft.FontWeight.W_800,
+                ),
+                ft.Row(
+                    spacing=6,
+                    controls=[
+                        ft.Icon(ft.Icons.NOTIFICATIONS_NONE, color=black, size=26),
+                        ft.PopupMenuButton(
+                            icon=ft.Icons.MORE_VERT,
+                            icon_color=black,
+                            items=[
+                                ft.PopupMenuItem(
+                                    content=ft.Text("Settings"),
+                                    icon=ft.Icons.SETTINGS_OUTLINED,
+                                    on_click=go_settings,
+                                ),
+                                ft.PopupMenuItem(
+                                    content=ft.Text("Log out"),
+                                    icon=ft.Icons.LOGOUT,
+                                    on_click=go_logout,
+                                ),
+                            ],
+                        ),
+                    ],
                 ),
             ],
         ),

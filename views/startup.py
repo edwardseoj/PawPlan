@@ -4,7 +4,7 @@ import threading
 
 from model.firestore_auth import uid_account, create_oauth_user_doc
 from utility.navigation import go_to
-from model.google_dotenv_setup import provider
+from setup.google_dotenv_setup import provider
 
 logger = logging.getLogger(f"pawplan.{__name__}")
 # === COPILOT NOTE ===

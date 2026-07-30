@@ -3,7 +3,7 @@ import logging
 from dataclasses import dataclass
 
 from model.firestore_auth import get_uid
-from model.uid_json import UserIdStore
+from model.json.uid_json import UserIdStore
 from utility.navigation import go_to
 
 logger = logging.getLogger(f"pawplan.{__name__}")

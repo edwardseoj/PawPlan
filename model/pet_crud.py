@@ -1,6 +1,6 @@
 from firebase_admin import firestore
 
-from model.firebase_setup import db
+from setup.firebase_setup import db
 import logging
 logger = logging.getLogger(f"pawplan.{__name__}")
 

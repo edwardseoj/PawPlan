@@ -66,9 +66,6 @@ def account_profile_view(page: ft.Page) -> ft.View:
         logger.debug(f"Settings route pushed: {e}")
         await page.push_route("/settings")
 
-    def go_help(e):
-        logger.info("Help clicked")
-
     async def go_logout(e):
         logger.debug(f"Logout route pushed: {e}")
         await page.push_route("/")
@@ -140,11 +137,6 @@ def account_profile_view(page: ft.Page) -> ft.View:
                                     content=ft.Text("Settings"),
                                     icon=ft.Icons.SETTINGS_OUTLINED,
                                     on_click=go_settings,
-                                ),
-                                ft.PopupMenuItem(
-                                    content=ft.Text("Help"),
-                                    icon=ft.Icons.HELP_OUTLINE,
-                                    on_click=go_help,
                                 ),
                                 ft.PopupMenuItem(
                                     content=ft.Text("Log out"),

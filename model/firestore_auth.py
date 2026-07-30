@@ -1,7 +1,7 @@
 import logging
-from model.firebase_setup import db
-from model.create_account_json import NewAccountStore
-from model.uid_json import UserIdStore
+from setup.firebase_setup import db
+from model.json.create_account_json import NewAccountStore
+from model.json.uid_json import UserIdStore
 
 create_account = NewAccountStore()
 uid_account = UserIdStore()

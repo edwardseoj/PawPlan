@@ -9,7 +9,7 @@ from google.cloud.firestore_v1 import FieldFilter
 from model.firestore_auth import get_uid
 from model.pet_crud import get_pet_list
 from utility.navigation import go_to
-from model.firebase_setup import db
+from setup.firebase_setup import db
 
 # LOGGER SETUP
 logger = logging.getLogger(f"pawplan.{__name__}")
@@ -76,6 +76,10 @@ def homepage_view(page: ft.Page) -> ft.View:
         # logger.info("Settings nav clicked")
         logger.debug("Settings nav clicked")
         await page.push_route("/settings")
+    async def go_logout(e):
+        # logger.info("Settings nav clicked")
+        logger.debug("Logout clicked")
+        await page.push_route("/")
 
     pill_nav_routes = ["/homepage", "/taskboard", "/account_profile"]
 
@@ -134,9 +138,14 @@ def homepage_view(page: ft.Page) -> ft.View:
                             icon_color=black,
                             items=[
                                 ft.PopupMenuItem(
-                                    content = ft.Text("Settings"),
+                                    content=ft.Text("Settings"),
                                     icon=ft.Icons.SETTINGS_OUTLINED,
                                     on_click=go_settings,
+                                ),
+                                ft.PopupMenuItem(
+                                    content=ft.Text("Log out"),
+                                    icon=ft.Icons.LOGOUT,
+                                    on_click=go_logout,
                                 ),
                             ],
                         ),

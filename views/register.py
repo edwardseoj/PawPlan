@@ -3,7 +3,7 @@ import logging
 
 from model.firestore_auth import create_user_doc
 from views.login import header_bar, labeled_field
-from model.create_account_json import NewAccountStore
+from model.json.create_account_json import NewAccountStore
 
 logger = logging.getLogger(f"pawplan.{__name__}")
 

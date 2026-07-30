@@ -45,11 +45,20 @@ DESTINATIONS = [
 
 
 def taskboard_view(page: ft.Page) -> ft.View:
+    async def go_settings(e):
+        # logger.info("Settings nav clicked")
+        logger.debug("Settings nav clicked")
+        await page.push_route("/settings")
+    async def go_logout(e):
+        # logger.info("Settings nav clicked")
+        logger.debug("Logout clicked")
+        await page.push_route("/")
 
     pill_nav_routes = ["/homepage", "/taskboard", "/account_profile"]
 
     header_row = ft.Row(
-        alignment=ft.MainAxisAlignment.CENTER,
+        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+        vertical_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
             ft.Text(
                 "Taskboard",
@@ -57,11 +66,34 @@ def taskboard_view(page: ft.Page) -> ft.View:
                 weight=ft.FontWeight.W_800,
                 color=black,
             ),
+            ft.Row(
+                spacing=6,
+                controls=[
+                    ft.Icon(ft.Icons.NOTIFICATIONS_NONE, color=black, size=26),
+                    ft.PopupMenuButton(
+                        icon=ft.Icons.MORE_VERT,
+                        icon_color=black,
+                        items=[
+                            ft.PopupMenuItem(
+                                content=ft.Text("Settings"),
+                                icon=ft.Icons.SETTINGS_OUTLINED,
+                                on_click=go_settings,
+                            ),
+                            ft.PopupMenuItem(
+                                content=ft.Text("Log out"),
+                                icon=ft.Icons.LOGOUT,
+                                on_click=go_logout,
+                            ),
+                        ],
+                    ),
+                ],
+            ),
         ],
     )
 
     appbar = ft.Container(
-        padding=ft.Padding.only(left=8, right=20, top=16, bottom=8),
+        padding=ft.Padding.symmetric(horizontal=16, vertical=16),
+        # padding=ft.Padding.only(left=8, right=20, top=16, bottom=8),
         bgcolor=white,
         content=header_row,
     )

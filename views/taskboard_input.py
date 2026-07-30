@@ -1,11 +1,11 @@
 import flet as ft
 import logging
 from firebase_admin import firestore
-from datetime import datetime, time, date, timedelta
+from datetime import time, date
 import calendar
 
-from model.uid_json import UserIdStore
-from model.firebase_setup import db
+from model.json.uid_json import UserIdStore
+from setup.firebase_setup import db
 
 logger = logging.getLogger(__name__)
 
