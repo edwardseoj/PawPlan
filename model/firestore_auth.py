@@ -5,12 +5,14 @@ import requests
 from model.firebase_setup import db
 from model.create_account_json import NewAccountStore
 from model.uid_json import UserIdStore
+from dotenv import load_dotenv
 
+load_dotenv()
 create_account = NewAccountStore()
 uid_account = UserIdStore()
 logger = logging.getLogger(__name__)
 
-API_KEY = os.getenv("FIREBASE_API_KEY")
+API_KEY = os.getenv("FIREBASE_WEB_API_KEY")
 if not API_KEY:
     raise ValueError("Missing FIREBASE_WEB_API_KEY in .env file")
 
