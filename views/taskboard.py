@@ -1,6 +1,8 @@
 import flet as ft
 import logging
 
+from utility.navigation import go_to
+
 logger = logging.getLogger(f"pawplan.{__name__}")
 
 # Sample data (wire up to Firestore later)
@@ -153,6 +155,27 @@ def taskboard_view(page: ft.Page) -> ft.View:
         ],
     )
 
+    add_task_button = ft.Container(
+        content=ft.Column(
+            controls=[
+                ft.Button(
+                    content=ft.Row(
+                        spacing=6,
+                        tight=True,
+                        controls=[
+                            ft.Icon(ft.Icons.ADD, color=white, size=18),
+                            ft.Text("Add Task", color=white, weight=ft.FontWeight.W_700),
+                        ],
+                    ),
+                    bgcolor="#0D6EFD",
+                    on_click=go_to(page, "/taskboard_input"),
+                ),
+            ],
+        ),
+        alignment=ft.Alignment.CENTER,
+        margin=ft.Margin.only(top=20),
+    )
+
     # ---------------- Floating nav bar ----------------
     nav_state = {"resting_scale": 1.0, "hovering": False}
     # Taskboard is index 1 in DESTINATIONS, so it starts active since we're on this page.
@@ -275,6 +298,7 @@ def taskboard_view(page: ft.Page) -> ft.View:
             appbar,
             todays_task_section,
             upcoming_task_section,
+            add_task_button,
             ft.Container(height=100),
         ],
     )

@@ -19,6 +19,7 @@ from views.homepage import homepage_view
 from views.petprofile_input import petprofile_input_view
 from views.petreminder import pet_reminder_view
 from views.taskboard import taskboard_view
+from views.taskboard_input import taskboard_input_view
 
 def main(page: ft.Page):
     page.title = "PawPlan"
@@ -47,6 +48,7 @@ def main(page: ft.Page):
         "/settings": settings_view,
         "/petprofile": petprofile_view,
         "/taskboard": taskboard_view,
+        "/taskboard_input": taskboard_input_view,
     }
 
     def route_change(e):
