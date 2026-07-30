@@ -5,6 +5,12 @@ import datetime
 from datetime import time
 from flet.controls import page
 
+primary = "#0D6EFD"
+header_blue = "#1450B4"
+orange = "#F5821F"
+soft_border = "#DDE3EE"
+white = "#FFFFFF"
+black = "#000000"
 
 def taskmaker_view(page: ft.Page) -> ft.View:
     page.scroll = ft.ScrollMode.AUTO
@@ -28,7 +34,7 @@ def taskmaker_view(page: ft.Page) -> ft.View:
 
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=20, vertical=10),
-        bgcolor="#8C52FF",
+        bgcolor=header_blue,
         content=ft.Row(
             alignment=ft.MainAxisAlignment.CENTER,
             controls=[
@@ -45,19 +51,24 @@ def taskmaker_view(page: ft.Page) -> ft.View:
             size=22,
             weight=ft.FontWeight.W_700,
             color="Black",
+            text_align=ft.TextAlign.CENTER,
         ),
     )
 
-    pet_picker = ft.Dropdown(
-        label="Choose Pet",
-        #TODO: add added pets to dropdown
-        options=[
-            ft.dropdown.Option("Nanet Japoles"),
-            ft.dropdown.Option("Layla Mesarka od Travnik"),
-        ])
+    # pet_picker = ft.Dropdown(
+    #     label="Choose Pet",
+    #     #TODO: add added pets to dropdown
+    #     options=[
+    #         ft.dropdown.Option("Nanet Japoles"),
+    #         ft.dropdown.Option("Layla Mesarka od Travnik"),
+    #     ])
 
     #inputs
-    task_input = ft.TextField(label="Input new task here", width=300, text_align=ft.TextAlign.CENTER)
+    task_input = ft.TextField(
+        label="Input new task here",
+        width=300,
+        text_align=ft.TextAlign.CENTER,
+    )
 
     time_picker = ft.TimePicker(
     value=time(hour=4, minute=20),
@@ -81,9 +92,10 @@ def taskmaker_view(page: ft.Page) -> ft.View:
     content = ft.SafeArea(
             content=ft.Column(
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.CENTER,
                 spacing = 15,
                 controls=[
-                    pet_picker,
+                    #pet_picker,
                     task_input,
                     ft.Button(
                         key="pick_time_button",
@@ -103,6 +115,7 @@ def taskmaker_view(page: ft.Page) -> ft.View:
         )
 
     return ft.View(
+        bgcolor=white,
         appbar=appbar,
         controls=[tasks, content],
     )

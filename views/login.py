@@ -1,12 +1,15 @@
 import flet as ft
 import logging
 from dataclasses import dataclass
+from firebase_auth import FirebaseAuth
 
 from model.firestore_auth import get_uid
 from model.uid_json import UserIdStore
 from utility.navigation import go_to
 
 logger = logging.getLogger(f"pawplan.{__name__}")
+
+
 
 def header_bar(page: ft.Page, title: str) -> ft.Container:
     return ft.Container(
@@ -105,21 +108,23 @@ def login_view(page: ft.Page) -> ft.View:
             return
         error_text.visible = False
 
-        # LOGIC
-        logger.debug(f"Attempting login with username: {username.field.value} and password: {password.field.value}")
-        uid_account = UserIdStore()
-        uid_account.set(str(username.field.value))
+        firebase.login(username, password)
 
-        uid = get_uid()
-
-        # route validation or smthn
-        if(uid is not None):
-            await page.push_route("/homepage")
-        else:
-            error_text.value = "Login failed."
-            username.field.value = ""
-            password.field.value = ""
-            error_text.visible = True
+        # # LOGIC
+        # logger.debug(f"Attempting login with username: {username.field.value} and password: {password.field.value}")
+        # uid_account = UserIdStore()
+        # uid_account.set(str(username.field.value))
+        #
+        # uid = get_uid()
+        #
+        # # route validation or smthn
+        # if(uid is not None):
+        #     await page.push_route("/homepage")
+        # else:
+        #     error_text.value = "Login failed."
+        #     username.field.value = ""
+        #     password.field.value = ""
+        #     error_text.visible = True
 
 
     not_registered = ft.TextButton(
