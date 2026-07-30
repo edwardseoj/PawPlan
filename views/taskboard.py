@@ -1,13 +1,15 @@
 import flet as ft
 import logging
 
+from utility.navigation import go_to
+
 logger = logging.getLogger(f"pawplan.{__name__}")
 
-# Sample data (wire up to Firestore later)
+
 TODAYS_TASKS = [
-    {"time": "8:00 am Daily", "task": "Feed Bella"},
-    {"time": "12:00 pm Daily", "task": "Walk Max"},
-    {"time": "10:00am, June 13", "task": "Vet Appointment for Bella"},
+    {"time": "8:00 am Daily", "task": "Feed Bella", "done": False},
+    {"time": "12:00 pm Daily", "task": "Walk Max", "done": False},
+    {"time": "10:00am, June 13", "task": "Vet Appointment for Bella", "done": False},
 ]
 
 UPCOMING_TASKS = []
@@ -22,6 +24,7 @@ nav_blue = "#0B4FB0"
 
 NAV_SHRINK_SCALE = 0.6
 NAV_HOVER_SCALE = 1.1
+LOGO_SIZE = 70
 
 DESTINATIONS = [
     ft.NavigationBarDestination(
@@ -46,58 +49,144 @@ def taskboard_view(page: ft.Page) -> ft.View:
 
     pill_nav_routes = ["/homepage", "/taskboard", "/account_profile"]
 
-    header_row = ft.Row(
-        alignment=ft.MainAxisAlignment.CENTER,
-        controls=[
-            ft.Text(
-                "Taskboard",
-                size=28,
-                weight=ft.FontWeight.W_800,
-                color=black,
-            ),
-        ],
+    # ---------------- Branded app header (logo, notifications, settings) ----------------
+    # Matches homepage.py's appbar so the same top bar appears on every main tab.
+    appbar = ft.Container(
+        padding=ft.Padding.symmetric(horizontal=20, vertical=12),
+        bgcolor=white,
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            controls=[
+                ft.Row(
+                    spacing=10,
+                    controls=[
+                        ft.Container(
+                            width=LOGO_SIZE,
+                            height=LOGO_SIZE,
+                            border_radius=10,
+                            alignment=ft.Alignment.CENTER,
+                            content=ft.Image(
+                                src="pawplan_icon.png",
+                                width=LOGO_SIZE,
+                                height=LOGO_SIZE,
+                                fit=ft.BoxFit.CONTAIN,
+                            ),
+                        ),
+                        ft.Row(
+                            spacing=2,
+                            controls=[
+                                ft.Text("Paw", size=22, weight=ft.FontWeight.W_800, color=orange),
+                                ft.Text("Plan", size=22, weight=ft.FontWeight.W_800, color="#0B2E6B"),
+                            ],
+                        ),
+                    ],
+                ),
+                ft.Row(
+                    spacing=6,
+                    controls=[
+                        ft.Icon(ft.Icons.NOTIFICATIONS_NONE, color=black, size=26),
+                        ft.PopupMenuButton(
+                            icon=ft.Icons.MORE_VERT,
+                            icon_color=black,
+                            items=[
+                                ft.PopupMenuItem(
+                                    content=ft.Text("Settings"),
+                                    icon=ft.Icons.SETTINGS_OUTLINED,
+                                    on_click=go_to(page, "/settings"),
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        ),
     )
 
-    appbar = ft.Container(
+    appbar_divider = ft.Container(height=5, bgcolor=orange)
+
+    page_title = ft.Container(
         padding=ft.Padding.only(left=8, right=20, top=16, bottom=8),
         bgcolor=white,
-        content=header_row,
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
+                ft.Text(
+                    "Taskboard",
+                    size=28,
+                    weight=ft.FontWeight.W_800,
+                    color=black,
+                ),
+            ],
+        ),
     )
-
-    def task_pill(label, index):
-        color = "#0B4FB0"
-        return ft.Container(
-            margin=ft.Margin.only(top=6, bottom=6),
-            padding=ft.Padding.symmetric(horizontal=12, vertical=10),
-            border_radius=30,
-            bgcolor=color,
-            content=ft.Row(
-                spacing=12,
-                vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                controls=[
-                    ft.Text(
-                        label,
-                        color=white,
-                        size=14,
-                        weight=ft.FontWeight.W_600,
-                        expand=True,
-                    ),
-                ],
-            ),
-        )
 
     def task_label(item):
         return f"{item['time']} - {item['task']}"
 
+    def task_pill(item, index):
+        color = "#0B4FB0"
+
+        label_text = ft.Text(
+            task_label(item),
+            color=white,
+            size=14,
+            weight=ft.FontWeight.W_600,
+            expand=True,
+            style=ft.TextStyle(
+                decoration=ft.TextDecoration.LINE_THROUGH if item["done"] else None,
+                decoration_color=black,
+            ),
+        )
+
+        pill_container = ft.Container(
+            margin=ft.Margin.only(top=6, bottom=6),
+            padding=ft.Padding.symmetric(horizontal=12, vertical=10),
+            border_radius=30,
+            bgcolor=color,
+            opacity=0.5 if item["done"] else 1.0,
+            animate_opacity=ft.Animation(150, ft.AnimationCurve.EASE_OUT),
+        )
+
+        def on_check_change(e: ft.ControlEvent):
+            item["done"] = e.control.value
+            label_text.style = ft.TextStyle(
+                decoration=ft.TextDecoration.LINE_THROUGH if item["done"] else None,
+                decoration_color=black,
+            )
+            pill_container.opacity = 0.5 if item["done"] else 1.0
+            label_text.update()
+            pill_container.update()
+
+        checkbox = ft.Checkbox(
+            value=item["done"],
+            on_change=on_check_change,
+            check_color=color,
+            fill_color=white,
+            active_color=white,
+        )
+
+        pill_container.content = ft.Row(
+            spacing=8,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                checkbox,
+                label_text,
+            ],
+        )
+
+        return pill_container
+
     today_pills = ft.Column(
         spacing=0,
-        controls=[task_pill(task_label(t), i) for i, t in enumerate(TODAYS_TASKS)],
+        scroll = ft.ScrollMode.AUTO,
+        controls=[task_pill(t, i) for i, t in enumerate(TODAYS_TASKS)],
     )
 
     upcoming_pills = ft.Column(
         spacing=0,
+        scroll = ft.ScrollMode.AUTO,
         controls=(
-            [task_pill(task_label(t), i) for i, t in enumerate(UPCOMING_TASKS)]
+            [task_pill(t, i) for i, t in enumerate(UPCOMING_TASKS)]
             if UPCOMING_TASKS
             else [
                 ft.Container(
@@ -114,6 +203,8 @@ def taskboard_view(page: ft.Page) -> ft.View:
         ),
     )
 
+
+
     def section_header(label):
         return ft.Container(
             margin=ft.Margin.only(left=20, right=20, top=24, bottom=10),
@@ -125,7 +216,7 @@ def taskboard_view(page: ft.Page) -> ft.View:
             ),
         )
 
-    def section_box(content_column, min_height=None):
+    def section_box(content_column, min_height=300):
         return ft.Container(
             margin=ft.Margin.only(left=20, right=20),
             padding=ft.Padding.symmetric(horizontal=10, vertical=10),
@@ -153,9 +244,8 @@ def taskboard_view(page: ft.Page) -> ft.View:
         ],
     )
 
-    # ---------------- Floating nav bar ----------------
+
     nav_state = {"resting_scale": 1.0, "hovering": False}
-    # Taskboard is index 1 in DESTINATIONS, so it starts active since we're on this page.
     nav_active_index = {"value": 1}
     nav_icon_containers = []
     nav_labels = []
@@ -217,6 +307,8 @@ def taskboard_view(page: ft.Page) -> ft.View:
             ),
         )
 
+
+
     floating_nav = ft.Container(
         bgcolor=nav_blue,
         border_radius=32,
@@ -240,15 +332,19 @@ def taskboard_view(page: ft.Page) -> ft.View:
         ),
     )
 
+
+
     def shrink_nav():
         nav_state["resting_scale"] = NAV_SHRINK_SCALE
         if not nav_state["hovering"]:
             apply_nav_scale(NAV_SHRINK_SCALE)
 
+
     def restore_nav(e=None):
         nav_state["resting_scale"] = 1.0
         if not nav_state["hovering"]:
             apply_nav_scale(1.0)
+
 
     def handle_nav_hover(e: ft.HoverEvent):
         is_hovering = e.data == "true"
@@ -262,6 +358,7 @@ def taskboard_view(page: ft.Page) -> ft.View:
     floating_nav.on_hover = handle_nav_hover
 
     def handle_content_scroll(e: ft.OnScrollEvent):
+
         if e.event_type == ft.ScrollType.USER:
             shrink_nav()
 
@@ -273,27 +370,33 @@ def taskboard_view(page: ft.Page) -> ft.View:
         on_scroll=handle_content_scroll,
         controls=[
             appbar,
+            appbar_divider,
+            page_title,
             todays_task_section,
             upcoming_task_section,
             ft.Container(height=100),
         ],
     )
 
+    floating_nav_overlay = ft.Container(
+        left=0,
+        right=0,
+        bottom=20,
+        alignment=ft.Alignment.CENTER,
+        content=floating_nav,
+    )
+
     return ft.View(
         route="/taskboard",
-        bgcolor=white,
+        bgcolor="#FFFFFF",
         padding=0,
         spacing=0,
         controls=[
-            ft.Column(
+            ft.Stack(
                 expand=True,
-                spacing=0,
                 controls=[
                     main_content,
-                    ft.Row(
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        controls=[floating_nav],
-                    ),
+                    floating_nav_overlay,
                 ],
             )
         ],

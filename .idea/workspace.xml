@@ -9,35 +9,11 @@
   <component name="ChangeListManager">
     <list default="true" id="1ba19bff-17e9-4a2f-a6d4-bae29a6a567a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/.ai/mcp/mcp.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/.python-version" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/assets/pawplan_icon.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/pawplan_icon.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/create_account_json.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/create_account_json.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/firebase_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/firebase_setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/firestore_auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/firestore_auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/google_dotenv_setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/google_dotenv_setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/pet_crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/pet_crud.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/uid_json.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/uid_json.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/user_account_crud.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/user_account_crud.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/model/user_details_json.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/user_details_json.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/utility/logging_config.py" beforeDir="false" afterPath="$PROJECT_DIR$/utility/logging_config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/utility/navigation.py" beforeDir="false" afterPath="$PROJECT_DIR$/utility/navigation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/account_profile.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/account_profile.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/homepage.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/homepage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/login.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/login.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/petprofile.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/petprofile.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/petprofile_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/petprofile_input.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/petreminder.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/petreminder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/register.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/register.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/startup.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/startup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/taskboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/taskboard.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PawPlan-backend-dev/views/taskmaker.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/taskmaker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/account_profile.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/account_profile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/login.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/login.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/petprofile_input.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/petprofile_input.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/views/taskboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/views/taskboard.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,61 +41,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.043336852113833" />
-      <entry key="MS500" value="3.11986317158726" />
-      <entry key="S2" value="8.664940267967868" />
-      <entry key="S5" value="12.999964704823052" />
-      <entry key="S10" value="17.9005705258603" />
-      <entry key="S30" value="27.880325980081412" />
-      <entry key="S60" value="36.266701866140444" />
-      <entry key="M2" value="50.37304011638454" />
-      <entry key="M5" value="92.41634709244133" />
-      <entry key="M10" value="148.7766517501954" />
-      <entry key="M15" value="188.85989853878309" />
-      <entry key="M30" value="267.57323373095653" />
-      <entry key="H1" value="358.43312078207595" />
-      <entry key="H2" value="451.04173035415585" />
-      <entry key="H4" value="532.7341454431357" />
-      <entry key="D1" value="646.429312875093" />
-      <entry key="W1" value="673.2474089351134" />
+      <entry key="MS100" value="1.192135750803061" />
+      <entry key="MS500" value="3.2262016587304916" />
+      <entry key="S2" value="6.534753270428315" />
+      <entry key="S5" value="7.875594760837049" />
+      <entry key="S10" value="8.458140371755377" />
+      <entry key="S30" value="9.989696960806334" />
+      <entry key="S60" value="11.81121770276671" />
+      <entry key="M2" value="15.059759291509083" />
+      <entry key="M5" value="24.866272851430352" />
+      <entry key="M10" value="37.27977095317088" />
+      <entry key="M15" value="46.88363657794278" />
+      <entry key="M30" value="79.13705847755517" />
+      <entry key="H1" value="171.38694012204553" />
+      <entry key="H2" value="336.39977191706873" />
+      <entry key="H4" value="520.6085535857793" />
+      <entry key="D1" value="805.9436933833698" />
+      <entry key="W1" value="876.4064771113461" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="7.658E-320" />
-      <entry key="MS500" value="1.505373059104041E-64" />
-      <entry key="S2" value="1.3379705964775614E-16" />
-      <entry key="S5" value="6.361199817355541E-7" />
-      <entry key="S10" value="0.0011162595421412046" />
-      <entry key="S30" value="0.1831613986583661" />
-      <entry key="S60" value="0.7698915448430412" />
-      <entry key="M2" value="1.7593104757986435" />
-      <entry key="M5" value="3.5541751748272166" />
-      <entry key="M10" value="5.447326800550771" />
-      <entry key="M15" value="6.812410114616896" />
-      <entry key="M30" value="9.414902188214405" />
-      <entry key="H1" value="12.02576129625664" />
-      <entry key="H2" value="14.867673542344523" />
-      <entry key="H4" value="18.178215208288513" />
-      <entry key="D1" value="24.12956260753311" />
-      <entry key="W1" value="25.713453463781978" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="4.644250365303784E-269" />
+      <entry key="S30" value="6.346740832984971E-90" />
+      <entry key="S60" value="4.5319797087083435E-45" />
+      <entry key="M2" value="1.3498070496335485E-22" />
+      <entry key="M5" value="5.06652873849142E-9" />
+      <entry key="M10" value="2.0566920591656468E-4" />
+      <entry key="M15" value="0.007666986152306431" />
+      <entry key="M30" value="0.31584772956087653" />
+      <entry key="H1" value="2.2026401562582985" />
+      <entry key="H2" value="6.362949892170643" />
+      <entry key="H4" value="11.892111815543279" />
+      <entry key="D1" value="22.48195496373233" />
+      <entry key="W1" value="25.45496463018438" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.014930302307649" />
-      <entry key="MS500" value="3.1013288377047408" />
-      <entry key="S2" value="8.649466681523224" />
-      <entry key="S5" value="12.990107692652703" />
-      <entry key="S10" value="17.894769899307985" />
-      <entry key="S30" value="28.055583345883775" />
-      <entry key="S60" value="37.02519387758606" />
-      <entry key="M2" value="52.119713779377214" />
-      <entry key="M5" value="95.95169873242726" />
-      <entry key="M10" value="154.1980944273028" />
-      <entry key="M15" value="195.6452107864146" />
-      <entry key="M30" value="276.96444180539595" />
-      <entry key="H1" value="370.4419388406294" />
-      <entry key="H2" value="465.8986131412378" />
-      <entry key="H4" value="550.9058998110577" />
-      <entry key="D1" value="670.557526295815" />
-      <entry key="W1" value="698.9606599310367" />
+      <entry key="MS100" value="1.1753769439270363" />
+      <entry key="MS500" value="3.200936254857107" />
+      <entry key="S2" value="6.51733847666056" />
+      <entry key="S5" value="7.866849040090256" />
+      <entry key="S10" value="8.450548873220013" />
+      <entry key="S30" value="9.962771229073697" />
+      <entry key="S60" value="11.779712873739838" />
+      <entry key="M2" value="15.0269635278898" />
+      <entry key="M5" value="24.828370370857133" />
+      <entry key="M10" value="37.24470338964615" />
+      <entry key="M15" value="46.85995682365906" />
+      <entry key="M30" value="79.42721444339702" />
+      <entry key="H1" value="173.56743707471963" />
+      <entry key="H2" value="342.74527855694873" />
+      <entry key="H4" value="532.488808638783" />
+      <entry key="D1" value="828.4229023183136" />
+      <entry key="W1" value="901.8610225147272" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -146,30 +122,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.taskmaker.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "copilot.chat.legacySessionMetadata.migrated": "true",
-    "git-widget-placeholder": "backend-dev-v2",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "/Users/macbookpro/Desktop/PythonProject/PawPlan-backend-dev",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.taskmaker.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;backend-dev-v2-with-taskmaker&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/macbookpro/Desktop/PythonProject/PawPlan-backend-dev&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <module name="pawplan" />
