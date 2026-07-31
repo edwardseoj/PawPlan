@@ -4,10 +4,9 @@ import logging
 import flet as ft
 import threading
 
-from google.cloud.firestore_v1 import FieldFilter
 from model.firestore_auth import get_uid
 from model.json.uid_json import UserIdStore
-from model.pet_crud import get_pet_list
+from model.pet_crud import get_pet_list, get_pet_color_map, DEFAULT_PET_COLOR
 from model.task_crud import (
     get_task_list,
     split_tasks_by_occurrence,
@@ -15,7 +14,6 @@ from model.task_crud import (
     format_occurrence_date,
 )
 from utility.navigation import go_to
-from setup.firebase_setup import db
 
 logger = logging.getLogger(f"pawplan.{__name__}")
 
@@ -61,18 +59,13 @@ def homepage_view(page: ft.Page) -> ft.View:
     # async functions
     def view_task_handler(pet_name):
         async def handler(e):
-            await view_task(pet_name, return_uid(page))
+            await view_task(pet_name)
         return handler
 
-    async def view_task(pet_name, uid): # need to change code here
+    async def view_task(pet_name):
         logger.debug("Pet reminder: %s", pet_name)
-        reminder_ref = (
-            db.collection("users").document(uid).collection("details").document("pets").collection("reminders").
-            where(filter=FieldFilter("pet","==",pet_name)).stream()
-        )
-        for reminders in reminder_ref:
-            print(f"{reminders.id} => {reminders.to_dict()}")
-
+        # remember which pet's reminders to show on /petreminder
+        page.session.store.set("pet_name", pet_name)
         await page.push_route("/petreminder")
 
     async def go_settings(e):
@@ -197,6 +190,7 @@ def homepage_view(page: ft.Page) -> ft.View:
     def pet_card(index):
         # get the name per index
         pet_name = pet_list[index]["name"]
+        pet_color = pet_list[index].get("color") or DEFAULT_PET_COLOR
         uid = return_uid(page)
 
         # page session
@@ -216,7 +210,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                     ft.Container(
                         width=90,
                         height=90,
-                        bgcolor="#F1D9B0",
+                        bgcolor=pet_color,
                         border_radius=10,
                         border=ft.Border.all(2, white),
                         alignment=ft.Alignment.CENTER,
@@ -281,6 +275,7 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     # tasks from firestore, split by their schedule
     all_tasks = get_task_list()
+    pet_color_map = get_pet_color_map()
     todays_tasks, upcoming_tasks = split_tasks_by_occurrence(all_tasks, today)
 
     def day_cell(day, col_index):
@@ -381,16 +376,30 @@ def homepage_view(page: ft.Page) -> ft.View:
         pet_name = item.get("pet_name", "Untitled pet")
         alarm = item.get("alarm") or {}
         time_str = alarm.get("time_12hr") or alarm.get("time") or "No time set"
+        pet_color = pet_color_map.get(pet_name, DEFAULT_PET_COLOR)
 
         return ft.Container(
-            border=ft.Border.all(1, soft_border),
+            border=ft.Border.all(1, pet_color),
             border_radius=8,
             padding=ft.Padding.symmetric(horizontal=14, vertical=12),
-            content=ft.Text(
-                f"{task_name} for {pet_name} - {time_str}, {format_occurrence_date(occ_date, today)}",
-                size=15,
-                weight=ft.FontWeight.W_600,
-                color=black,
+            content=ft.Row(
+                spacing=10,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Container(
+                        width=12,
+                        height=12,
+                        border_radius=6,
+                        bgcolor=pet_color,
+                    ),
+                    ft.Text(
+                        f"{task_name} for {pet_name} - {time_str}, {format_occurrence_date(occ_date, today)}",
+                        size=15,
+                        weight=ft.FontWeight.W_600,
+                        color=black,
+                        expand=True,
+                    ),
+                ],
             ),
         )
 

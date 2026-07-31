@@ -2,6 +2,7 @@ import flet as ft
 import logging
 from datetime import date
 
+from model.pet_crud import get_pet_color_map, DEFAULT_PET_COLOR
 from model.task_crud import (
     get_task_list,
     split_tasks_by_occurrence,
@@ -11,9 +12,6 @@ from model.task_crud import (
 from utility.navigation import go_to
 
 logger = logging.getLogger(f"pawplan.{__name__}")
-
-# colors used for the task pills
-pill_colors = ["#6C5CE7", "#F05648"]
 
 black = "#000000"
 white = "#FFFFFF"
@@ -45,6 +43,7 @@ DESTINATIONS = [
 
 def taskboard_view(page: ft.Page) -> ft.View:
     today = date.today()
+    pet_color_map = get_pet_color_map()
     todays_tasks, upcoming_tasks = split_tasks_by_occurrence(get_task_list(), today)
 
     async def go_settings(e):
@@ -158,12 +157,10 @@ def taskboard_view(page: ft.Page) -> ft.View:
             logger.error("complete_task_occurrence failed: %s", err)
             return False
 
-    def task_pill(label, occ_date, item, list_holder, empty_message):
-        color = "#0B4FB0"
-
+    def task_pill(label, occ_date, item, color, list_holder, empty_message):
         label_text = ft.Text(
             label,
-            color=white,
+            color=black,
             size=14,
             weight=ft.FontWeight.W_600,
             expand=True,
@@ -233,7 +230,14 @@ def taskboard_view(page: ft.Page) -> ft.View:
     today_list_holder = {}
     today_pill_controls = (
         [
-            task_pill(task_label(d, t), d, t, today_list_holder, "No tasks scheduled today")
+            task_pill(
+                task_label(d, t),
+                d,
+                t,
+                pet_color_map.get(t.get("pet_name"), DEFAULT_PET_COLOR),
+                today_list_holder,
+                "No tasks scheduled today",
+            )
             for d, t in todays_tasks
         ]
         if todays_tasks
@@ -249,7 +253,14 @@ def taskboard_view(page: ft.Page) -> ft.View:
     upcoming_list_holder = {}
     upcoming_pill_controls = (
         [
-            task_pill(task_label(d, t), d, t, upcoming_list_holder, "No upcoming tasks")
+            task_pill(
+                task_label(d, t),
+                d,
+                t,
+                pet_color_map.get(t.get("pet_name"), DEFAULT_PET_COLOR),
+                upcoming_list_holder,
+                "No upcoming tasks",
+            )
             for d, t in upcoming_tasks
         ]
         if upcoming_tasks
@@ -301,25 +312,17 @@ def taskboard_view(page: ft.Page) -> ft.View:
         ],
     )
 
-    add_task_button = ft.Container(
-        content=ft.Column(
+    add_task_button = ft.Button(
+        content=ft.Row(
+            spacing=6,
+            tight=True,
             controls=[
-                ft.Button(
-                    content=ft.Row(
-                        spacing=6,
-                        tight=True,
-                        controls=[
-                            ft.Icon(ft.Icons.ADD, color=white, size=18),
-                            ft.Text("Add Task", color=white, weight=ft.FontWeight.W_700),
-                        ],
-                    ),
-                    bgcolor="#0D6EFD",
-                    on_click=go_to(page, "/taskboard_input"),
-                ),
+                ft.Icon(ft.Icons.ADD, color=white, size=18),
+                ft.Text("Add Task", color=white, weight=ft.FontWeight.W_700),
             ],
         ),
-        alignment=ft.Alignment.CENTER,
-        margin=ft.Margin.only(top=20),
+        bgcolor="#0D6EFD",
+        on_click=go_to(page, "/taskboard_input"),
     )
 
     # ---------------- Floating nav bar ----------------
@@ -445,8 +448,7 @@ def taskboard_view(page: ft.Page) -> ft.View:
             page_title,
             todays_task_section,
             upcoming_task_section,
-            add_task_button,
-            ft.Container(height=100),
+            ft.Container(height=160),
         ],
     )
 
@@ -456,6 +458,18 @@ def taskboard_view(page: ft.Page) -> ft.View:
         bottom=20,
         alignment=ft.Alignment.CENTER,
         content=floating_nav,
+    )
+
+    # Pinned above the nav overlay so the add button can never be covered by
+    # the pill, regardless of scroll position or shrink/expand state.
+    # bottom=145 clears the hover-expanded (1.1x) pill top (~120px) with ~25px
+    # to spare, while keeping the button as close as possible to the nav.
+    add_task_overlay = ft.Container(
+        left=0,
+        right=0,
+        bottom=145,
+        alignment=ft.Alignment.CENTER,
+        content=add_task_button,
     )
 
     return ft.View(
@@ -468,6 +482,8 @@ def taskboard_view(page: ft.Page) -> ft.View:
                 expand=True,
                 controls=[
                     main_content,
+                    ft.Container(height=100),
+                    add_task_overlay,
                     floating_nav_overlay,
                 ],
             )

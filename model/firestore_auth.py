@@ -7,6 +7,26 @@ create_account = NewAccountStore()
 uid_account = UserIdStore()
 logger = logging.getLogger(__name__)
 
+
+def seed_uid_from_auth(auth):
+    """Mirror an authenticated user's email into the local uid store.
+
+    The model CRUD modules (task_crud, pet_crud) read their uid from this
+    store, and main.py clears it on startup. Views that load while a session
+    is already active (e.g. page refresh / navigating back to "/") must call
+    this so Firestore reads/writes hit the right user document.
+
+    Returns the seeded uid, or None if there is no usable auth context.
+    """
+    try:
+        email = auth.user["email"]
+    except (AttributeError, KeyError, TypeError):
+        return None
+    if not email:
+        return None
+    uid_account.set(str(email))
+    return str(email)
+
 # For new accounts (register and oauth)
 def create_user_doc():
     # logger.debug("Creating user document in Firestore...")

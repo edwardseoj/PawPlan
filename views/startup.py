@@ -2,7 +2,7 @@ import flet as ft
 import logging
 import threading
 
-from model.firestore_auth import uid_account, create_oauth_user_doc
+from model.firestore_auth import seed_uid_from_auth, create_oauth_user_doc
 from utility.navigation import go_to
 from setup.google_dotenv_setup import provider
 
@@ -24,7 +24,7 @@ def make_on_login(page: ft.Page): # called on main
             email = str(page.auth.user["email"])
             logger.info("Logged in as: %s", email)
             # set local uid immediately so other views can read it
-            uid_account.set(email)
+            seed_uid_from_auth(page.auth)
 
             # create firestore user document in background to avoid blocking navigation
             def _create_doc():
@@ -42,6 +42,12 @@ def make_on_login(page: ft.Page): # called on main
 
 # STARTUP PAGE ("/")
 def startup_view(page: ft.Page) -> ft.View:
+    # Re-seed the local uid store from a restored auth session so model CRUD
+    # calls resolve the right Firestore doc even though main.py clears the
+    # uid file on startup (e.g. after a page refresh or navigating back here
+    # while still signed in).
+    seed_uid_from_auth(page.auth)
+
     async def login_click(e):
         await page.login(provider)
 
@@ -116,11 +122,13 @@ def startup_view(page: ft.Page) -> ft.View:
     )
 
     # ---------- Google sign-in button ----------
+    # Logo is bundled locally (assets/google_g_logo.png) instead of hotlinking
+    # wikimedia so the button looks the same offline / without external network.
     google_logo = ft.Container(
         height = 20,
         width = 20,
         content = ft.Image(
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/3840px-Google_%22G%22_logo.svg.png",
+            src="google_g_logo.png",
             height = 18,
             width = 18,
             fit = ft.BoxFit.CONTAIN,

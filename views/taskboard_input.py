@@ -598,15 +598,17 @@ def taskboard_input_view(page: ft.Page) -> ft.View:
         content=ft.Icon(ft.Icons.FORMAT_LIST_BULLETED_ROUNDED, size=44, color="#8A6A3B"),
     )
 
-    # Firestore code
-    current_user_id = None
-    if (page.auth is not None):
-        current_user_id = page.auth.user["email"]
+    # Resolve the current user's uid and mirror it into the local uid store,
+    # so the model CRUD calls (task_crud / pet_crud) read the right Firestore
+    # doc. This matches homepage.py's return_uid() pattern: after an OAuth
+    # login the temp uid file may be empty (main.py clears it on startup), so
+    # page.auth is the source of truth here.
+    if page.auth is not None:
+        current_user_id = str(page.auth.user["email"])
     else:
-        user_session = UserIdStore()
-        current_user_id = user_session.get()
-
-
+        current_user_id = UserIdStore().get()
+    if current_user_id:
+        UserIdStore().set(current_user_id)
 
     # Normal functions can't call async functions
     async def add_task(e):
@@ -632,13 +634,21 @@ def taskboard_input_view(page: ft.Page) -> ft.View:
         # Prepare task data for Firebase
 
         try:
-            # Add task to Firestore
-            add_task_crud(
+            # Add task to Firestore via the model CRUD
+            saved = add_task_crud(
                 task_name.value,
                 pet_selection.value,
-                task_desc.value,
+                task_desc.value or "",
                 alarm_data,
+                uid=current_user_id,
             )
+
+            if not saved:
+                # add_task only fails when no uid is set, i.e. not logged in
+                error_text.value = "Could not save task: not signed in. Please log in again."
+                error_text.visible = True
+                page.update()
+                return
 
             # Show success message
             success_text.value = "✅ Task created successfully with alarm!"

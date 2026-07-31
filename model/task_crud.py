@@ -110,11 +110,16 @@ def get_task_list(uid=None):
     return task_list
 
 # add task
-def add_task(task_name, pet_name, description, alarm):
-    uid = uid_account.get()
+def add_task(task_name, pet_name, description, alarm, uid=None):
+    """Persist a new task to Firestore.
+
+    Returns True on success, False if no uid was available (so callers can
+    surface a real error instead of silently "succeeding").
+    """
+    uid = uid or uid_account.get()
     if not uid:
         logger.error("add_task: no uid set, aborting")
-        return
+        return False
 
     tasks_ref = db.collection("users").document(uid).collection("details").document("tasks")
 
@@ -130,6 +135,8 @@ def add_task(task_name, pet_name, description, alarm):
             "alarm": alarm,
         }])
     }, merge=True)
+    logger.info("Added task '%s' for uid=%s", task_name, uid)
+    return True
 
 
 def _normalize_task_value(value):
@@ -217,3 +224,28 @@ def complete_task_occurrence(task, occurrence_date, uid=None):
     tasks_ref = db.collection("users").document(uid).collection("details").document("tasks")
     tasks_ref.set({"tasks": tasks}, merge=True)
     return True
+
+
+def remove_tasks_by_pet(pet_name, uid=None):
+    """Delete every task assigned to a pet (matched via the task's ``pet_name``).
+
+    Called when a pet is deleted so orphaned tasks don't linger in the
+    separate tasks document. No-op if the tasks document is missing or no
+    task references the pet.
+    """
+    uid = uid or uid_account.get()
+    if not uid:
+        logger.error("remove_tasks_by_pet: no uid set, aborting")
+        return
+
+    tasks = get_task_list(uid)
+    remaining = [t for t in tasks if t.get("pet_name") != pet_name]
+    removed = len(tasks) - len(remaining)
+
+    if removed == 0:
+        logger.debug("remove_tasks_by_pet: no tasks found for pet '%s'", pet_name)
+        return
+
+    tasks_ref = db.collection("users").document(uid).collection("details").document("tasks")
+    tasks_ref.set({"tasks": remaining}, merge=True)
+    logger.info("Removed %d task(s) for pet '%s' (uid=%s)", removed, pet_name, uid)

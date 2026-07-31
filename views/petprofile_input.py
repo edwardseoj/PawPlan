@@ -1,7 +1,11 @@
 import flet as ft
 import logging
 
-from model.pet_crud import add_pet as add_pet_crud   # adjust path to match your project structure
+from model.pet_crud import (
+    add_pet as add_pet_crud,
+    PASTEL_PET_COLORS,
+    DEFAULT_PET_COLOR,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -160,6 +164,42 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
 
     error_text = ft.Text("", color=ft.Colors.RED_600, size=13, visible=False)
 
+    # Pastel color picker for the new pet, stored in Firestore with the pet.
+    selected_color = {"value": DEFAULT_PET_COLOR}
+
+    def build_color_picker() -> ft.Row:
+        swatches = []
+
+        def select(name, hex_color):
+            selected_color["value"] = hex_color
+            for container, swatch_name, _ in swatches:
+                is_selected = swatch_name == name
+                container.border = ft.Border.all(3, black) if is_selected else None
+                container.content = (
+                    ft.Icon(ft.Icons.CHECK, size=18, color=black) if is_selected else None
+                )
+            page.update()
+
+        for name, hex_color in PASTEL_PET_COLORS.items():
+            is_selected = hex_color == selected_color["value"]
+            container = ft.Container(
+                width=40,
+                height=40,
+                border_radius=20,
+                bgcolor=hex_color,
+                alignment=ft.Alignment.CENTER,
+                border=ft.Border.all(3, black) if is_selected else None,
+                content=ft.Icon(ft.Icons.CHECK, size=18, color=black) if is_selected else None,
+                on_click=lambda e, n=name, h=hex_color: select(n, h),
+            )
+            swatches.append((container, name, hex_color))
+
+        return ft.Row(
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=14,
+            controls=[swatch[0] for swatch in swatches],
+        )
+
     # Avatar placeholder (visual anchor at the top of the form)
     avatar_placeholder = ft.Container(
         width=90,
@@ -193,6 +233,7 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
                 pet_age.value,
                 pet_breed.value,
                 allergies_list,
+                selected_color["value"],
             )
         except Exception as ex:
             logger.error(f"Failed to add pet: {ex}")
@@ -229,6 +270,7 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
                 labeled_input("Age", pet_age),
                 labeled_input("Breed", pet_breed),
                 labeled_input("Allergies", pet_allergies),
+                labeled_input("Color", build_color_picker()),
                 error_text,
             ],
         ),
