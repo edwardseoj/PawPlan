@@ -4,9 +4,12 @@ from dataclasses import dataclass
 
 from model.firestore_auth import get_uid
 from model.json.uid_json import UserIdStore
+from model.firestore_auth import log_in
 from utility.navigation import go_to
 
 logger = logging.getLogger(f"pawplan.{__name__}")
+
+
 
 def header_bar(page: ft.Page, title: str) -> ft.Container:
     return ft.Container(
@@ -89,7 +92,8 @@ def login_view(page: ft.Page) -> ft.View:
         "value": None
     }
 
-    username = labeled_field("Username", horizontal_alignment=ft.CrossAxisAlignment.CENTER)
+    #Changed to email because that's how mafia works
+    email = labeled_field("Username", horizontal_alignment=ft.CrossAxisAlignment.CENTER)
     password  = labeled_field("Password", password = True, horizontal_alignment=ft.CrossAxisAlignment.CENTER)
 
 
@@ -97,7 +101,7 @@ def login_view(page: ft.Page) -> ft.View:
     # basic client-side validation - wires up auth check here
     async def do_login(e):
 
-        if not username.field.value or not password.field.value:
+        if not email.field.value or not password.field.value:
             error_text.value = "Please enter username and password."
 
             error_text.visible = True
@@ -105,21 +109,32 @@ def login_view(page: ft.Page) -> ft.View:
             return
         error_text.visible = False
 
-        # LOGIC
-        logger.debug(f"Attempting login with username: {username.field.value} and password: {password.field.value}")
-        uid_account = UserIdStore()
-        uid_account.set(str(username.field.value))
+        uid = log_in(email.field.value, password.field.value)
 
-        uid = get_uid()
-
-        # route validation or smthn
         if(uid is not None):
             await page.push_route("/homepage")
         else:
             error_text.value = "Login failed."
-            username.field.value = ""
+            email.field.value = ""
             password.field.value = ""
             error_text.visible = True
+
+
+        # # LOGIC
+        # logger.debug(f"Attempting login with username: {username.field.value} and password: {password.field.value}")
+        # uid_account = UserIdStore()
+        # uid_account.set(str(username.field.value))
+        #
+        # uid = get_uid()
+        #
+        # # route validation or smthn
+        # if(uid is not None):
+        #     await page.push_route("/homepage")
+        # else:
+        #     error_text.value = "Login failed."
+        #     username.field.value = ""
+        #     password.field.value = ""
+        #     error_text.visible = True
 
 
     not_registered = ft.TextButton(
@@ -168,7 +183,7 @@ def login_view(page: ft.Page) -> ft.View:
         padding = ft.Padding.symmetric(horizontal=35, vertical=35),
         content = ft.Column(
             [
-                username.views,
+                email.views,
                 ft.Container(
                     height = 25
                 ),

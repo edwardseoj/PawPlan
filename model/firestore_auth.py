@@ -2,7 +2,15 @@ import logging
 from setup.firebase_setup import db
 from model.json.create_account_json import NewAccountStore
 from model.json.uid_json import UserIdStore
+import os
+import requests
 
+from setup.firebase_setup import db
+from model.json.create_account_json import NewAccountStore
+from model.json.uid_json import UserIdStore
+from dotenv import load_dotenv
+
+load_dotenv()
 create_account = NewAccountStore()
 uid_account = UserIdStore()
 logger = logging.getLogger(__name__)
@@ -26,6 +34,11 @@ def seed_uid_from_auth(auth):
         return None
     uid_account.set(str(email))
     return str(email)
+API_KEY = os.getenv("FIREBASE_WEB_API_KEY")
+if not API_KEY:
+    raise ValueError("Missing FIREBASE_WEB_API_KEY in .env file")
+
+BASE_URL = "https://identitytoolkit.googleapis.com/v1/accounts"
 
 # For new accounts (register and oauth)
 def create_user_doc():
@@ -89,3 +102,24 @@ def get_uid():
     else:
         logger.debug(f"User document does not exist for UID: {uid}")
         return None
+
+def sign_up(email: str, password: str) -> str | None:
+    resp = requests.post(
+        f"{BASE_URL}:signUp?key={API_KEY}",
+        json={"email": email, "password": password, "returnSecureToken": True},
+    )
+    if resp.status_code == 200:
+        return resp.json()["localId"]
+    logger.debug(f"Sign up failed: {resp.json().get('error', {}).get('message')}")
+    return None
+
+
+def log_in(email: str, password: str) -> str | None:
+    resp = requests.post(
+        f"{BASE_URL}:signInWithPassword?key={API_KEY}",
+        json={"email": email, "password": password, "returnSecureToken": True},
+    )
+    if resp.status_code == 200:
+        return resp.json()["localId"]
+    logger.debug(f"Sign in failed: {resp.json().get('error', {}).get('message')}")
+    return None
