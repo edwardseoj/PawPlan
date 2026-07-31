@@ -1,14 +1,12 @@
 import logging
-from setup.firebase_setup import db
-from model.json.create_account_json import NewAccountStore
-from model.json.uid_json import UserIdStore
 import os
 import requests
 
-from setup.firebase_setup import db
+from dotenv import load_dotenv
+
 from model.json.create_account_json import NewAccountStore
 from model.json.uid_json import UserIdStore
-from dotenv import load_dotenv
+from setup.firebase_setup import db
 
 load_dotenv()
 create_account = NewAccountStore()
@@ -34,27 +32,35 @@ def seed_uid_from_auth(auth):
         return None
     uid_account.set(str(email))
     return str(email)
-API_KEY = os.getenv("FIREBASE_WEB_API_KEY")
+API_KEY = os.getenv("FIREBASE_API_KEY") or os.getenv("FIREBASE_WEB_API_KEY")
 if not API_KEY:
-    raise ValueError("Missing FIREBASE_WEB_API_KEY in .env file")
+    raise ValueError("Missing FIREBASE_API_KEY in .env file")
 
 BASE_URL = "https://identitytoolkit.googleapis.com/v1/accounts"
 
 # For new accounts (register and oauth)
 def create_user_doc():
-    # logger.debug("Creating user document in Firestore...")
-    uid = create_account.get_username()
-    doc_ref = db.collection("users").document(uid)
-    doc = doc_ref.get()
+    """Create the Firestore document for a newly registered user.
 
-    if doc.exists:
+    The document is keyed by the user's email, which is the same identity used
+    by the OAuth flow (seed_uid_from_auth / create_oauth_user_doc) and by
+    log_in below, so every sign-in path resolves the same Firestore doc.
+    """
+    user_data = create_account.get()
+    if not user_data or not user_data.get("email"):
+        logger.debug("create_user_doc: no session data, skipping")
         return
-    else:
-        data = {"uid": str(uid)}
-        db.collection("users").document(str(uid)).set(data)
-        uid_account.set(str(uid))  # set uid json
-        setup_user_details(uid)
-        setup_pet(uid)
+
+    uid = user_data["email"]
+    uid_account.set(uid)  # seed local uid so the app works immediately
+
+    doc_ref = db.collection("users").document(uid)
+    if doc_ref.get().exists:
+        return
+
+    db.collection("users").document(uid).set({"uid": uid})
+    setup_user_details(uid)
+    setup_pet(uid)
 
 def setup_user_details(uid):
     user_data = create_account.get()
@@ -77,11 +83,14 @@ def setup_pet(uid):
     db.collection("users").document(uid).collection("details").document("pets").set({"temp": "temp"})
 
 def create_oauth_user_doc(uid: str):
+    """Ensure a Firestore doc exists for an OAuth user (keyed by email)."""
+    if not uid:
+        return
+    uid_account.set(uid)
     doc_ref = db.collection("users").document(uid)
     if doc_ref.get().exists:
         return
-    doc_ref.set({"uid": str(uid)})
-    uid_account.set(str(uid))
+    doc_ref.set({"uid": uid})
     setup_pet(uid)
 
 # to get uid in homepage

@@ -2,9 +2,7 @@ import flet as ft
 import logging
 from dataclasses import dataclass
 
-from model.firestore_auth import get_uid
-from model.json.uid_json import UserIdStore
-from model.firestore_auth import log_in
+from model.firestore_auth import create_oauth_user_doc, log_in
 from utility.navigation import go_to
 
 logger = logging.getLogger(f"pawplan.{__name__}")
@@ -112,6 +110,10 @@ def login_view(page: ft.Page) -> ft.View:
         uid = log_in(email.field.value, password.field.value)
 
         if(uid is not None):
+            # Seed the local uid store (email) so the CRUD layer resolves the
+            # right Firestore doc, and ensure the doc exists if the auth
+            # account was created without going through registration.
+            create_oauth_user_doc(email.field.value)
             await page.push_route("/homepage")
         else:
             error_text.value = "Login failed."

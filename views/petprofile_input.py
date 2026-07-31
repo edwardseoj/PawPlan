@@ -167,35 +167,6 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
 
     error_text = ft.Text("", color=ft.Colors.RED_600, size=13, visible=False)
 
-    # ---------- Pet limit (max MAX_PETS per account) ----------
-    submit_btn = ft.Button(
-        content=ft.Text("Save Profile", size=16, weight=ft.FontWeight.W_700),
-        width=340,
-        height=54,
-        on_click=add_pet,
-        color=white,
-        bgcolor=primary,
-        style=ft.ButtonStyle(
-            shape=ft.RoundedRectangleBorder(radius=30),
-            side=ft.BorderSide(width=1.5, color=black),
-        ),
-    )
-
-    def _check_pet_limit():
-        """Disable the form and show a notice when the account is at the cap."""
-        try:
-            current = get_pet_list() or []
-            if len(current) >= MAX_PETS:
-                submit_btn.disabled = True
-                submit_btn.bgcolor = "#9CA3AF"
-                error_text.value = f"Pet limit reached. You can have up to {MAX_PETS} pets."
-                error_text.visible = True
-                page.update()
-        except Exception as ex:
-            logger.exception("Failed checking pet limit: %s", ex)
-
-    threading.Thread(target=_check_pet_limit, daemon=True).start()
-
     # Pastel color picker for the new pet, stored in Firestore with the pet.
     selected_color = {"value": DEFAULT_PET_COLOR}
 
@@ -246,7 +217,7 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
     # ---------- Resolve current user (no DB access here, just id lookup) ----------
 
     # normal functions can't call async functions
-    async def add_pet(e):
+    async def handle_add_pet(e):
         if not pet_name.value or not pet_type.value:
             error_text.value = "Please enter a name and select a pet type."
             error_text.visible = True
@@ -281,6 +252,35 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
             return
 
         await go_homepage(e)
+
+    # ---------- Pet limit (max MAX_PETS per account) ----------
+    submit_btn = ft.Button(
+        content=ft.Text("Save Profile", size=16, weight=ft.FontWeight.W_700),
+        width=340,
+        height=54,
+        on_click=handle_add_pet,
+        color=white,
+        bgcolor=primary,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=30),
+            side=ft.BorderSide(width=1.5, color=black),
+        ),
+    )
+
+    def _check_pet_limit():
+        """Disable the form and show a notice when the account is at the cap."""
+        try:
+            current = get_pet_list() or []
+            if len(current) >= MAX_PETS:
+                submit_btn.disabled = True
+                submit_btn.bgcolor = "#9CA3AF"
+                error_text.value = f"Pet limit reached. You can have up to {MAX_PETS} pets."
+                error_text.visible = True
+                page.update()
+        except Exception as ex:
+            logger.exception("Failed checking pet limit: %s", ex)
+
+    threading.Thread(target=_check_pet_limit, daemon=True).start()
 
     form = ft.Container(
         margin=ft.Margin.only(left=16, right=16, top=24, bottom=16),

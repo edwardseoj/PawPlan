@@ -1,7 +1,7 @@
 import flet as ft
 import logging
 
-from model.firestore_auth import create_user_doc
+from model.firestore_auth import create_user_doc, sign_up
 from views.login import header_bar, labeled_field
 from model.json.create_account_json import NewAccountStore
 
@@ -112,11 +112,19 @@ def register_view(page: ft.Page) -> ft.View:
         error_text.visible = False
 
         # LOGIC
-        # save data to json
+        # 1) create the Firebase Auth account (email/password)
+        local_id = sign_up(email_col.field.value, password_col.field.value)
+        if local_id is None:
+            error_text.value = "Registration failed. That email may already be in use."
+            error_text.visible = True
+            page.update()
+            return
+
+        # 2) save data to json
         dob = f"{mm.value}-{dd.value}-{yyyy.value}"
 
         try:
-            create_account  = NewAccountStore()
+            create_account = NewAccountStore()
             create_account.set(
                 username=username_col.field.value,
                 email=email_col.field.value,
@@ -127,6 +135,10 @@ def register_view(page: ft.Page) -> ft.View:
             create_account.clear() # delete create account json afterwards
         except Exception as e:
             logger.exception("Error during registration process.")
+            error_text.value = "Registration failed. Please try again."
+            error_text.visible = True
+            page.update()
+            return
 
         await page.push_route("/homepage")
 

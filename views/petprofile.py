@@ -20,14 +20,11 @@ def petprofile_view(page: ft.Page) -> ft.View:
     logger.debug(f"index: {index}")
 
     # temporary pet data, wire up to Firestore later
-    pet = get_specific_pet(uid, index)
-    # pet = {
-    #     "name": "Bella",
-    #     "age": 4,
-    #     "breed": "Chihuahua",
-    #     "photo_url": "https://example.com/this-image-does-not-exist.png",
-    #     "allergies": ["Chicken Sensitivity"],
-    # }
+    pet = get_specific_pet(uid, index) or {}
+    # get_specific_pet returns {} when no pet exists (e.g. stale session index),
+    # so fall back to placeholders instead of crashing on pet["name"].
+    if not pet:
+        pet = {"name": "Unknown Pet", "age": "?", "breed": "Unknown", "allergies": []}
 
     async def go_back(e):
         logger.info("Back nav clicked")
@@ -132,9 +129,9 @@ def petprofile_view(page: ft.Page) -> ft.View:
             spacing=2,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
-                ft.Text(pet["name"], size=30, weight=ft.FontWeight.W_800, color="#000000"),
-                ft.Text(f"Age: {pet['age']}", size=16, color="#000000"),
-                ft.Text(f"Breed: {pet['breed']}", size=16, color="#000000"),
+                ft.Text(pet.get("name"), size=30, weight=ft.FontWeight.W_800, color="#000000"),
+                ft.Text(f"Age: {pet.get('age')}", size=16, color="#000000"),
+                ft.Text(f"Breed: {pet.get('breed')}", size=16, color="#000000"),
             ],
         ),
     )
@@ -171,7 +168,7 @@ def petprofile_view(page: ft.Page) -> ft.View:
         controls = []
 
         controls.append(ft.Text("Allergies:", size=16, weight=ft.FontWeight.W_600, color="#000000"))
-        if pet["allergies"]:
+        if pet.get("allergies"):
             for a in pet["allergies"]:
                 controls.append(med_pill(a, show_checkbox=False))
         else:
