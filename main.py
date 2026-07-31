@@ -101,7 +101,7 @@ async def main(page: ft.Page):
 
 # ft.run(main, port=8550, view=ft.AppView.WEB_BROWSER)
 ft.run(
-    target=main,
+    main,
     view=ft.AppView.WEB_BROWSER,
     port=int(os.environ.get("PORT", 8550)),
     host="0.0.0.0"
