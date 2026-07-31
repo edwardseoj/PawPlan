@@ -175,7 +175,7 @@ def taskboard_view(page: ft.Page) -> ft.View:
             weight=ft.FontWeight.W_600,
             expand=True,
             style=ft.TextStyle(
-                decoration=ft.TextDecoration.LINE_THROUGH if item["done"] else None,
+                # decoration=ft.TextDecoration.LINE_THROUGH if item["done"] else None,
                 decoration_color=ON_BRAND,
             ),
         )
@@ -192,7 +192,7 @@ def taskboard_view(page: ft.Page) -> ft.View:
 
         def mark_done():
             label_text.style = ft.TextStyle(
-                decoration=ft.TextDecoration.LINE_THROUGH if item["done"] else None,
+                # decoration=ft.TextDecoration.LINE_THROUGH if item["done"] else None,
                 decoration_color=ON_BRAND,
             )
             pill_container.opacity = 0.5
