@@ -1,5 +1,5 @@
 import flet as ft
-import time
+import os
 
 # logger setup
 from utility.logging_config import setup_logging
@@ -96,4 +96,10 @@ async def main(page: ft.Page):
     route_change(None)
 
 
-ft.run(main, port=8550, view=ft.AppView.WEB_BROWSER)
+# ft.run(main, port=8550, view=ft.AppView.WEB_BROWSER)
+ft.app(
+    target=main,
+    view=ft.AppView.WEB_BROWSER,
+    port=int(os.environ.get("PORT", 8550)),
+    host="0.0.0.0"
+)
