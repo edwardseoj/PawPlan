@@ -4,7 +4,7 @@ import logging
 import threading
 
 from model.firestore_auth import get_uid
-from model.pet_crud import get_pet_list, remove_pet
+from model.pet_crud import get_pet_list, remove_pet, DEFAULT_PET_COLOR
 from model.user_account_crud import get_data
 
 logger = logging.getLogger(__name__)
@@ -273,6 +273,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
     def pet_profile_card(pet):
         allergies = pet.get("allergies", []),
         allergies_display = " ,".join(", ".join(sublist) for sublist in allergies) if allergies else "None"
+        pet_color = pet.get("color") or DEFAULT_PET_COLOR
         return ft.Container(
             padding=ft.Padding.all(20),
             bgcolor=white,
@@ -283,7 +284,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
                     ft.Container(
-                        width=80, height=80, bgcolor=soft_blue_bg, border_radius=40,
+                        width=80, height=80, bgcolor=pet_color, border_radius=40,
                         alignment=ft.Alignment.CENTER,
                         content=ft.Icon(ft.Icons.PETS, size=44, color=primary),
                     ),
