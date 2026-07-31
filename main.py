@@ -25,7 +25,7 @@ from views.taskboard_input import taskboard_input_view
 from model.firestore_auth import uid_account
 _uid_file_cleared = False
 
-def main(page: ft.Page):
+async def main(page: ft.Page):
     global _uid_file_cleared
     if not _uid_file_cleared:
         _uid_file_cleared = True
@@ -39,7 +39,7 @@ def main(page: ft.Page):
     page.window.min_width = 430
     page.window.max_height = 900
     page.window.resizable = False
-    page.window.center()
+    await page.window.center()
     page.update()
 
     page.on_login = make_on_login(page)

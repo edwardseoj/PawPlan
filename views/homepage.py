@@ -446,8 +446,10 @@ def homepage_view(page: ft.Page) -> ft.View:
         async def handle_nav_click(e):
             print(pill_nav_routes[index])
             route = str(pill_nav_routes[index])
-            await page.push_route(route)
+            # restore the pill BEFORE navigating: push_route tears down this view,
+            # so updating floating_nav after the await would hit a detached control
             restore_nav(e)
+            await page.push_route(route)
 
         return ft.Container(
             padding=ft.Padding.symmetric(horizontal=10, vertical=8),

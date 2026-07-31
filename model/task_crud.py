@@ -132,9 +132,88 @@ def add_task(task_name, pet_name, description, alarm):
     }, merge=True)
 
 
+def _normalize_task_value(value):
+    """Recursively normalize a value so task dicts read from Firestore compare
+    equal across separate reads (datetimes are the common gotcha)."""
+    if isinstance(value, datetime):
+        return value.isoformat()
+    if isinstance(value, dict):
+        return {k: _normalize_task_value(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_normalize_task_value(v) for v in value]
+    return value
 
 
+def _find_task_index(tasks, target_task):
+    target = _normalize_task_value(target_task)
+    for i, task in enumerate(tasks):
+        if _normalize_task_value(task) == target:
+            return i
+    return None
 
-# update task
 
-# delete task
+# complete (check off) a single task occurrence
+def complete_task_occurrence(task, occurrence_date, uid=None):
+    """Check off one occurrence of a task and persist it to Firestore.
+
+    - Repeating task with multiple scheduled days: remove the completed
+      weekday from ``day_names`` and its matching number from ``days``.
+    - Repeating task with a single day, or a one-off date task: delete the
+      task from the tasks array entirely.
+
+    Returns True if the occurrence was completed/removed, False if the task
+    wasn't found or wasn't scheduled on ``occurrence_date``.
+    """
+    uid = uid or uid_account.get()
+    if not uid:
+        logger.error("complete_task_occurrence: no uid set, aborting")
+        return False
+
+    tasks = get_task_list(uid)
+    if not tasks:
+        return False
+
+    idx = _find_task_index(tasks, task)
+    if idx is None:
+        logger.warning("complete_task_occurrence: task not found, skipping")
+        return False
+
+    scheduled_task = tasks[idx]
+    alarm = dict(scheduled_task.get("alarm") or {})
+    day_names = _split_day_names(alarm.get("day_names"))
+
+    if day_names:
+        day_name = WEEKDAY_NAMES[occurrence_date.weekday()]
+        if day_name not in day_names:
+            logger.warning(
+                "complete_task_occurrence: %r not scheduled on %s",
+                scheduled_task.get("task_name"), day_name,
+            )
+            return False
+
+        if len(day_names) > 1:
+            # multiple days -> drop only the completed day from the schedule
+            alarm["day_names"] = [d for d in day_names if d != day_name]
+            days = alarm.get("days")
+            if isinstance(days, list):
+                day_index = WEEKDAY_NAMES.index(day_name)
+                alarm["days"] = [d for d in days if d != day_index]
+            else:
+                alarm["days"] = []
+            tasks[idx] = {**scheduled_task, "alarm": alarm}
+            logger.debug(
+                "Removed %s from %r, days left: %s",
+                day_name, scheduled_task.get("task_name"), alarm["day_names"],
+            )
+        else:
+            # only one day left -> remove the whole task
+            tasks.pop(idx)
+            logger.debug("Removed single-day task %r", scheduled_task.get("task_name"))
+    else:
+        # one-off date task -> checking it off deletes it
+        tasks.pop(idx)
+        logger.debug("Removed one-off task %r", scheduled_task.get("task_name"))
+
+    tasks_ref = db.collection("users").document(uid).collection("details").document("tasks")
+    tasks_ref.set({"tasks": tasks}, merge=True)
+    return True

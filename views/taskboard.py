@@ -6,6 +6,7 @@ from model.task_crud import (
     get_task_list,
     split_tasks_by_occurrence,
     format_occurrence_date,
+    complete_task_occurrence,
 )
 from utility.navigation import go_to
 
@@ -132,28 +133,6 @@ def taskboard_view(page: ft.Page) -> ft.View:
         ),
     )
 
-    def task_pill(label, index):
-        color = "#0B4FB0"
-        return ft.Container(
-            margin=ft.Margin.only(top=6, bottom=6),
-            padding=ft.Padding.symmetric(horizontal=12, vertical=10),
-            border_radius=30,
-            bgcolor=color,
-            content=ft.Row(
-                spacing=12,
-                vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                controls=[
-                    ft.Text(
-                        label,
-                        color=white,
-                        size=14,
-                        weight=ft.FontWeight.W_600,
-                        expand=True,
-                    ),
-                ],
-            ),
-        )
-
     def task_label(occ_date, item):
         task_name = item.get("task_name", "Untitled task")
         alarm = item.get("alarm") or {}
@@ -172,25 +151,116 @@ def taskboard_view(page: ft.Page) -> ft.View:
             ),
         )
 
+    async def complete_occurrence(item, occ_date):
+        try:
+            return complete_task_occurrence(item, occ_date)
+        except Exception as err:
+            logger.error("complete_task_occurrence failed: %s", err)
+            return False
+
+    def task_pill(label, occ_date, item, list_holder, empty_message):
+        color = "#0B4FB0"
+
+        label_text = ft.Text(
+            label,
+            color=white,
+            size=14,
+            weight=ft.FontWeight.W_600,
+            expand=True,
+        )
+
+        pill_container = ft.Container(
+            margin=ft.Margin.only(top=6, bottom=6),
+            padding=ft.Padding.symmetric(horizontal=12, vertical=10),
+            border_radius=30,
+            bgcolor=color,
+            animate_opacity=ft.Animation(150, ft.AnimationCurve.EASE_OUT),
+        )
+
+        state = {"busy": False}
+
+        def mark_done():
+            label_text.style = ft.TextStyle(
+                decoration=ft.TextDecoration.LINE_THROUGH,
+                decoration_color=black,
+            )
+            pill_container.opacity = 0.5
+            label_text.update()
+            pill_container.update()
+
+        def revert_done():
+            label_text.style = None
+            pill_container.opacity = 1.0
+            label_text.update()
+            pill_container.update()
+
+        async def on_check_change(e: ft.ControlEvent):
+            if not e.control.value or state["busy"]:
+                return
+            state["busy"] = True
+            mark_done()
+
+            if await complete_occurrence(item, occ_date):
+                # occurrence removed from Firestore -> drop the pill from its list
+                column = list_holder.get("column")
+                if column is not None:
+                    if pill_container in column.controls:
+                        column.controls.remove(pill_container)
+                    if not column.controls:
+                        column.controls.append(no_tasks_text(empty_message))
+                    column.update()
+            else:
+                e.control.value = False
+                revert_done()
+            state["busy"] = False
+
+        checkbox = ft.Checkbox(
+            value=False,
+            on_change=on_check_change,
+            check_color=color,
+            fill_color=white,
+            active_color=white,
+        )
+
+        pill_container.content = ft.Row(
+            spacing=8,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[checkbox, label_text],
+        )
+
+        return pill_container
+
+    today_list_holder = {}
+    today_pill_controls = (
+        [
+            task_pill(task_label(d, t), d, t, today_list_holder, "No tasks scheduled today")
+            for d, t in todays_tasks
+        ]
+        if todays_tasks
+        else [no_tasks_text("No tasks scheduled today")]
+    )
     today_pills = ft.Column(
         spacing=0,
         scroll=ft.ScrollMode.AUTO,
-        controls=(
-            [task_pill(task_label(d, t), i) for i, (d, t) in enumerate(todays_tasks)]
-            if todays_tasks
-            else [no_tasks_text("No tasks scheduled today")]
-        ),
+        controls=today_pill_controls,
     )
+    today_list_holder["column"] = today_pills
 
+    upcoming_list_holder = {}
+    upcoming_pill_controls = (
+        [
+            task_pill(task_label(d, t), d, t, upcoming_list_holder, "No upcoming tasks")
+            for d, t in upcoming_tasks
+        ]
+        if upcoming_tasks
+        else [no_tasks_text("No upcoming tasks")]
+    )
     upcoming_pills = ft.Column(
         spacing=0,
         scroll=ft.ScrollMode.AUTO,
-        controls=(
-            [task_pill(task_label(d, t), i) for i, (d, t) in enumerate(upcoming_tasks)]
-            if upcoming_tasks
-            else [no_tasks_text("No upcoming tasks")]
-        ),
+        controls=upcoming_pill_controls,
     )
+    upcoming_list_holder["column"] = upcoming_pills
 
     def section_header(label):
         return ft.Container(
