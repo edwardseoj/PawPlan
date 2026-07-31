@@ -1,19 +1,15 @@
 import flet as ft
 import logging
+from datetime import date
 
-from model.json.uid_json import UserIdStore
-from model.task_crud import get_task_list
+from model.task_crud import (
+    get_task_list,
+    split_tasks_by_occurrence,
+    format_occurrence_date,
+)
 from utility.navigation import go_to
 
 logger = logging.getLogger(f"pawplan.{__name__}")
-
-# Sample data (wire up to Firestore later)
-
-uid_account = UserIdStore()
-uid = uid_account.get()
-TODAYS_TASKS = get_task_list()
-
-UPCOMING_TASKS = []
 
 # colors used for the task pills
 pill_colors = ["#6C5CE7", "#F05648"]
@@ -46,6 +42,9 @@ DESTINATIONS = [
 
 
 def taskboard_view(page: ft.Page) -> ft.View:
+    today = date.today()
+    todays_tasks, upcoming_tasks = split_tasks_by_occurrence(get_task_list(), today)
+
     async def go_settings(e):
         # logger.info("Settings nav clicked")
         logger.debug("Settings nav clicked")
@@ -120,34 +119,39 @@ def taskboard_view(page: ft.Page) -> ft.View:
             ),
         )
 
-    def task_label(item):
+    def task_label(occ_date, item):
         task_name = item.get("task_name", "Untitled task")
         alarm = item.get("alarm") or {}
         time_str = alarm.get("time_12hr") or alarm.get("time") or "No time set"
-        return f"{time_str} - {task_name}"
+        return f"{time_str} - {task_name} ({format_occurrence_date(occ_date, today)})"
+
+    def no_tasks_text(message):
+        return ft.Container(
+            alignment=ft.Alignment.CENTER,
+            padding=ft.Padding.symmetric(vertical=20),
+            content=ft.Text(
+                message,
+                size=14,
+                weight=ft.FontWeight.W_600,
+                color=ft.Colors.BLACK,
+            ),
+        )
 
     today_pills = ft.Column(
         spacing=0,
-        controls=[task_pill(task_label(t), i) for i, t in enumerate(TODAYS_TASKS)],
+        controls=(
+            [task_pill(task_label(d, t), i) for i, (d, t) in enumerate(todays_tasks)]
+            if todays_tasks
+            else [no_tasks_text("No tasks scheduled today")]
+        ),
     )
 
     upcoming_pills = ft.Column(
         spacing=0,
         controls=(
-            [task_pill(task_label(t), i) for i, t in enumerate(UPCOMING_TASKS)]
-            if UPCOMING_TASKS
-            else [
-                ft.Container(
-                    alignment=ft.Alignment.CENTER,
-                    padding=ft.Padding.symmetric(vertical=20),
-                    content=ft.Text(
-                        "No upcoming tasks",
-                        size=14,
-                        weight=ft.FontWeight.W_600,
-                        color=ft.Colors.BLACK,
-                    ),
-                )
-            ]
+            [task_pill(task_label(d, t), i) for i, (d, t) in enumerate(upcoming_tasks)]
+            if upcoming_tasks
+            else [no_tasks_text("No upcoming tasks")]
         ),
     )
 

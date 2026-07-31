@@ -8,7 +8,12 @@ from google.cloud.firestore_v1 import FieldFilter
 from model.firestore_auth import get_uid
 from model.json.uid_json import UserIdStore
 from model.pet_crud import get_pet_list
-from model.task_crud import get_task_list
+from model.task_crud import (
+    get_task_list,
+    split_tasks_by_occurrence,
+    task_occurs_on,
+    format_occurrence_date,
+)
 from utility.navigation import go_to
 from setup.firebase_setup import db
 
@@ -274,23 +279,46 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     weekday_labels = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
 
+    # tasks from firestore, split by their schedule
+    all_tasks = get_task_list()
+    todays_tasks, upcoming_tasks = split_tasks_by_occurrence(all_tasks, today)
+
     def day_cell(day, col_index):
         weekend = col_index == 0 or col_index == 6
         todays = day == today.day
         text_color = weekend_blue if weekend else "#1F2937"
         if day == 0:
             return ft.Container(expand=1, height=30)
+
+        has_task = any(
+            task_occurs_on(t, datetime.date(calendar_year, calendar_month, day))
+            for t in all_tasks
+        )
+
         return ft.Container(
             expand=1,
             height=30,
             border_radius=6,
             bgcolor=primary if todays else None,
             alignment=ft.Alignment.CENTER,
-            content=ft.Text(
-                str(day),
-                size=11,
-                color=white if todays else text_color,
-                weight=ft.FontWeight.W_700 if todays else ft.FontWeight.W_400,
+            content=ft.Column(
+                spacing=0,
+                tight=True,
+                alignment=ft.MainAxisAlignment.CENTER,
+                controls=[
+                    ft.Text(
+                        str(day),
+                        size=11,
+                        color=white if todays else text_color,
+                        weight=ft.FontWeight.W_700 if todays else ft.FontWeight.W_400,
+                    ),
+                    ft.Container(
+                        width=4,
+                        height=4,
+                        border_radius=2,
+                        bgcolor=orange if has_task else None,
+                    ),
+                ],
             ),
         )
 
@@ -348,16 +376,10 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 
     # TASKS
-    TODAYS_TASKS = get_task_list()
-    UPCOMING_EVENT = "Upcoming Vet Visit for Bella - June 15"
-
-    def task_row(item):
-        # add more description here
+    def task_row(occ_date, item):
         task_name = item.get("task_name", "Untitled task")
         pet_name = item.get("pet_name", "Untitled pet")
         alarm = item.get("alarm") or {}
-        days_str = alarm.get("day_names")
-        date_str = alarm.get("date") or days_str or "No date set",
         time_str = alarm.get("time_12hr") or alarm.get("time") or "No time set"
 
         return ft.Container(
@@ -365,12 +387,32 @@ def homepage_view(page: ft.Page) -> ft.View:
             border_radius=8,
             padding=ft.Padding.symmetric(horizontal=14, vertical=12),
             content=ft.Text(
-                f"{task_name} for {pet_name} - {time_str}, {date_str}", # add more details here
+                f"{task_name} for {pet_name} - {time_str}, {format_occurrence_date(occ_date, today)}",
                 size=15,
                 weight=ft.FontWeight.W_600,
                 color=black,
             ),
         )
+
+    def empty_task_state(message):
+        return ft.Container(
+            border=ft.Border.all(1, soft_border),
+            border_radius=8,
+            padding=ft.Padding.symmetric(horizontal=14, vertical=12),
+            content=ft.Text(
+                message,
+                size=14,
+                weight=ft.FontWeight.W_600,
+                color="#6B7280",
+            ),
+        )
+
+    todays_rows = [task_row(d, t) for d, t in todays_tasks] or [
+        empty_task_state("No tasks scheduled today")
+    ]
+    upcoming_rows = [task_row(d, t) for d, t in upcoming_tasks] or [
+        empty_task_state("No upcoming tasks")
+    ]
 
     tasks_section = ft.Container(
         margin=ft.Margin.only(left=16, right=16, top=16),
@@ -383,19 +425,14 @@ def homepage_view(page: ft.Page) -> ft.View:
                     weight=ft.FontWeight.W_700,
                     color=black,
                 ),
-
-                *[task_row(item) for item in TODAYS_TASKS],
-                ft.Container(
-                    padding=ft.Padding.symmetric(horizontal=14, vertical=12),
-                    border=ft.Border.all(1, soft_border),
-                    border_radius=8,
-                    content=ft.Text(
-                        UPCOMING_EVENT,
-                        size=14,
-                        weight=ft.FontWeight.W_600,
-                        color=black,
-                    ),
+                *todays_rows,
+                ft.Text(
+                    "Upcoming Task",
+                    size=20,
+                    weight=ft.FontWeight.W_700,
+                    color=black,
                 ),
+                *upcoming_rows,
             ],
         ),
     )

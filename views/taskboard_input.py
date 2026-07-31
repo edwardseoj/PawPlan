@@ -204,10 +204,11 @@ class AlarmClockSelector(ft.Container):
         # Day labels
         day_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         labels_row = ft.Row(
-            [ft.Text(label, size=12, weight=ft.FontWeight.BOLD, width=40, text_align=ft.TextAlign.CENTER,
-                     color="#6B7280")
+            [ft.Text(label, size=12, weight=ft.FontWeight.BOLD, expand=True,
+                     text_align=ft.TextAlign.CENTER, color="#6B7280")
              for label in day_labels],
             alignment=ft.MainAxisAlignment.CENTER,
+            spacing=5,
         )
 
         # Calendar grid
@@ -249,7 +250,7 @@ class AlarmClockSelector(ft.Container):
                 if day == 0:
                     # Empty cell
                     week_row.controls.append(
-                        ft.Container(width=40, height=40)
+                        ft.Container(expand=True, height=40)
                     )
                 else:
                     # Check if this day is selected
@@ -264,7 +265,7 @@ class AlarmClockSelector(ft.Container):
                             color=white if is_selected else black,
                             text_align=ft.TextAlign.CENTER,
                         ),
-                        width=40,
+                        expand=True,
                         height=40,
                         alignment=ft.Alignment.CENTER,
                         bgcolor=primary if is_selected else "#F5F7FA",
@@ -338,7 +339,7 @@ class AlarmClockSelector(ft.Container):
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     spacing=2,
                 ),
-                width=45,
+                expand=True,
                 height=60,
                 padding=5,
                 bgcolor=primary if is_selected else "#F5F7FA",
