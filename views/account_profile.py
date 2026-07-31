@@ -268,6 +268,8 @@ def account_profile_view(page: ft.Page) -> ft.View:
 
         return handler
     def pet_profile_card(pet):
+        allergies = pet.get("allergies", []),
+        allergies_display = " ,".join(", ".join(sublist) for sublist in allergies) if allergies else "None"
         return ft.Container(
             padding=ft.Padding.all(20),
             bgcolor=white,
@@ -287,8 +289,9 @@ def account_profile_view(page: ft.Page) -> ft.View:
                     ft.Text(pet.get("breed", ""), size=13, color="#6B7280",
                             text_align=ft.TextAlign.CENTER),
                     ft.Container(height=1, bgcolor=soft_border),
+                    detail_row("Type", pet.get("type", "")),
                     detail_row("Age", pet.get("age", "")),
-                    detail_row("Gender", pet.get("gender", "")),
+                    detail_row("Allergies", allergies_display),
 
                     ft.Button(
                         content = "Delete pet",

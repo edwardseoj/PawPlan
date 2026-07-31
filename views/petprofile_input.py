@@ -1,13 +1,9 @@
 import flet as ft
 import logging
-from firebase_admin import firestore
 
-from model.json.uid_json import UserIdStore
-from setup.firebase_setup import db
+from model.pet_crud import add_pet as add_pet_crud   # adjust path to match your project structure
 
 logger = logging.getLogger(__name__)
-
-# firestore setup
 
 
 primary = "#0D6EFD"
@@ -19,7 +15,6 @@ black = "#000000"
 
 
 def labeled_input(label: str, field: ft.Control) -> ft.Column:
-    """Wraps a field with a label above it, styled like the rest of the app's forms."""
     return ft.Column(
         spacing=6,
         controls=[
@@ -47,11 +42,9 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
         except Exception as e:
             logger.error(f"Error occurred: {e}")
     async def go_settings(e):
-        # logger.info("Settings nav clicked")
         logger.debug("Settings nav clicked")
         await page.push_route("/settings")
     async def go_logout(e):
-        # logger.info("Settings nav clicked")
         logger.debug("Logout clicked")
         await page.push_route("/")
 
@@ -178,17 +171,9 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
         content=ft.Icon(ft.Icons.PETS, size=44, color="#8A6A3B"),
     )
 
-    # firestore code
-    current_user_id = None
-    if (page.auth is not None):
-        current_user_id = page.auth.user["email"]
-    else:
-        user_session = UserIdStore()
-        current_user_id = user_session.get()
+    # ---------- Resolve current user (no DB access here, just id lookup) ----------
 
-    pets_ref = db.collection("users").document(current_user_id).collection("details").document("pets")
-
-    # normla functions can't call asynch functions
+    # normal functions can't call async functions
     async def add_pet(e):
         if not pet_name.value or not pet_type.value:
             error_text.value = "Please enter a name and select a pet type."
@@ -201,19 +186,23 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
             a.strip() for a in (pet_allergies.value or "").split(",") if a.strip()
         ]
 
-        pets_ref.set({
-            "pets": firestore.ArrayUnion([{
-                "name": pet_name.value,
-                "type": pet_type.value,
-                "age": pet_age.value,
-                "breed": pet_breed.value,
-                "allergies": allergies_list
-            }])
-        }, merge=True)
+        try:
+            add_pet_crud(
+                pet_name.value,
+                pet_type.value,
+                pet_age.value,
+                pet_breed.value,
+                allergies_list,
+            )
+        except Exception as ex:
+            logger.error(f"Failed to add pet: {ex}")
+            error_text.value = "Something went wrong. Please try again."
+            error_text.visible = True
+            page.update()
+            return
 
         await go_homepage(e)
 
-    # change this later
     submit_btn = ft.Button(
         content=ft.Text("Save Profile", size=16, weight=ft.FontWeight.W_700),
         width=340,

@@ -21,7 +21,16 @@ from views.pet_tasks import pet_reminder_view
 from views.taskboard import taskboard_view
 from views.taskboard_input import taskboard_input_view
 
+# clear any uid left over from a previous run so stale tabs can't read it
+from model.firestore_auth import uid_account
+_uid_file_cleared = False
+
 def main(page: ft.Page):
+    global _uid_file_cleared
+    if not _uid_file_cleared:
+        _uid_file_cleared = True
+        uid_account.clear()
+
     page.title = "PawPlan"
     page.window.height = 900
     page.window.width = 430

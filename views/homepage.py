@@ -1,27 +1,21 @@
 import calendar
 import datetime
 import logging
-
 import flet as ft
 import threading
-from google.cloud.firestore_v1 import FieldFilter
 
+from google.cloud.firestore_v1 import FieldFilter
 from model.firestore_auth import get_uid
+from model.json.uid_json import UserIdStore
 from model.pet_crud import get_pet_list
+from model.task_crud import get_task_list
 from utility.navigation import go_to
 from setup.firebase_setup import db
 
-# LOGGER SETUP
 logger = logging.getLogger(f"pawplan.{__name__}")
 
-# Sample based on Mock Screens (will be updated later on)
-TODAYS_TASKS = [
-    {"time": "8:00 AM", "task": "Feed Bella"},
-    {"time": "12:00 PM", "task": "Walk Max"},
-    {"time": "6:00 PM", "task": "Give Bella Medication"},
-]
 
-UPCOMING_EVENT = "Upcoming Vet Visit for Bella - June 15"
+# Hardcoded values
 
 DESTINATIONS = [
     ft.NavigationBarDestination(
@@ -40,25 +34,31 @@ DESTINATIONS = [
         label = "Profile"
     ),
 ]
-
 LOGO_SIZE = 70
 NAV_SHRINK_SCALE = 0.6
 
 
-
 # returns uid from model
 def return_uid(page):
-    current_user_id = get_uid()
+    if page.auth is not None:
+        current_user_id = page.auth.user["email"]
+        uid = UserIdStore()
+        uid.set(str(current_user_id))
+    else:
+        current_user_id = get_uid()
+
     return current_user_id
 
 
 # START OF VIEWS
 def homepage_view(page: ft.Page) -> ft.View:
 
+    # async functions
     def view_task_handler(pet_name):
         async def handler(e):
             await view_task(pet_name, return_uid(page))
         return handler
+
     async def view_task(pet_name, uid): # need to change code here
         logger.debug("Pet reminder: %s", pet_name)
         reminder_ref = (
@@ -70,21 +70,18 @@ def homepage_view(page: ft.Page) -> ft.View:
 
         await page.push_route("/petreminder")
 
-
-
     async def go_settings(e):
-        # logger.info("Settings nav clicked")
         logger.debug("Settings nav clicked")
         await page.push_route("/settings")
+
     async def go_logout(e):
-        # logger.info("Settings nav clicked")
         logger.debug("Logout clicked")
         await page.push_route("/")
 
     pill_nav_routes = ["/homepage", "/taskboard", "/account_profile"]
 
 
-    # content variables
+    # color variables
     primary = "#0D6EFD"
     header_blue = "#1450B4"
     orange = "#F5821F"
@@ -97,7 +94,7 @@ def homepage_view(page: ft.Page) -> ft.View:
     weekend_blue = "#3B6FD6"
 
 
-
+    # APPBAR
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=20, vertical=12),
         bgcolor=white,
@@ -119,7 +116,6 @@ def homepage_view(page: ft.Page) -> ft.View:
                                 fit=ft.BoxFit.CONTAIN,
                             ),
                         ),
-
                         ft.Row(
                             spacing=2,
                             controls=[
@@ -155,36 +151,12 @@ def homepage_view(page: ft.Page) -> ft.View:
         ),
     )
 
-    appbar_divider = ft.Container(height=5, bgcolor=orange)
+    appbar_divider = ft.Container(height=5, bgcolor=orange)\
 
 
-
-    # firestore code (load pets in background to avoid blocking UI)
-    # current_user_id = get_uid()
-    # logger.debug("current_user_id: %s", current_user_id)
-    #
-    # pets_ref = db.collection("users").document(current_user_id).collection("details").document("pets")
-    #
-    #
-    # # get data
-    # pet_list = []
-    # doc = pets_ref.get()
-    #
-    # # extra debugging
-    # if doc.exists:
-    #     data = doc.to_dict()
-    #     if not data.get("pets", []):
-    #         logger.debug("pet list empty")
-    #     pet_list = data.get("pets", [])
-    #     logger.debug("Pet list: %s", pet_list)
-    # else:
-    #     logger.debug("No such document!")
-
-
+    # PET CARDS
     pet_list = []
-
     pet_cards_row_height = 30
-
     def empty_state(message: str) -> ft.Container:
         return ft.Container(
             height = pet_cards_row_height,
@@ -192,8 +164,6 @@ def homepage_view(page: ft.Page) -> ft.View:
             content = ft.Text(message, color=white),
         )
 
-
-    # placeholder row for pet cards; populated asynchronously
     pet_cards_row = ft.Row(
         spacing=14,
         scroll=ft.ScrollMode.AUTO,
@@ -202,7 +172,7 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     def _fetch_pets():
         try:
-            pets = get_pet_list(return_uid(page))
+            pets = get_pet_list()
             # update outer pet_list so pet_card can access correct data
             pet_list[:] = pets
             if pets:
@@ -219,8 +189,6 @@ def homepage_view(page: ft.Page) -> ft.View:
     # start background thread to fetch pets without blocking UI
     threading.Thread(target=_fetch_pets, daemon=True).start()
 
-
-
     def pet_card(index):
         # get the name per index
         pet_name = pet_list[index]["name"]
@@ -229,7 +197,6 @@ def homepage_view(page: ft.Page) -> ft.View:
         # page session
         page.session.store.set("index", index)
         page.session.store.set("uid", uid)
-
 
         async def handle_pet_click(e):
             await page.push_route("/petprofile")
@@ -240,7 +207,6 @@ def homepage_view(page: ft.Page) -> ft.View:
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=6,
                 controls=[
-
                     ft.Text(pet_name, color=white, size=15, weight=ft.FontWeight.W_700),
                     ft.Container(
                         width=90,
@@ -261,7 +227,8 @@ def homepage_view(page: ft.Page) -> ft.View:
             ),
         )
 
-    header_text = f"Hello {str(return_uid(page))}"
+    current_uid = return_uid(page)
+    header_text = f"Hello {current_uid}" if current_uid else "Hello, Pet Parent!"
 
     header = ft.Container(
         padding=ft.Padding.symmetric(horizontal=16, vertical=16),
@@ -269,7 +236,6 @@ def homepage_view(page: ft.Page) -> ft.View:
         content=ft.Column(
             spacing=16,
             controls=[
-
                 ft.Row(
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -299,7 +265,7 @@ def homepage_view(page: ft.Page) -> ft.View:
         ),
     )
 
-    # Added Calendar (should have backend functions for vet scheduled visits)
+    # CALENDAR
     today = datetime.date.today()
     calendar_year, calendar_month = today.year, today.month
     calendar.setfirstweekday(calendar.SUNDAY)
@@ -381,24 +347,30 @@ def homepage_view(page: ft.Page) -> ft.View:
     )
 
 
-
-
-
-    # Today's Tasks (for backends this needs to be connected to reminder page)
+    # TASKS
+    TODAYS_TASKS = get_task_list()
+    UPCOMING_EVENT = "Upcoming Vet Visit for Bella - June 15"
 
     def task_row(item):
+        # add more description here
+        task_name = item.get("task_name", "Untitled task")
+        pet_name = item.get("pet_name", "Untitled pet")
+        alarm = item.get("alarm") or {}
+        days_str = alarm.get("day_names")
+        date_str = alarm.get("date") or days_str or "No date set",
+        time_str = alarm.get("time_12hr") or alarm.get("time") or "No time set"
+
         return ft.Container(
             border=ft.Border.all(1, soft_border),
             border_radius=8,
             padding=ft.Padding.symmetric(horizontal=14, vertical=12),
             content=ft.Text(
-                f"{item['time']} - {item['task']}",
+                f"{task_name} for {pet_name} - {time_str}, {date_str}", # add more details here
                 size=15,
                 weight=ft.FontWeight.W_600,
                 color=black,
             ),
         )
-
 
     tasks_section = ft.Container(
         margin=ft.Margin.only(left=16, right=16, top=16),
@@ -428,8 +400,8 @@ def homepage_view(page: ft.Page) -> ft.View:
         ),
     )
 
-    # Navigation Bar (turned into a pill)
 
+    # NAVIGATION PILL
     def pill_destination(index, label, icon):
 
         is_active = page.route == pill_nav_routes[index]
@@ -552,13 +524,11 @@ def homepage_view(page: ft.Page) -> ft.View:
     )
 
 
+# RUNNABLE
 def _standalone_main(page: ft.Page):
-    # Lets you run `python homepage.py` on its own to preview this screen
-
     page.title = "PawPlan"
     page.window.width = 430
     page.window.height = 900
-
 
     page.theme = ft.Theme(
         page_transitions=ft.PageTransitionsTheme(
@@ -572,7 +542,6 @@ def _standalone_main(page: ft.Page):
 
     page.views.append(homepage_view(page))
     page.update()
-
 
 if __name__ == "__main__":
     ft.run(_standalone_main, assets_dir="assets")

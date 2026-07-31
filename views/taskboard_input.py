@@ -1,11 +1,11 @@
 import flet as ft
 import logging
-from firebase_admin import firestore
 from datetime import time, date
 import calendar
 
 from model.json.uid_json import UserIdStore
-from setup.firebase_setup import db
+from model.pet_crud import get_pet_list
+from model.task_crud import add_task as add_task_crud
 
 logger = logging.getLogger(__name__)
 
@@ -535,6 +535,8 @@ def taskboard_input_view(page: ft.Page) -> ft.View:
     success_text = ft.Text("", color=ft.Colors.GREEN_600, size=13, visible=False)
 
     # Pet selection dropdown
+
+    pet_list = get_pet_list()
     pet_selection = ft.Dropdown(
         hint_text="Select pet",
         width=340,
@@ -544,7 +546,12 @@ def taskboard_input_view(page: ft.Page) -> ft.View:
         color=black,
         content_padding=field_content_padding,
         options=[
+
             # fill with pet profile info
+            # get from crud
+            ft.dropdown.Option(pet.get("name"))
+            for pet in pet_list
+            if pet.get("name")
         ],
     )
 
@@ -598,8 +605,7 @@ def taskboard_input_view(page: ft.Page) -> ft.View:
         user_session = UserIdStore()
         current_user_id = user_session.get()
 
-    pets_ref = db.collection("users").document(current_user_id).collection("details").document("pets")
-    tasks_ref = db.collection("users").document(current_user_id).collection("tasks")
+
 
     # Normal functions can't call async functions
     async def add_task(e):
@@ -623,18 +629,15 @@ def taskboard_input_view(page: ft.Page) -> ft.View:
         error_text.visible = False
 
         # Prepare task data for Firebase
-        task_data = {
-            "task_name": task_name.value,
-            "pet_name": pet_selection.value,
-            "description": task_desc.value if task_desc.value else "",
-            "created_at": firestore.SERVER_TIMESTAMP,
-            "alarm": alarm_data,
-            "completed": False,
-        }
 
         try:
             # Add task to Firestore
-            tasks_ref.add(task_data)
+            add_task_crud(
+                task_name.value,
+                pet_selection.value,
+                task_desc.value,
+                alarm_data,
+            )
 
             # Show success message
             success_text.value = "✅ Task created successfully with alarm!"

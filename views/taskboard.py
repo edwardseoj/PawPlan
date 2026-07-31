@@ -1,16 +1,17 @@
 import flet as ft
 import logging
 
+from model.json.uid_json import UserIdStore
+from model.task_crud import get_task_list
 from utility.navigation import go_to
 
 logger = logging.getLogger(f"pawplan.{__name__}")
 
 # Sample data (wire up to Firestore later)
-TODAYS_TASKS = [
-    {"time": "8:00 am Daily", "task": "Feed Bella"},
-    {"time": "12:00 pm Daily", "task": "Walk Max"},
-    {"time": "10:00am, June 13", "task": "Vet Appointment for Bella"},
-]
+
+uid_account = UserIdStore()
+uid = uid_account.get()
+TODAYS_TASKS = get_task_list()
 
 UPCOMING_TASKS = []
 
@@ -93,7 +94,6 @@ def taskboard_view(page: ft.Page) -> ft.View:
 
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=16, vertical=16),
-        # padding=ft.Padding.only(left=8, right=20, top=16, bottom=8),
         bgcolor=white,
         content=header_row,
     )
@@ -121,7 +121,10 @@ def taskboard_view(page: ft.Page) -> ft.View:
         )
 
     def task_label(item):
-        return f"{item['time']} - {item['task']}"
+        task_name = item.get("task_name", "Untitled task")
+        alarm = item.get("alarm") or {}
+        time_str = alarm.get("time_12hr") or alarm.get("time") or "No time set"
+        return f"{time_str} - {task_name}"
 
     today_pills = ft.Column(
         spacing=0,

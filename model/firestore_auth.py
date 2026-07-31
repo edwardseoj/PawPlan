@@ -55,6 +55,9 @@ def create_oauth_user_doc(uid: str):
 def get_uid():
     # set uid
     uid = uid_account.get()
+    if not uid:
+        logger.debug("get_uid: no uid set")
+        return None
 
     # check doc
     doc_ref = db.collection("users").document(uid)
