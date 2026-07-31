@@ -21,6 +21,7 @@ nav_blue = "#0B4FB0"
 
 NAV_SHRINK_SCALE = 0.6
 NAV_HOVER_SCALE = 1.1
+LOGO_SIZE = 70
 
 DESTINATIONS = [
     ft.NavigationBarDestination(
@@ -46,55 +47,89 @@ def taskboard_view(page: ft.Page) -> ft.View:
     todays_tasks, upcoming_tasks = split_tasks_by_occurrence(get_task_list(), today)
 
     async def go_settings(e):
-        # logger.info("Settings nav clicked")
         logger.debug("Settings nav clicked")
         await page.push_route("/settings")
+
     async def go_logout(e):
-        # logger.info("Settings nav clicked")
         logger.debug("Logout clicked")
         await page.push_route("/")
 
     pill_nav_routes = ["/homepage", "/taskboard", "/account_profile"]
 
-    header_row = ft.Row(
-        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-        vertical_alignment=ft.CrossAxisAlignment.CENTER,
-        controls=[
-            ft.Text(
-                "Taskboard",
-                size=28,
-                weight=ft.FontWeight.W_800,
-                color=black,
-            ),
-            ft.Row(
-                spacing=6,
-                controls=[
-                    ft.Icon(ft.Icons.NOTIFICATIONS_NONE, color=black, size=26),
-                    ft.PopupMenuButton(
-                        icon=ft.Icons.MORE_VERT,
-                        icon_color=black,
-                        items=[
-                            ft.PopupMenuItem(
-                                content=ft.Text("Settings"),
-                                icon=ft.Icons.SETTINGS_OUTLINED,
-                                on_click=go_settings,
+    # ---------------- Branded app header (logo, notifications, settings) ----------------
+    # Matches homepage.py's appbar so the same top bar appears on every main tab.
+    appbar = ft.Container(
+        padding=ft.Padding.symmetric(horizontal=20, vertical=12),
+        bgcolor=white,
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            controls=[
+                ft.Row(
+                    spacing=10,
+                    controls=[
+                        ft.Container(
+                            width=LOGO_SIZE,
+                            height=LOGO_SIZE,
+                            border_radius=10,
+                            alignment=ft.Alignment.CENTER,
+                            content=ft.Image(
+                                src="pawplan_icon.png",
+                                width=LOGO_SIZE,
+                                height=LOGO_SIZE,
+                                fit=ft.BoxFit.CONTAIN,
                             ),
-                            ft.PopupMenuItem(
-                                content=ft.Text("Log out"),
-                                icon=ft.Icons.LOGOUT,
-                                on_click=go_logout,
-                            ),
-                        ],
-                    ),
-                ],
-            ),
-        ],
+                        ),
+                        ft.Row(
+                            spacing=2,
+                            controls=[
+                                ft.Text("Paw", size=22, weight=ft.FontWeight.W_800, color=orange),
+                                ft.Text("Plan", size=22, weight=ft.FontWeight.W_800, color="#0B2E6B"),
+                            ],
+                        ),
+                    ],
+                ),
+                ft.Row(
+                    spacing=6,
+                    controls=[
+                        ft.Icon(ft.Icons.NOTIFICATIONS_NONE, color=black, size=26),
+                        ft.PopupMenuButton(
+                            icon=ft.Icons.MORE_VERT,
+                            icon_color=black,
+                            items=[
+                                ft.PopupMenuItem(
+                                    content=ft.Text("Settings"),
+                                    icon=ft.Icons.SETTINGS_OUTLINED,
+                                    on_click=go_settings,
+                                ),
+                                ft.PopupMenuItem(
+                                    content=ft.Text("Log out"),
+                                    icon=ft.Icons.LOGOUT,
+                                    on_click=go_logout,
+                                ),
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        ),
     )
 
-    appbar = ft.Container(
-        padding=ft.Padding.symmetric(horizontal=16, vertical=16),
+    appbar_divider = ft.Container(height=5, bgcolor=orange)
+
+    page_title = ft.Container(
+        padding=ft.Padding.only(left=8, right=20, top=16, bottom=8),
         bgcolor=white,
-        content=header_row,
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
+                ft.Text(
+                    "Taskboard",
+                    size=28,
+                    weight=ft.FontWeight.W_800,
+                    color=black,
+                ),
+            ],
+        ),
     )
 
     def task_pill(label, index):
@@ -139,6 +174,7 @@ def taskboard_view(page: ft.Page) -> ft.View:
 
     today_pills = ft.Column(
         spacing=0,
+        scroll=ft.ScrollMode.AUTO,
         controls=(
             [task_pill(task_label(d, t), i) for i, (d, t) in enumerate(todays_tasks)]
             if todays_tasks
@@ -148,6 +184,7 @@ def taskboard_view(page: ft.Page) -> ft.View:
 
     upcoming_pills = ft.Column(
         spacing=0,
+        scroll=ft.ScrollMode.AUTO,
         controls=(
             [task_pill(task_label(d, t), i) for i, (d, t) in enumerate(upcoming_tasks)]
             if upcoming_tasks
@@ -166,7 +203,7 @@ def taskboard_view(page: ft.Page) -> ft.View:
             ),
         )
 
-    def section_box(content_column, min_height=None):
+    def section_box(content_column, min_height=300):
         return ft.Container(
             margin=ft.Margin.only(left=20, right=20),
             padding=ft.Padding.symmetric(horizontal=10, vertical=10),
@@ -217,7 +254,6 @@ def taskboard_view(page: ft.Page) -> ft.View:
 
     # ---------------- Floating nav bar ----------------
     nav_state = {"resting_scale": 1.0, "hovering": False}
-    # Taskboard is index 1 in DESTINATIONS, so it starts active since we're on this page.
     nav_active_index = {"value": 1}
     nav_icon_containers = []
     nav_labels = []
@@ -335,6 +371,8 @@ def taskboard_view(page: ft.Page) -> ft.View:
         on_scroll=handle_content_scroll,
         controls=[
             appbar,
+            appbar_divider,
+            page_title,
             todays_task_section,
             upcoming_task_section,
             add_task_button,
@@ -342,21 +380,25 @@ def taskboard_view(page: ft.Page) -> ft.View:
         ],
     )
 
+    floating_nav_overlay = ft.Container(
+        left=0,
+        right=0,
+        bottom=20,
+        alignment=ft.Alignment.CENTER,
+        content=floating_nav,
+    )
+
     return ft.View(
         route="/taskboard",
-        bgcolor=white,
+        bgcolor="#FFFFFF",
         padding=0,
         spacing=0,
         controls=[
-            ft.Column(
+            ft.Stack(
                 expand=True,
-                spacing=0,
                 controls=[
                     main_content,
-                    ft.Row(
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        controls=[floating_nav],
-                    ),
+                    floating_nav_overlay,
                 ],
             )
         ],

@@ -146,7 +146,7 @@ def login_view(page: ft.Page) -> ft.View:
         style = ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=30),
             side = {
-                ft.ControlState.DEFAULT: ft.BorderSide(1, "#000000")
+                ft.ControlState.DEFAULT: ft.BorderSide(2, color="#000000"),
             },
             text_style = ft.TextStyle(
                 size = 22,
@@ -154,6 +154,7 @@ def login_view(page: ft.Page) -> ft.View:
             ),
         ),
     )
+
 
     bottom_bars = ft.Column(
         [

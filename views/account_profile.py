@@ -151,6 +151,9 @@ def account_profile_view(page: ft.Page) -> ft.View:
         ),
     )
 
+    appbar_divider = ft.Container(height=5, bgcolor=orange)
+
+
     # Header
     header = ft.Container(
         padding=ft.Padding.symmetric(horizontal=16, vertical=16),
@@ -294,9 +297,10 @@ def account_profile_view(page: ft.Page) -> ft.View:
                     detail_row("Allergies", allergies_display),
 
                     ft.Button(
-                        content = "Delete pet",
+                        content = "Delete Pet",
                         style=ft.ButtonStyle(
-                            bgcolor=ft.Colors.RED
+                            bgcolor=ft.Colors.RED,
+                            side=ft.BorderSide(3, color="000000")
                         ),
                         icon = ft.Icons.DELETE,
                         on_click = make_delete_handler(pet.get("name", ""))
@@ -461,27 +465,32 @@ def account_profile_view(page: ft.Page) -> ft.View:
         on_scroll=handle_content_scroll,
         controls=[
             appbar,
+            appbar_divider,
             header,
             profile_details,
             ft.Container(height=100),
         ],
     )
 
+    floating_nav_overlay = ft.Container(
+        left=0,
+        right=0,
+        bottom=20,
+        alignment=ft.Alignment.CENTER,
+        content=floating_nav,
+    )
+
     return ft.View(
         route="/account_profile",
-        bgcolor=white,
+        bgcolor="#FFFFFF",
         padding=0,
         spacing=0,
         controls=[
-            ft.Column(
+            ft.Stack(
                 expand=True,
-                spacing=0,
                 controls=[
                     main_content,
-                    ft.Row(
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        controls=[floating_nav],
-                    ),
+                    floating_nav_overlay,
                 ],
             )
         ],

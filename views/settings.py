@@ -14,7 +14,7 @@ header_blue = "#1450B4"
 
 
 SETTINGS_OPTIONS = [
-    "Change Name",
+    "Change Username",
     "Change Email",
     "Change Password",
     "Change Appearance"
@@ -22,6 +22,8 @@ SETTINGS_OPTIONS = [
 
 
 def settings_view(page: ft.Page) -> ft.View:
+    page.theme_mode = ft.ThemeMode.LIGHT
+    page.update()
 
     # async def go_back(e: ft.ViewPopEvent):
     #     logger.debug("Back to homepage clicked")
@@ -73,12 +75,18 @@ def settings_view(page: ft.Page) -> ft.View:
     )
 
     def toggle_appearance(e):
-        logger.debug("Toggle appearance clicked: {'Dark' if e.control. value else 'Light'} mode")
+            if e.control.value:  # ON
+                logger.debug("Dark mode enabled")
+                page.theme_mode = ft.ThemeMode.DARK
+            else:  # OFF
+                logger.debug("Light mode enabled")
+                page.theme_mode = ft.ThemeMode.LIGHT
+            page.update()
 
     def setting_row(label):
         if label ==  "Change Appearance":
             trailing = ft.Switch(
-                value = False,
+                value = page.theme_mode == ft.ThemeMode.DARK,
                 active_color = primary,
                 on_change = toggle_appearance,
             )
@@ -97,7 +105,12 @@ def settings_view(page: ft.Page) -> ft.View:
                 vertical_alignment = ft.CrossAxisAlignment.CENTER,
 
                 controls = [
-                    ft.Text(label, size = 15, weight = ft.FontWeight.W_400, color = black),
+                    ft.Text(
+                        label,
+                        size = 15,
+                        weight = ft.FontWeight.W_400,
+                        color = ft.Colors.ON_SURFACE,
+                    ),
                     trailing,
                 ],
             ),
@@ -132,7 +145,7 @@ def settings_view(page: ft.Page) -> ft.View:
 
     return ft.View(
         route="/settings",
-        bgcolor=white,
+        bgcolor=None,
         padding=0,
         spacing=0,
         controls=[

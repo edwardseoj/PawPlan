@@ -1,9 +1,15 @@
-from cProfile import label
-
 import flet as ft
 import datetime
+import logging
 from datetime import time
-from flet.controls import page
+
+logger = logging.getLogger(f"pawplan.{__name__}")
+
+# shared with the rest of the app
+black = "#000000"
+white = "#FFFFFF"
+orange = "#F5821F"
+nav_blue = "#0B4FB0"
 
 # feels redundant
 
@@ -11,7 +17,12 @@ def taskmaker_view(page: ft.Page) -> ft.View:
     page.scroll = ft.ScrollMode.AUTO
 
     # flet spazzes out for some reason if these aren't functions
-    selection_text = ft.Text(weight=ft.FontWeight.BOLD, value="No task selected")
+    selection_text = ft.Text(weight=ft.FontWeight.BOLD, value="No task selected", color=black)
+
+    async def go_back(e):
+        logger.debug("Going back")
+        await page.push_route("/homepage")
+
     def on_time_change(e):
         selection_text.value = f"Time selected: {time_picker.value}"
         page.update()
@@ -26,48 +37,54 @@ def taskmaker_view(page: ft.Page) -> ft.View:
     def on_date_dismiss(e):
         page.show_dialog(ft.SnackBar(ft.Text("DatePicker dismissed!")))
 
+    def on_save_task(e):
+        # TODO: wire up to Firestore / task list
+        logger_msg = f"Saving task '{task_input.value}' for {pet_picker.value}"
+        page.show_dialog(ft.SnackBar(ft.Text("Task saved!")))
+        print(logger_msg)
 
     appbar = ft.Container(
-        padding=ft.Padding.symmetric(horizontal=20, vertical=10),
-        bgcolor="#8C52FF",
+        padding=ft.Padding.only(left=8, right=20, top=30, bottom=20),
+        bgcolor=nav_blue,
         content=ft.Row(
-            alignment=ft.MainAxisAlignment.CENTER,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
-                ft.Text("Task Maker", size=20, weight=ft.FontWeight.W_700, color="#FFFFFF"),
+                ft.IconButton(
+                    icon=ft.Icons.ARROW_BACK,
+                    icon_color=white,
+                    on_click=go_back,
+                ),
+                ft.Container(
+                    expand=True,
+                    alignment=ft.Alignment.CENTER,
+                    content=ft.Text("Taskmaker", size=20, weight=ft.FontWeight.W_700, color=white),
+                ),
+                ft.Container(width=48),  # balances the back button so the title stays centered
             ]
-        ),
-    )
-
-
-    tasks = ft.Container(
-        margin=ft.Margin.only(left=16, right=16, top=10),
-        content=ft.Text(
-            "New Task",
-            size=22,
-            weight=ft.FontWeight.W_700,
-            color="Black",
         ),
     )
 
     pet_picker = ft.Dropdown(
         label="Choose Pet",
-        #TODO: add added pets to dropdown
+        # TODO: add added pets to dropdown
         options=[
             ft.dropdown.Option("Nanet Japoles"),
             ft.dropdown.Option("Layla Mesarka od Travnik"),
-        ])
+        ],
+        width=300,
+    )
 
-    #inputs
+    # inputs
     task_input = ft.TextField(label="Input new task here", width=300, text_align=ft.TextAlign.CENTER)
 
     time_picker = ft.TimePicker(
-    value=time(hour=4, minute=20),
-    confirm_text="Confirm",
-    error_invalid_text="Time out of range",
-    help_text="Pick your time slot",
-    entry_mode=ft.TimePickerEntryMode.DIAL,
-    on_change = on_time_change,
-    on_dismiss = on_time_dismiss,
+        value=time(hour=4, minute=20),
+        confirm_text="Confirm",
+        error_invalid_text="Time out of range",
+        help_text="Pick your time slot",
+        entry_mode=ft.TimePickerEntryMode.DIAL,
+        on_change=on_time_change,
+        on_dismiss=on_time_dismiss,
     )
 
     today = datetime.datetime(year=2026, month=7, day=22)
@@ -79,43 +96,93 @@ def taskmaker_view(page: ft.Page) -> ft.View:
         on_dismiss=on_date_dismiss,
     )
 
-    content = ft.SafeArea(
-            content=ft.Column(
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing = 15,
-                controls=[
-                    pet_picker,
-                    task_input,
-                    ft.Button(
-                        key="pick_time_button",
-                        content="Pick time",
-                        icon=ft.Icons.TIME_TO_LEAVE,
-                        on_click=lambda e: page.show_dialog(time_picker),
-                    ),
-                    ft.Button(
-                        key="pick_date_button",
-                        content="Pick date",
-                        icon=ft.Icons.CALENDAR_MONTH,
-                        on_click=lambda e: page.show_dialog(date_picker),
-                    ),
-                    selection_text,
-                ],
-            ),
-        )
-
-    return ft.View(
-        route = "/taskmaker",
-        controls = [
-            appbar,
-            tasks,
-            content,
-            # appbar=appbar,
-            # controls=[tasks, content],
-        ]
+    form_card = ft.Container(
+        margin=ft.Margin.only(left=16, right=16, top=12),
+        padding=ft.Padding.symmetric(horizontal=16, vertical=20),
+        border=ft.Border.all(width=2.5, color=black),
+        border_radius=20,
+        content=ft.Column(
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=15,
+            controls=[
+                pet_picker,
+                task_input,
+                ft.Button(
+                    key="pick_time_button",
+                    content="Pick time",
+                    icon=ft.Icons.SCHEDULE,
+                    on_click=lambda e: page.show_dialog(time_picker),
+                ),
+                ft.Button(
+                    key="pick_date_button",
+                    content="Pick date",
+                    icon=ft.Icons.CALENDAR_MONTH,
+                    on_click=lambda e: page.show_dialog(date_picker),
+                ),
+                selection_text,
+            ],
+        ),
     )
 
+    save_button = ft.Container(
+        margin=ft.Margin.only(left=16, right=16, top=12, bottom=20),
+        content=ft.FilledButton(
+            content= ft.Text("Save Task", size=20, weight=ft.FontWeight.W_700),
+            icon=ft.Icons.CHECK,
+            style=ft.ButtonStyle(
+                bgcolor=orange,
+                color=white,
+                shape=ft.RoundedRectangleBorder(radius=30),
+                side=ft.BorderSide(width=1.5, color=black),
+                padding=ft.Padding.symmetric(horizontal=24, vertical=16),
+            ),
+            on_click=on_save_task,
+            width=300,
+        ),
+    )
+
+    main_content = ft.Column(
+        spacing=0,
+        expand=True,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+        controls=[
+            ft.Container(
+                expand=True,
+                alignment=ft.Alignment.CENTER,
+                content=ft.SafeArea(
+                    content=ft.Column(
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        spacing=0,
+                        scroll=ft.ScrollMode.AUTO,
+                        controls=[form_card],
+                    ),
+                ),
+            ),
+        ],
+    )
+
+    return ft.View(
+        route="/taskmaker",
+        bgcolor=white,
+        padding=0,
+        spacing=0,
+        controls=[
+            ft.Column(
+                expand=True,
+                spacing=0,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    appbar,
+                    main_content,
+                    save_button,
+                ],
+            )
+        ],
+    )
+
+
 def _standalone_main(page: ft.Page):
-    page.title = "TaskMaker"
+    page.title = "Taskmaker"
     page.window.width = 430
     page.window.height = 900
     page.views.append(taskmaker_view(page))

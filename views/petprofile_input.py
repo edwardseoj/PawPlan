@@ -48,7 +48,7 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
         logger.debug("Logout clicked")
         await page.push_route("/")
 
-    # ---------- App bar (matches header_blue style used on Homepage/Settings) ----------
+
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=16, vertical=16),
         bgcolor=header_blue,
@@ -93,7 +93,7 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
         ),
     )
 
-    # ---------- Form field styling ----------
+
     field_border_radius = 12
     field_content_padding = ft.Padding.symmetric(horizontal=16, vertical=14)
 
@@ -160,7 +160,7 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
 
     error_text = ft.Text("", color=ft.Colors.RED_600, size=13, visible=False)
 
-    # ---------- Avatar placeholder (visual anchor at the top of the form) ----------
+    # Avatar placeholder (visual anchor at the top of the form)
     avatar_placeholder = ft.Container(
         width=90,
         height=90,
