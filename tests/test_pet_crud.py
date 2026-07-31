@@ -68,8 +68,12 @@ class AddPetColorTests(unittest.TestCase):
     def setUp(self):
         uid_account.clear()
         _setup.db.reset_mock()
+        # add_pet now reads the current pet count to enforce MAX_PETS.
+        self._pet_list_patch = mock.patch("model.pet_crud.get_pet_list", return_value=[])
+        self._pet_list_patch.start()
 
     def tearDown(self):
+        self._pet_list_patch.stop()
         uid_account.clear()
 
     def _last_pet(self):
@@ -80,8 +84,9 @@ class AddPetColorTests(unittest.TestCase):
 
     def test_stores_chosen_color(self):
         uid_account.set("user@example.com")
-        add_pet("Bella", "Dog", 3, "Chihuahua", [], "#81D4FA")
+        ok, _ = add_pet("Bella", "Dog", 3, "Chihuahua", [], "#81D4FA")
 
+        self.assertTrue(ok)
         doc = _setup.db.collection.return_value.document.return_value.collection.return_value.document.return_value
         doc.set.assert_called_once()
         self.assertEqual(doc.set.call_args.kwargs["merge"], True)
@@ -90,12 +95,55 @@ class AddPetColorTests(unittest.TestCase):
 
     def test_defaults_color_when_none_passed(self):
         uid_account.set("user@example.com")
-        add_pet("Max", "Cat", 2, "Tabby", [], None)
+        ok, _ = add_pet("Max", "Cat", 2, "Tabby", [], None)
+        self.assertTrue(ok)
         self.assertEqual(self._last_pet()["color"], DEFAULT_PET_COLOR)
 
     def test_aborts_without_uid(self):
-        add_pet("Bella", "Dog", 3, "Chihuahua", [], "#81D4FA")
+        ok, message = add_pet("Bella", "Dog", 3, "Chihuahua", [], "#81D4FA")
+        self.assertFalse(ok)
+        self.assertIn("not signed in", message)
         _setup.db.collection.assert_not_called()
+
+
+class AddPetLimitTests(unittest.TestCase):
+    def setUp(self):
+        uid_account.clear()
+        _setup.db.reset_mock()
+
+    def tearDown(self):
+        uid_account.clear()
+
+    def _doc(self):
+        return _setup.db.collection.return_value.document.return_value.collection.return_value.document.return_value
+
+    def test_rejects_when_at_limit(self):
+        uid_account.set("user@example.com")
+        pets = [{"name": f"Pet{i}"} for i in range(5)]
+        with mock.patch("model.pet_crud.get_pet_list", return_value=pets):
+            ok, message = add_pet("Bella", "Dog", 3, "Chihuahua", [], "#81D4FA")
+
+        self.assertFalse(ok)
+        self.assertIn("5", message)
+        self._doc().set.assert_not_called()
+
+    def test_rejects_when_over_limit(self):
+        uid_account.set("user@example.com")
+        pets = [{"name": f"Pet{i}"} for i in range(7)]
+        with mock.patch("model.pet_crud.get_pet_list", return_value=pets):
+            ok, _ = add_pet("Bella", "Dog", 3, "Chihuahua", [], "#81D4FA")
+
+        self.assertFalse(ok)
+        self._doc().set.assert_not_called()
+
+    def test_allows_when_under_limit(self):
+        uid_account.set("user@example.com")
+        pets = [{"name": f"Pet{i}"} for i in range(4)]
+        with mock.patch("model.pet_crud.get_pet_list", return_value=pets):
+            ok, _ = add_pet("Bella", "Dog", 3, "Chihuahua", [], "#81D4FA")
+
+        self.assertTrue(ok)
+        self._doc().set.assert_called_once()
 
 
 class RemovePetCascadeTests(unittest.TestCase):

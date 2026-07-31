@@ -18,6 +18,9 @@ PASTEL_PET_COLORS = {
 }
 DEFAULT_PET_COLOR = PASTEL_PET_COLORS["Yellow"]
 
+# Maximum number of pets a single account can have.
+MAX_PETS = 5
+
 def get_specific_pet(uid, index):
     pet_list = get_pet_list(uid)
 
@@ -47,10 +50,22 @@ def get_pet_list(uid=None):
     return pet_list
 
 def add_pet(name, pet_type, age, breed, allergies, color=DEFAULT_PET_COLOR):
+    """Add a pet, enforcing a maximum of MAX_PETS pets per account.
+
+    Returns a ``(success, message)`` tuple. On failure ``message`` explains
+    why (e.g. limit reached), on success it's just confirmation.
+    """
     uid = uid_account.get()
     if not uid:
         logger.error("add_pet: no uid set, aborting")
-        return
+        return False, "User not signed in."
+
+    if len(get_pet_list(uid)) >= MAX_PETS:
+        logger.warning(
+            "add_pet: pet limit of %d reached for uid=%s, refusing '%s'",
+            MAX_PETS, uid, name,
+        )
+        return False, f"You can only have up to {MAX_PETS} pets. Delete one before adding another."
 
     pets_ref = db.collection("users").document(uid).collection("details").document("pets")
     pets_ref.set({
@@ -64,6 +79,7 @@ def add_pet(name, pet_type, age, breed, allergies, color=DEFAULT_PET_COLOR):
         }])
     }, merge=True)
     logger.info(f"Added pet '{name}' for uid={uid}")
+    return True, "Pet added."
 
 def get_pet_color_map(uid=None):
     """Map each pet's name to its stored pastel color, defaulting for old pets."""

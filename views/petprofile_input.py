@@ -1,10 +1,13 @@
 import flet as ft
 import logging
+import threading
 
 from model.pet_crud import (
     add_pet as add_pet_crud,
+    get_pet_list,
     PASTEL_PET_COLORS,
     DEFAULT_PET_COLOR,
+    MAX_PETS,
 )
 
 logger = logging.getLogger(__name__)
@@ -164,6 +167,35 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
 
     error_text = ft.Text("", color=ft.Colors.RED_600, size=13, visible=False)
 
+    # ---------- Pet limit (max MAX_PETS per account) ----------
+    submit_btn = ft.Button(
+        content=ft.Text("Save Profile", size=16, weight=ft.FontWeight.W_700),
+        width=340,
+        height=54,
+        on_click=add_pet,
+        color=white,
+        bgcolor=primary,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=30),
+            side=ft.BorderSide(width=1.5, color=black),
+        ),
+    )
+
+    def _check_pet_limit():
+        """Disable the form and show a notice when the account is at the cap."""
+        try:
+            current = get_pet_list() or []
+            if len(current) >= MAX_PETS:
+                submit_btn.disabled = True
+                submit_btn.bgcolor = "#9CA3AF"
+                error_text.value = f"Pet limit reached. You can have up to {MAX_PETS} pets."
+                error_text.visible = True
+                page.update()
+        except Exception as ex:
+            logger.exception("Failed checking pet limit: %s", ex)
+
+    threading.Thread(target=_check_pet_limit, daemon=True).start()
+
     # Pastel color picker for the new pet, stored in Firestore with the pet.
     selected_color = {"value": DEFAULT_PET_COLOR}
 
@@ -227,7 +259,7 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
         ]
 
         try:
-            add_pet_crud(
+            ok, message = add_pet_crud(
                 pet_name.value,
                 pet_type.value,
                 pet_age.value,
@@ -242,20 +274,13 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
             page.update()
             return
 
-        await go_homepage(e)
+        if not ok:
+            error_text.value = message
+            error_text.visible = True
+            page.update()
+            return
 
-    submit_btn = ft.Button(
-        content=ft.Text("Save Profile", size=16, weight=ft.FontWeight.W_700),
-        width=340,
-        height=54,
-        on_click=add_pet,
-        color=white,
-        bgcolor=primary,
-        style=ft.ButtonStyle(
-            shape=ft.RoundedRectangleBorder(radius=30),
-            side=ft.BorderSide(width=1.5, color=black),
-        ),
-    )
+        await go_homepage(e)
 
     form = ft.Container(
         margin=ft.Margin.only(left=16, right=16, top=24, bottom=16),
@@ -270,7 +295,14 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
                 labeled_input("Age", pet_age),
                 labeled_input("Breed", pet_breed),
                 labeled_input("Allergies", pet_allergies),
-                labeled_input("Color", build_color_picker()),
+                ft.Column(
+                    spacing=6,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    controls=[
+                        ft.Text("Color", size=13, weight=ft.FontWeight.W_600, color="#6B7280"),
+                        build_color_picker(),
+                    ],
+                ),
                 error_text,
             ],
         ),
