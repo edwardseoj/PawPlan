@@ -13,6 +13,7 @@ from model.task_crud import (
     task_occurs_on,
     format_occurrence_date,
 )
+from model.user_account_crud import get_data
 from utility.navigation import go_to
 
 logger = logging.getLogger(f"pawplan.{__name__}")
@@ -227,7 +228,18 @@ def homepage_view(page: ft.Page) -> ft.View:
         )
 
     current_uid = return_uid(page)
-    header_text = f"Hello {current_uid}" if current_uid else "Hello, Pet Parent!"
+    # Greet with the stored username (e.g. "Bella's human"), falling back to
+    # the raw email / placeholder when no profile details exist yet.
+    if current_uid:
+        try:
+            profile = get_data(current_uid) or {}
+            display_name = profile.get("username") or current_uid
+        except Exception as ex:
+            logger.warning("Failed to load username for greeting: %s", ex)
+            display_name = current_uid
+        header_text = f"Hello {display_name}"
+    else:
+        header_text = "Hello, Pet Parent!"
 
     header = ft.Container(
         padding=ft.Padding.symmetric(horizontal=16, vertical=16),
