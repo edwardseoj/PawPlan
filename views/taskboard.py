@@ -2,6 +2,7 @@ import flet as ft
 import logging
 
 from utility.navigation import go_to
+from utility.theme import get_colors, ON_BRAND, ORANGE, NAV_BLUE
 
 logger = logging.getLogger(f"pawplan.{__name__}")
 
@@ -17,10 +18,8 @@ UPCOMING_TASKS = []
 # colors used for the task pills
 pill_colors = ["#6C5CE7", "#F05648"]
 
-black = "#000000"
-white = "#FFFFFF"
-orange = "#F5821F"
-nav_blue = "#0B4FB0"
+orange = ORANGE
+nav_blue = NAV_BLUE
 
 NAV_SHRINK_SCALE = 0.6
 NAV_HOVER_SCALE = 1.1
@@ -46,6 +45,10 @@ DESTINATIONS = [
 
 
 def taskboard_view(page: ft.Page) -> ft.View:
+    toggleColor = get_colors(page)
+    black = toggleColor["text"]
+    white = toggleColor["surface"]
+
 
     pill_nav_routes = ["/homepage", "/taskboard", "/account_profile"]
 
@@ -128,13 +131,13 @@ def taskboard_view(page: ft.Page) -> ft.View:
 
         label_text = ft.Text(
             task_label(item),
-            color=white,
+            color=ON_BRAND,
             size=14,
             weight=ft.FontWeight.W_600,
             expand=True,
             style=ft.TextStyle(
                 decoration=ft.TextDecoration.LINE_THROUGH if item["done"] else None,
-                decoration_color=black,
+                decoration_color=ON_BRAND,
             ),
         )
 
@@ -151,7 +154,7 @@ def taskboard_view(page: ft.Page) -> ft.View:
             item["done"] = e.control.value
             label_text.style = ft.TextStyle(
                 decoration=ft.TextDecoration.LINE_THROUGH if item["done"] else None,
-                decoration_color=black,
+                decoration_color=ON_BRAND,
             )
             pill_container.opacity = 0.5 if item["done"] else 1.0
             label_text.update()
@@ -161,8 +164,8 @@ def taskboard_view(page: ft.Page) -> ft.View:
             value=item["done"],
             on_change=on_check_change,
             check_color=color,
-            fill_color=white,
-            active_color=white,
+            fill_color=ON_BRAND,
+            active_color=ON_BRAND,
         )
 
         pill_container.content = ft.Row(
@@ -178,13 +181,13 @@ def taskboard_view(page: ft.Page) -> ft.View:
 
     today_pills = ft.Column(
         spacing=0,
-        scroll = ft.ScrollMode.AUTO,
+        scroll=ft.ScrollMode.AUTO,
         controls=[task_pill(t, i) for i, t in enumerate(TODAYS_TASKS)],
     )
 
     upcoming_pills = ft.Column(
         spacing=0,
-        scroll = ft.ScrollMode.AUTO,
+        scroll=ft.ScrollMode.AUTO,
         controls=(
             [task_pill(t, i) for i, t in enumerate(UPCOMING_TASKS)]
             if UPCOMING_TASKS
@@ -196,14 +199,12 @@ def taskboard_view(page: ft.Page) -> ft.View:
                         "No upcoming tasks",
                         size=14,
                         weight=ft.FontWeight.W_600,
-                        color=ft.Colors.BLACK,
+                        color=toggleColor["muted_text"],
                     ),
                 )
             ]
         ),
     )
-
-
 
     def section_header(label):
         return ft.Container(
@@ -244,7 +245,6 @@ def taskboard_view(page: ft.Page) -> ft.View:
         ],
     )
 
-
     nav_state = {"resting_scale": 1.0, "hovering": False}
     nav_active_index = {"value": 1}
     nav_icon_containers = []
@@ -271,6 +271,7 @@ def taskboard_view(page: ft.Page) -> ft.View:
             logger.debug(f"Bottom nav tapped: {target_route}")
             if page.route != target_route:
                 await page.push_route(target_route)
+
         return handler
 
     def pill_destination(index, label, icon):
@@ -283,12 +284,12 @@ def taskboard_view(page: ft.Page) -> ft.View:
             bgcolor=orange if is_active else None,
             alignment=ft.Alignment.CENTER,
             animate=ft.Animation(200, ft.AnimationCurve.EASE_OUT_CUBIC),
-            content=ft.Icon(icon, color=white, size=20),
+            content=ft.Icon(icon, color=ON_BRAND, size=20),
         )
         label_text = ft.Text(
             label,
             size=11,
-            color=white,
+            color=ON_BRAND,
             weight=ft.FontWeight.W_700 if is_active else ft.FontWeight.W_600,
         )
 
@@ -306,8 +307,6 @@ def taskboard_view(page: ft.Page) -> ft.View:
                 controls=[icon_box, label_text],
             ),
         )
-
-
 
     floating_nav = ft.Container(
         bgcolor=nav_blue,
@@ -332,19 +331,15 @@ def taskboard_view(page: ft.Page) -> ft.View:
         ),
     )
 
-
-
     def shrink_nav():
         nav_state["resting_scale"] = NAV_SHRINK_SCALE
         if not nav_state["hovering"]:
             apply_nav_scale(NAV_SHRINK_SCALE)
 
-
     def restore_nav(e=None):
         nav_state["resting_scale"] = 1.0
         if not nav_state["hovering"]:
             apply_nav_scale(1.0)
-
 
     def handle_nav_hover(e: ft.HoverEvent):
         is_hovering = e.data == "true"
@@ -388,7 +383,7 @@ def taskboard_view(page: ft.Page) -> ft.View:
 
     return ft.View(
         route="/taskboard",
-        bgcolor="#FFFFFF",
+        bgcolor=toggleColor["bg"],
         padding=0,
         spacing=0,
         controls=[

@@ -3,17 +3,21 @@ import datetime
 import logging
 from datetime import time
 
+from utility.theme import get_colors, ON_BRAND, ORANGE, NAV_BLUE
+
 logger = logging.getLogger(f"pawplan.{__name__}")
 
 # shared with the rest of the app
-black = "#000000"
-white = "#FFFFFF"
-orange = "#F5821F"
-nav_blue = "#0B4FB0"
+
+orange = ORANGE
+nav_blue = NAV_BLUE
 
 
 def taskmaker_view(page: ft.Page) -> ft.View:
     page.scroll = ft.ScrollMode.AUTO
+    toggleColor = get_colors(page)
+    black = toggleColor["text"]
+    white = toggleColor["surface"]
 
     # flet spazzes out for some reason if these aren't functions
     selection_text = ft.Text(weight=ft.FontWeight.BOLD, value="No task selected", color=black)
@@ -50,13 +54,13 @@ def taskmaker_view(page: ft.Page) -> ft.View:
             controls=[
                 ft.IconButton(
                     icon=ft.Icons.ARROW_BACK,
-                    icon_color=white,
+                    icon_color=ON_BRAND,
                     on_click=go_back,
                 ),
                 ft.Container(
                     expand=True,
                     alignment=ft.Alignment.CENTER,
-                    content=ft.Text("Taskmaker", size=20, weight=ft.FontWeight.W_700, color=white),
+                    content=ft.Text("Taskmaker", size=20, weight=ft.FontWeight.W_700, color=ON_BRAND),
                 ),
                 ft.Container(width=48),  # balances the back button so the title stays centered
             ]
@@ -126,11 +130,11 @@ def taskmaker_view(page: ft.Page) -> ft.View:
     save_button = ft.Container(
         margin=ft.Margin.only(left=16, right=16, top=12, bottom=20),
         content=ft.FilledButton(
-            content= ft.Text("Save Task", size=20, weight=ft.FontWeight.W_700),
+            content=ft.Text("Save Task", size=20, weight=ft.FontWeight.W_700),
             icon=ft.Icons.CHECK,
             style=ft.ButtonStyle(
                 bgcolor=orange,
-                color=white,
+                color=ON_BRAND,
                 shape=ft.RoundedRectangleBorder(radius=30),
                 side=ft.BorderSide(width=1.5, color=black),
                 padding=ft.Padding.symmetric(horizontal=24, vertical=16),
@@ -162,7 +166,7 @@ def taskmaker_view(page: ft.Page) -> ft.View:
 
     return ft.View(
         route="/taskmaker",
-        bgcolor=white,
+        bgcolor=toggleColor["bg"],
         padding=0,
         spacing=0,
         controls=[

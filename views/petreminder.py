@@ -4,16 +4,14 @@ import logging
 from google.cloud.firestore_v1 import FieldFilter
 from model.firebase_setup import db
 from model.firestore_auth import get_uid
+from utility.theme import get_colors, ON_BRAND
 
 logger = logging.getLogger(__name__)
 
 
 def pet_reminder_view(page: ft.Page) -> ft.View:
+    toggleColor = get_colors(page)
 
-    primary = "#0D6EFD"
-    soft_border = "#DDE3EE"
-    white = "#FFFFFF"
-    white38 = "#FFFFFF66"
 
     # colors used for the reminder pills, cycled by index to match mockup
     pill_colors = ["#6C5CE7", "#F05648"]
@@ -30,7 +28,7 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
     # header: back arrow + centered title, no overflow menu
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=20, vertical=10),
-        bgcolor="#FFFFFF",
+        bgcolor=toggleColor["surface"],
         content=ft.Stack(
             controls=[
                 ft.Row(
@@ -40,7 +38,7 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
                             "Reminders",
                             size=22,
                             weight=ft.FontWeight.W_800,
-                            color="#000000",
+                            color=toggleColor["text"]
                         ),
                     ],
                 ),
@@ -49,7 +47,7 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
                     controls=[
                         ft.IconButton(
                             icon=ft.Icons.ARROW_BACK,
-                            icon_color="#000000",
+                            icon_color=toggleColor["text"],
                             icon_size=26,
                             on_click=go_back,
                         ),
@@ -59,9 +57,9 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
         ),
     )
 
-    def create_alarm(e):
+    def create_alarm():
 
-        def delete_alarm(e):
+        def delete_alarm():
             alarm_list_layout.controls.remove(alarm_unit)
             page.update()
 
@@ -91,11 +89,11 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
                         width=32,
                         height=32,
                         border_radius=10,
-                        border=ft.Border.all(width=2, color=white),
+                        border=ft.Border.all(width=2, color=ON_BRAND),
                     ),
                     ft.Text(
                         reminder_name,
-                        color=white,
+                        color=ON_BRAND,
                         size=15,
                         weight=ft.FontWeight.W_600,
                         expand=True,
@@ -111,7 +109,7 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
         expand=True,
         spacing=0,
         scroll=ft.ScrollMode.ADAPTIVE,
-        controls=[ft.Text("Loading reminders...", color="#000000")],
+        controls=[ft.Text("Loading reminders...", color=toggleColor["text"])],
     )
 
     def _fetch_reminders():
@@ -133,11 +131,11 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
                     create_reminder_control(r, i) for i, r in enumerate(reminders)
                 ]
             else:
-                alarm_list_layout.controls[:] = [ft.Text("No reminders", color="#000000")]
+                alarm_list_layout.controls[:] = [ft.Text("No reminders", color=toggleColor["text"])]
             page.update()
         except Exception as ex:
             logger.exception("Failed fetching reminders: %s", ex)
-            alarm_list_layout.controls[:] = [ft.Text("Failed to load reminders")]
+            alarm_list_layout.controls[:] = [ft.Text("Failed to load reminders", color=toggleColor["text"])]
             page.update()
 
     threading.Thread(target=_fetch_reminders, daemon=True).start()
@@ -147,7 +145,7 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
         margin=ft.Margin.only(left=16, right=16, top=15, bottom=5),
         padding=ft.Padding.symmetric(vertical=10),
         expand=True,
-        border=ft.Border.all(width=2.5, color="#000000"),
+        border=ft.Border.all(width=2.5, color=toggleColor["text"]),
         border_radius=18,
         content=alarm_list_layout  # Inject the list layout here
     )
@@ -164,7 +162,7 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
             alignment=ft.Alignment.CENTER,
             content=ft.IconButton(
                 icon=ft.Icons.ADD,
-                icon_color="white",
+                icon_color=ON_BRAND,
                 icon_size=26,
                 tooltip="Add reminder",
                 on_click=create_alarm,
@@ -174,11 +172,11 @@ def pet_reminder_view(page: ft.Page) -> ft.View:
 
     return ft.View(
         route="/petreminder",
-        bgcolor=white,
+        bgcolor=toggleColor["bg"],
         controls=[
             ft.Container(
                 expand=True,
-                bgcolor=white,
+                bgcolor=toggleColor["bg"],
                 content=ft.Column(
                     spacing=0,
                     expand=True,

@@ -1,16 +1,11 @@
 import flet as ft
 
 import logging
+
+
+from utility.theme import get_colors, apply_theme_mode, PRIMARY, ON_BRAND, HEADER_BLUE
+
 logger = logging.getLogger(f"pawplan.{__name__}")
-
-
-
-primary = "#0D6EFD"
-black = "#000000"
-white = "#FFFFFF"
-soft_border = "#DDE3EE"
-header_blue = "#1450B4"
-
 
 
 SETTINGS_OPTIONS = [
@@ -22,51 +17,34 @@ SETTINGS_OPTIONS = [
 
 
 def settings_view(page: ft.Page) -> ft.View:
-    page.theme_mode = ft.ThemeMode.LIGHT
-    page.update()
 
-    # async def go_back(e: ft.ViewPopEvent):
-    #     logger.debug("Back to homepage clicked")
-    #     try:
-    #         if e.view is not None:
-    #             print("View pop:", e.view)
-    #             page.views.remove(e.view)
-    #             top_view = page.views[-1]
-    #             await page.push_route(top_view.route)
-    #             logger.debug("Route popped")
-    #         else:
-    #             logger.debug("Route stuck")
-    #         # await page.pop_route()
-    #     except Exception as ex:
-    #         logger.error(f"Error occurred: {ex}")
+    toggleColor = get_colors(page)
+
     async def go_back(e):
         logger.debug("Going back")
         await page.push_route("/homepage")
-
 
     def setting_option_tapped(label):
         def handler(e):
             logger.debug("Setting option tapped clicked")
         return handler
 
-
-
     #APPBAR
     appbar = ft.Container(
         padding = ft.Padding.symmetric(horizontal=16, vertical=16),
-        bgcolor = header_blue,
+        bgcolor = HEADER_BLUE,
         content=ft.Row(
             vertical_alignment = ft.CrossAxisAlignment.CENTER,
             controls=[
                 ft.IconButton(
                     icon = ft.Icons.ARROW_BACK,
-                    icon_color = white,
+                    icon_color = ON_BRAND,
                     on_click = go_back,
                 ),
 
                 ft.Text(
                     "Settings",
-                    color = white,
+                    color = ON_BRAND,
                     size = 25,
                     weight = ft.FontWeight.W_800,
                 )
@@ -74,28 +52,31 @@ def settings_view(page: ft.Page) -> ft.View:
         ),
     )
 
-    def toggle_appearance(e):
-            if e.control.value:  # ON
-                logger.debug("Dark mode enabled")
-                page.theme_mode = ft.ThemeMode.DARK
-            else:  # OFF
-                logger.debug("Light mode enabled")
-                page.theme_mode = ft.ThemeMode.LIGHT
-            page.update()
+    async def toggle_appearance(e):
+        if e.control.value:  # ON
+            logger.debug("Dark mode enabled")
+            await apply_theme_mode(page, ft.ThemeMode.DARK)
+        else:  # OFF
+            logger.debug("Light mode enabled")
+            await apply_theme_mode(page, ft.ThemeMode.LIGHT)
+
+        page.views[-1] = settings_view(page)
+        page.update()
 
     def setting_row(label):
         if label ==  "Change Appearance":
             trailing = ft.Switch(
                 value = page.theme_mode == ft.ThemeMode.DARK,
-                active_color = primary,
+                active_color = PRIMARY,
                 on_change = toggle_appearance,
             )
         else:
-            trailing = ft.Icon(ft.Icons.CHEVRON_RIGHT, color = "#9CA3AF", size = 20)
+            trailing = ft.Icon(ft.Icons.CHEVRON_RIGHT, color = toggleColor["muted_text"], size = 20)
 
 
         return ft.Container(
-            border = ft.Border.all(1, soft_border),
+            bgcolor = toggleColor["card"],
+            border = ft.Border.all(1, toggleColor["border"]),
             border_radius = 8,
             padding = ft.Padding.symmetric(horizontal=14, vertical=16),
 
@@ -109,7 +90,7 @@ def settings_view(page: ft.Page) -> ft.View:
                         label,
                         size = 15,
                         weight = ft.FontWeight.W_400,
-                        color = ft.Colors.ON_SURFACE,
+                        color = toggleColor["text"],
                     ),
                     trailing,
                 ],
@@ -143,9 +124,10 @@ def settings_view(page: ft.Page) -> ft.View:
         ],
     )
 
+
     return ft.View(
         route="/settings",
-        bgcolor=None,
+        bgcolor=toggleColor["bg"],
         padding=0,
         spacing=0,
         controls=[

@@ -6,17 +6,15 @@ import threading
 from model.firestore_auth import get_uid
 from model.pet_crud import get_pet_list, remove_pet
 from model.user_account_crud import get_data
+from utility.theme import get_colors, ON_BRAND, PRIMARY, ORANGE, HEADER_BLUE, NAV_BLUE
 
 logger = logging.getLogger(__name__)
 
 
-primary = "#0D6EFD"
-orange = "#F5821F"
-header_blue = "#1450B4"
-nav_blue = "#0B4FB0"
-black = "#000000"
-white = "#FFFFFF"
-soft_border = "#DDE3EE"
+primary = PRIMARY
+orange = ORANGE
+header_blue = HEADER_BLUE
+nav_blue = NAV_BLUE
 soft_blue_bg = "#EAF0FB"
 
 
@@ -57,6 +55,12 @@ SAMPLE_OWNER = {
 
 def account_profile_view(page: ft.Page) -> ft.View:
     # start with placeholders; load real data in background
+    toggleColor = get_colors(page)
+    black = toggleColor["text"]
+    white = toggleColor["surface"]
+    soft_border = toggleColor["border"]
+
+
 
     OWNER_DATA = {}
     pet_list = []
@@ -76,8 +80,6 @@ def account_profile_view(page: ft.Page) -> ft.View:
 
     pill_nav_routes = ["/homepage", "/taskboard", "/account_profile"]
 
-
-
     # PILL COLOR STATE
     section_state = {"active": "owner"}
 
@@ -85,9 +87,9 @@ def account_profile_view(page: ft.Page) -> ft.View:
         def handler(e):
             section_state["active"] = section
             owner_tab.bgcolor = primary if section == "owner" else soft_blue_bg
-            owner_tab_text.color = white if section == "owner" else primary
+            owner_tab_text.color = ON_BRAND if section == "owner" else primary
             pet_tab.bgcolor = primary if section == "pet" else soft_blue_bg
-            pet_tab_text.color = white if section == "pet" else primary
+            pet_tab_text.color = ON_BRAND if section == "pet" else primary
             logger.info(f"Profile section switched to: {section}")
 
             profile_content.content = build_profile_content()
@@ -95,7 +97,6 @@ def account_profile_view(page: ft.Page) -> ft.View:
             profile_nav_bar.update()
 
         return handler
-
 
     # APPBAR
     appbar = ft.Container(
@@ -161,7 +162,6 @@ def account_profile_view(page: ft.Page) -> ft.View:
 
     appbar_divider = ft.Container(height=5, bgcolor=orange)
 
-
     # Header
     header = ft.Container(
         padding=ft.Padding.symmetric(horizontal=16, vertical=16),
@@ -172,7 +172,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
             controls=[
                 ft.Text(
                     "Account Profile",
-                    color=white,
+                    color=ON_BRAND,
                     size=22,
                     weight=ft.FontWeight.W_800,
                 ),
@@ -182,7 +182,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
 
     # Owner and Pet Profile Toggle
     owner_tab_text = ft.Text(
-        "Owner", color=white, weight=ft.FontWeight.W_700, size=14, text_align=ft.TextAlign.CENTER
+        "Owner", color=ON_BRAND, weight=ft.FontWeight.W_700, size=14, text_align=ft.TextAlign.CENTER
     )
     pet_tab_text = ft.Text(
         "Pet", color=primary, weight=ft.FontWeight.W_700, size=14, text_align=ft.TextAlign.CENTER
@@ -220,7 +220,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
         return ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             controls=[
-                ft.Text(label, size=13, color="#6B7280", weight=ft.FontWeight.W_600),
+                ft.Text(label, size=13, color=toggleColor["muted_text"], weight=ft.FontWeight.W_600),
                 ft.Text(value, size=14, color=black, weight=ft.FontWeight.W_700),
             ],
         )
@@ -242,7 +242,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
                     ),
                     ft.Text(OWNER_DATA.get("username", ""), size=20, weight=ft.FontWeight.W_800,
                             color=black, text_align=ft.TextAlign.CENTER),
-                    ft.Text(f"Email: {OWNER_DATA.get('email', '')}", size=13, color="#6B7280",
+                    ft.Text(f"Email: {OWNER_DATA.get('email', '')}", size=13, color=toggleColor["muted_text"],
                             text_align=ft.TextAlign.CENTER),
                     ft.Container(height=1, bgcolor=soft_border),
                     detail_row("Date of Birth (MM-DD-YYYY)", OWNER_DATA.get("dob", "")),
@@ -278,6 +278,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
             threading.Thread(target=_do_delete, daemon=True).start()
 
         return handler
+
     def pet_profile_card(pet):
         return ft.Container(
             padding=ft.Padding.all(20),
@@ -295,34 +296,34 @@ def account_profile_view(page: ft.Page) -> ft.View:
                     ),
                     ft.Text(pet.get("name", "Pet"), size=20, weight=ft.FontWeight.W_800,
                             color=black, text_align=ft.TextAlign.CENTER),
-                    ft.Text(pet.get("breed", ""), size=13, color="#6B7280",
+                    ft.Text(pet.get("breed", ""), size=13, color=toggleColor["muted_text"],
                             text_align=ft.TextAlign.CENTER),
                     ft.Container(height=1, bgcolor=soft_border),
                     detail_row("Age", pet.get("age", "")),
                     detail_row("Gender", pet.get("gender", "")),
 
                     ft.Button(
-                        content = "Delete Pet",
+                        content="Delete Pet",
                         style=ft.ButtonStyle(
                             bgcolor=ft.Colors.RED,
                             side=ft.BorderSide(3, color="000000")
                         ),
-                        icon = ft.Icons.DELETE,
-                        on_click = make_delete_handler(pet.get("name", ""))
+                        icon=ft.Icons.DELETE,
+                        on_click=make_delete_handler(pet.get("name", ""))
                     )
                 ],
             ),
         )
 
     # start with empty UI; populate in background
-    profile_content = ft.Container(content=ft.Text("Loading profile...", color="#000000"))
+    profile_content = ft.Container(content=ft.Text("Loading profile...", color=black))
 
     def build_profile_content():
         if section_state["active"] == "owner":
             return owner_profile_card()
         if pet_list:
             return ft.Column(spacing=12, controls=[pet_profile_card(p) for p in pet_list])
-        return ft.Text("No pets yet", color="#6B7280", text_align=ft.TextAlign.CENTER)
+        return ft.Text("No pets yet", color=toggleColor["muted_text"], text_align=ft.TextAlign.CENTER)
 
     profile_details = ft.Container(
         margin=ft.Margin.only(left=16, right=16, top=16, bottom=16),
@@ -379,6 +380,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
             logger.info(f"Bottom nav tapped: {target_route}")
             if page.route != target_route:
                 await page.push_route(target_route)
+
         return handler
 
     def pill_destination(index, label, icon):
@@ -391,12 +393,12 @@ def account_profile_view(page: ft.Page) -> ft.View:
             bgcolor=orange if is_active else None,
             alignment=ft.Alignment.CENTER,
             animate=ft.Animation(200, ft.AnimationCurve.EASE_OUT_CUBIC),
-            content=ft.Icon(icon, color=white, size=20),
+            content=ft.Icon(icon, color=ON_BRAND, size=20),
         )
         label_text = ft.Text(
             label,
             size=11,
-            color=white,
+            color=ON_BRAND,
             weight=ft.FontWeight.W_700 if is_active else ft.FontWeight.W_600,
         )
 
@@ -406,7 +408,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
         return ft.Container(
             padding=ft.Padding.symmetric(horizontal=10, vertical=8),
             border_radius=20,
-            on_click=nav_destination_tapped(index), # navigation call, may need to be changed
+            on_click=nav_destination_tapped(index),  # navigation call, may need to be changed
             content=ft.Column(
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=2,
@@ -432,7 +434,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
             alignment=ft.MainAxisAlignment.SPACE_AROUND,
             tight=True,
             controls=[
-                pill_destination(i, dest.label, dest.selected_icon) # may need to change this one too
+                pill_destination(i, dest.label, dest.selected_icon)  # may need to change this one too
                 for i, dest in enumerate(DESTINATIONS)
             ],
         ),
@@ -487,7 +489,7 @@ def account_profile_view(page: ft.Page) -> ft.View:
 
     return ft.View(
         route="/account_profile",
-        bgcolor="#FFFFFF",
+        bgcolor=toggleColor["bg"],
         padding=0,
         spacing=0,
         controls=[

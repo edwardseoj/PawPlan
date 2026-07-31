@@ -3,6 +3,7 @@ import time
 
 # logger setup
 from utility.logging_config import setup_logging
+from utility.theme import app_themes, load_saved_theme_mode
 from views.petprofile import petprofile_view
 from views.settings import settings_view
 
@@ -20,7 +21,7 @@ from views.petprofile_input import petprofile_input_view
 from views.petreminder import pet_reminder_view
 from views.taskboard import taskboard_view
 
-def main(page: ft.Page):
+async def main(page: ft.Page):
     page.title = "PawPlan"
     page.window.height = 900
     page.window.width = 430
@@ -30,6 +31,11 @@ def main(page: ft.Page):
     page.window.max_height = 900
     page.window.resizable = False
     page.window.center()
+
+    page.on_login = make_on_login(page)
+
+    page.theme, page.dark_theme = app_themes()
+    await load_saved_theme_mode(page)
     page.update()
 
     page.on_login = make_on_login(page)
