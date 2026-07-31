@@ -3,6 +3,7 @@ import datetime
 import logging
 import flet as ft
 import threading
+import os
 
 from model.firestore_auth import get_uid
 from model.json.uid_json import UserIdStore
@@ -585,10 +586,12 @@ def homepage_view(page: ft.Page) -> ft.View:
 
 
 # RUNNABLE
+IS_WEB = os.environ.get("PORT") is not None
 def _standalone_main(page: ft.Page):
     page.title = "PawPlan"
-    page.window.width = 430
-    page.window.height = 900
+    if not IS_WEB:
+        page.window.width = 430
+        page.window.height = 900
 
     page.theme = ft.Theme(
         page_transitions=ft.PageTransitionsTheme(

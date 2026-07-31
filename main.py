@@ -25,6 +25,8 @@ from views.taskboard_input import taskboard_input_view
 from model.firestore_auth import uid_account
 _uid_file_cleared = False
 
+IS_WEB = os.environ.get("PORT") is not None
+logger.debug(f"IS_WEB = {IS_WEB}, PORT env = {os.environ.get('PORT')}")
 async def main(page: ft.Page):
     global _uid_file_cleared
     if not _uid_file_cleared:
@@ -32,14 +34,15 @@ async def main(page: ft.Page):
         uid_account.clear()
 
     page.title = "PawPlan"
-    page.window.height = 900
-    page.window.width = 430
-    page.window.min_height = 900
-    page.window.max_height = 900
-    page.window.min_width = 430
-    page.window.max_height = 900
-    page.window.resizable = False
-    await page.window.center()
+    if not IS_WEB:
+        page.window.height = 900
+        page.window.width = 430
+        page.window.min_height = 900
+        page.window.max_height = 900
+        page.window.min_width = 430
+        page.window.max_height = 900
+        page.window.resizable = False
+        await page.window.center()
     page.update()
 
     page.on_login = make_on_login(page)

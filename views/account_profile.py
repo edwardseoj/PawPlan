@@ -1,5 +1,5 @@
 import flet as ft
-
+import os
 import logging
 import threading
 
@@ -499,10 +499,12 @@ def account_profile_view(page: ft.Page) -> ft.View:
 
 
 # Standalone runnable
+IS_WEB = os.environ.get("PORT") is not None
 def _standalone_main(page: ft.Page):
     page.title = "Account Profile"
-    page.window.width = 430
-    page.window.height = 900
+    if not IS_WEB:
+        page.window.width = 430
+        page.window.height = 900
     page.views.append(account_profile_view(page))
     page.update()
 

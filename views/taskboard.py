@@ -1,5 +1,6 @@
 import flet as ft
 import logging
+import os
 from datetime import date
 
 from model.pet_crud import get_pet_color_map, DEFAULT_PET_COLOR
@@ -490,11 +491,12 @@ def taskboard_view(page: ft.Page) -> ft.View:
         ],
     )
 
-
+IS_WEB = os.environ.get("PORT") is not None
 def _standalone_main(page: ft.Page):
     page.title = "PawPlan"
-    page.window.width = 430
-    page.window.height = 900
+    if not IS_WEB:
+        page.window.width = 430
+        page.window.height = 900
     page.views.append(taskboard_view(page))
     page.update()
 
