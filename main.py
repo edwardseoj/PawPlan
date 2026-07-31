@@ -3,6 +3,7 @@ import os
 
 # logger setup
 from utility.logging_config import setup_logging
+from utility.theme import app_themes, load_saved_theme_mode
 from views.petprofile import petprofile_view
 from views.settings import settings_view
 
@@ -43,6 +44,10 @@ async def main(page: ft.Page):
         page.window.max_height = 900
         page.window.resizable = False
         await page.window.center()
+
+    page.on_login = make_on_login(page)
+    page.theme, page.dark_theme = app_themes()
+    await load_saved_theme_mode(page)
     page.update()
 
     page.on_login = make_on_login(page)

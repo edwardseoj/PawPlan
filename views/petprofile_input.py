@@ -9,29 +9,38 @@ from model.pet_crud import (
     DEFAULT_PET_COLOR,
     MAX_PETS,
 )
+from firebase_admin import firestore
+from utility.theme import get_colors, ON_BRAND, PRIMARY, HEADER_BLUE
+from model.json.uid_json import UserIdStore
+from setup.firebase_setup import db
 
 logger = logging.getLogger(__name__)
 
 
-primary = "#0D6EFD"
-header_blue = "#1450B4"
+primary = PRIMARY
+header_blue = HEADER_BLUE
 orange = "#F5821F"
-soft_border = "#DDE3EE"
-white = "#FFFFFF"
-black = "#000000"
 
 
-def labeled_input(label: str, field: ft.Control) -> ft.Column:
+def labeled_input(label: str, field: ft.Control, colors: dict | None = None) -> ft.Column:
+    """Wraps a field with a label above it, styled like the rest of the app's forms."""
+    from utility.theme import LIGHT
+    toggleColor = colors or LIGHT
     return ft.Column(
         spacing=6,
         controls=[
-            ft.Text(label, size=13, weight=ft.FontWeight.W_600, color="#6B7280"),
+            ft.Text(label, size=13, weight=ft.FontWeight.W_600, color=toggleColor["muted_text"]),
             field,
         ],
     )
 
 
 def petprofile_input_view(page: ft.Page) -> ft.View:
+    toggleColor = get_colors(page)
+    soft_border = toggleColor["border"]
+    white = toggleColor["surface"]
+    black = toggleColor["text"]
+
     async def go_homepage(e):
         logger.info("Go to pet profile clicked")
         try:
@@ -55,7 +64,6 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
         logger.debug("Logout clicked")
         await page.push_route("/")
 
-
     appbar = ft.Container(
         padding=ft.Padding.symmetric(horizontal=16, vertical=16),
         bgcolor=header_blue,
@@ -65,12 +73,12 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
             controls=[
                 ft.IconButton(
                     icon=ft.Icons.ARROW_BACK,
-                    icon_color=white,
+                    icon_color=ON_BRAND,
                     on_click=go_back,
                 ),
                 ft.Text(
                     "Add Pet",
-                    color=white,
+                    color=ON_BRAND,
                     size=22,
                     weight=ft.FontWeight.W_800,
                 ),
@@ -99,7 +107,6 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
             ],
         ),
     )
-
 
     field_border_radius = 12
     field_content_padding = ft.Padding.symmetric(horizontal=16, vertical=14)
@@ -259,11 +266,11 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
         width=340,
         height=54,
         on_click=handle_add_pet,
-        color=white,
+        color=ON_BRAND,
         bgcolor=primary,
         style=ft.ButtonStyle(
             shape=ft.RoundedRectangleBorder(radius=30),
-            side=ft.BorderSide(width=1.5, color=black),
+            side=ft.BorderSide(2, color=toggleColor["border"]),
         ),
     )
 
@@ -290,11 +297,11 @@ def petprofile_input_view(page: ft.Page) -> ft.View:
             controls=[
                 avatar_placeholder,
                 ft.Container(height=6),
-                labeled_input("Pet Name", pet_name),
-                labeled_input("Pet Type", pet_type),
-                labeled_input("Age", pet_age),
-                labeled_input("Breed", pet_breed),
-                labeled_input("Allergies", pet_allergies),
+                labeled_input("Pet Name", pet_name, colors=toggleColor),
+                labeled_input("Pet Type", pet_type, colors=toggleColor),
+                labeled_input("Age", pet_age, colors=toggleColor),
+                labeled_input("Breed", pet_breed, colors=toggleColor),
+                labeled_input("Allergies", pet_allergies, colors=toggleColor),
                 ft.Column(
                     spacing=6,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,

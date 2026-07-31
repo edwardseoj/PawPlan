@@ -16,6 +16,8 @@ from model.task_crud import (
 )
 from model.user_account_crud import get_data
 from utility.navigation import go_to
+from setup.firebase_setup import db
+from utility.theme import get_colors, ON_BRAND, PRIMARY, HEADER_BLUE, ORANGE, NAV_BLUE, GREEN
 
 logger = logging.getLogger(f"pawplan.{__name__}")
 
@@ -80,16 +82,16 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     pill_nav_routes = ["/homepage", "/taskboard", "/account_profile"]
 
-
-    # color variables
-    primary = "#0D6EFD"
-    header_blue = "#1450B4"
-    orange = "#F5821F"
-    soft_border = "#DDE3EE"
-    white = "#FFFFFF"
-    black = "#000000"
-    green = "#4CAF50"
-    nav_blue = "#0B4FB0"
+    # Theme-aware colors (flip between light/dark)
+    toggleColor = get_colors(page)
+    primary = PRIMARY
+    header_blue = HEADER_BLUE
+    orange = ORANGE
+    soft_border = toggleColor["border"]
+    white = toggleColor["surface"]
+    black = toggleColor["text"]
+    green = GREEN
+    nav_blue = NAV_BLUE
     calendar_header_blue = "#2F6FCB"
     weekend_blue = "#3B6FD6"
 
@@ -156,12 +158,14 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     # PET CARDS
     pet_list = []
-    pet_cards_row_height = 30
+
+    pet_cards_row_height = 35
+
     def empty_state(message: str) -> ft.Container:
         return ft.Container(
             height = pet_cards_row_height,
             alignment = ft.Alignment.CENTER,
-            content = ft.Text(message, color=white),
+            content = ft.Text(message, color=ON_BRAND),
         )
 
     pet_cards_row = ft.Row(
@@ -208,19 +212,20 @@ def homepage_view(page: ft.Page) -> ft.View:
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=6,
                 controls=[
-                    ft.Text(pet_name, color=white, size=15, weight=ft.FontWeight.W_700),
+
+                    ft.Text(pet_name, color=ON_BRAND, size=15, weight=ft.FontWeight.W_700),
                     ft.Container(
                         width=90,
                         height=90,
                         bgcolor=pet_color,
                         border_radius=10,
-                        border=ft.Border.all(2, white),
+                        border=ft.Border.all(2, ON_BRAND),
                         alignment=ft.Alignment.CENTER,
                         content=ft.Icon(ft.Icons.PETS, size=40, color="#8A6A3B"),
                         on_click=handle_pet_click,
                     ),
                     ft.Button(
-                        content=ft.Text("View Task", size=8, color=white),
+                        content=ft.Text("View Task", size=8, color=ON_BRAND),
                         bgcolor=green,
                         on_click= view_task_handler(pet_name), # logic to go to view reminder
                     ),
@@ -254,7 +259,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                     controls=[
                         ft.Text(
                             header_text,
-                            color=white,
+                            color=ON_BRAND,
                             size=24,
                             weight=ft.FontWeight.W_800,
                         ),
@@ -267,7 +272,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                                     ft.Icon(ft.Icons.ARROW_CIRCLE_RIGHT, color=primary, size=18),
                                 ],
                             ),
-                            bgcolor=white,
+                            bgcolor=ON_BRAND,
                             on_click=go_to(page, "/petprofile_input"),
                         ),
                     ],
@@ -294,7 +299,7 @@ def homepage_view(page: ft.Page) -> ft.View:
     def day_cell(day, col_index):
         weekend = col_index == 0 or col_index == 6
         todays = day == today.day
-        text_color = weekend_blue if weekend else "#1F2937"
+        text_color = weekend_blue if weekend else toggleColor["text"]
         if day == 0:
             return ft.Container(expand=1, height=30)
 
@@ -317,7 +322,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                     ft.Text(
                         str(day),
                         size=11,
-                        color=white if todays else text_color,
+                        color=ON_BRAND if todays else text_color,
                         weight=ft.FontWeight.W_700 if todays else ft.FontWeight.W_400,
                     ),
                     ft.Container(
@@ -327,6 +332,11 @@ def homepage_view(page: ft.Page) -> ft.View:
                         bgcolor=orange if has_task else None,
                     ),
                 ],
+            # content=ft.Text(
+            #     str(day),
+            #     size=11,
+            #     color=ON_BRAND if todays else text_color,
+            #     weight=ft.FontWeight.W_700 if todays else ft.FontWeight.W_400,
             ),
         )
 
@@ -353,7 +363,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                     bgcolor=calendar_header_blue,
                     alignment=ft.Alignment.CENTER,
                     content=ft.Text(
-                        month_label, size=12, weight=ft.FontWeight.W_700, color=white
+                        month_label, size=12, weight=ft.FontWeight.W_700, color=ON_BRAND
                     ),
                 ),
 
@@ -366,7 +376,7 @@ def homepage_view(page: ft.Page) -> ft.View:
                                 expand=1,
                                 alignment=ft.Alignment.CENTER,
                                 content=ft.Text(
-                                    label, size=9, weight=ft.FontWeight.W_700, color="#6B7280"
+                                    label, size=9, weight=ft.FontWeight.W_700, color=toggleColor["muted_text"]
                                 ),
                             )
                             for label in weekday_labels
@@ -489,12 +499,12 @@ def homepage_view(page: ft.Page) -> ft.View:
                         bgcolor=orange if is_active else None,
                         alignment=ft.Alignment.CENTER,
                         animate=ft.Animation(100, ft.AnimationCurve.EASE_OUT_CUBIC),
-                        content=ft.Icon(icon, color=white, size=20),
+                        content=ft.Icon(icon, color=ON_BRAND, size=20),
                     ),
                     ft.Text(
                         label,
                         size=11,
-                        color=white,
+                        color=ON_BRAND,
                         weight=ft.FontWeight.W_700 if is_active else ft.FontWeight.W_600,
                     ),
                 ],
@@ -570,7 +580,7 @@ def homepage_view(page: ft.Page) -> ft.View:
 
     return ft.View(
         route="/homepage",
-        bgcolor="#FFFFFF",
+        bgcolor=toggleColor["bg"],
         padding=0,
         spacing=0,
         controls=[

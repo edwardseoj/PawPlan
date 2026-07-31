@@ -2,15 +2,17 @@ import flet as ft
 import logging
 
 from model.pet_crud import get_specific_pet
+from utility.theme import get_colors, ON_BRAND, ORANGE, NAV_BLUE
 
 logger = logging.getLogger(__name__)
 
 
 def petprofile_view(page: ft.Page) -> ft.View:
-    orange = "#F5893C"
-    blue = "#0B4FB0"
+    toggleColor = get_colors(page)
+    orange = ORANGE
+    blue = NAV_BLUE
     purple = "#8B7AE8"
-    white = "#FFFFFF"
+    # white = "#FFFFFF"
     black = "#000000"
 
     # get page session values
@@ -18,6 +20,7 @@ def petprofile_view(page: ft.Page) -> ft.View:
     uid = page.session.store.get("uid")
     logger.debug(f"uid: {uid}")
     logger.debug(f"index: {index}")
+    white = toggleColor["surface"]
 
     # temporary pet data, wire up to Firestore later
     pet = get_specific_pet(uid, index) or {}
@@ -66,7 +69,7 @@ def petprofile_view(page: ft.Page) -> ft.View:
                             "Paw Profile",
                             size=22,
                             weight=ft.FontWeight.W_800,
-                            color=white,
+                            color=ON_BRAND,
                         ),
                     ],
                 ),
@@ -129,9 +132,9 @@ def petprofile_view(page: ft.Page) -> ft.View:
             spacing=2,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
-                ft.Text(pet.get("name"), size=30, weight=ft.FontWeight.W_800, color="#000000"),
-                ft.Text(f"Age: {pet.get('age')}", size=16, color="#000000"),
-                ft.Text(f"Breed: {pet.get('breed')}", size=16, color="#000000"),
+                ft.Text(pet.get("name"), size=30, weight=ft.FontWeight.W_800, color=toggleColor["text"]),
+                ft.Text(f"Age: {pet.get('age')}", size=16, color=toggleColor["text"]),
+                ft.Text(f"Breed: {pet.get('breed')}", size=16, color=toggleColor["text"]),
             ],
         ),
     )
@@ -146,11 +149,11 @@ def petprofile_view(page: ft.Page) -> ft.View:
                     width=28,
                     height=28,
                     border_radius=9,
-                    border=ft.Border.all(width=2, color=white),
+                    border=ft.Border.all(width=2, color=ON_BRAND),
                 )
             )
         row_controls.append(
-            ft.Text(text, color=white, size=14, weight=ft.FontWeight.W_600, expand=True)
+            ft.Text(text, color=ON_BRAND, size=14, weight=ft.FontWeight.W_600, expand=True)
         )
         return ft.Container(
             padding=ft.Padding.symmetric(horizontal=14, vertical=12),
@@ -167,12 +170,12 @@ def petprofile_view(page: ft.Page) -> ft.View:
     def build_allergies_content():
         controls = []
 
-        controls.append(ft.Text("Allergies:", size=16, weight=ft.FontWeight.W_600, color="#000000"))
+        controls.append(ft.Text("Allergies:", size=16, weight=ft.FontWeight.W_600, color=toggleColor["text"]))
         if pet.get("allergies"):
             for a in pet["allergies"]:
                 controls.append(med_pill(a, show_checkbox=False))
         else:
-            controls.append(ft.Text("No known allergies", size=13, color=ft.Colors.GREY_600))
+            controls.append(ft.Text("No known allergies", size=13, color=toggleColor["muted_text"]))
 
         return controls
 
@@ -220,9 +223,10 @@ def petprofile_view(page: ft.Page) -> ft.View:
         ],
     )
 
+
     return ft.View(
         route="/petprofile",
-        bgcolor=white,
+        bgcolor=toggleColor["bg"],
         padding=0,
         controls=[main_column],
     )
@@ -232,5 +236,6 @@ if __name__ == "__main__":
     def _main(page: ft.Page):
         page.views.append(petprofile_view(page))
         page.update()
+
 
     ft.run(_main)
