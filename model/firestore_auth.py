@@ -11,7 +11,7 @@ from setup.firebase_setup import db
 load_dotenv()
 create_account = NewAccountStore()
 uid_account = UserIdStore()
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(f"pawplan.{__name__}")
 
 
 def seed_uid_from_auth(auth):
